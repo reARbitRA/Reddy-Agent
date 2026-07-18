@@ -1,0 +1,113 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Space Grotesk", sans-serif;
+  --font-mono: "Space Mono", monospace;
+}
+
+/* Theme configurations and custom classes */
+body {
+  font-family: var(--font-mono);
+  background-color: #09090b; /* Near black dark-zinc-950 */
+  color: #f4f4f5; /* zinc-100 */
+}
+
+/* Engineering Grid Background */
+.engineering-grid {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(113, 113, 122, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(113, 113, 122, 0.05) 1px, transparent 1px);
+}
+
+/* Subtle CRT Scanline overlay */
+.scanline-overlay {
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.25) 50%
+  ), linear-gradient(
+    90deg, 
+    rgba(255, 0, 0, 0.06), 
+    rgba(0, 255, 0, 0.02), 
+    rgba(0, 0, 255, 0.06)
+  );
+  background-size: 100% 4px, 6px 100%;
+}
+
+/* Dark Vignette around the edges */
+.vignette-edges {
+  box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.95);
+}
+
+/* Neo-Brutalist Core Styles */
+.brutalist-card {
+  border: 4px solid #000000;
+  border-radius: 0px !important;
+  background-color: #181c20;
+  box-shadow: 4px 4px 0px 0px #000000;
+}
+
+.brutalist-card-yellow {
+  border: 4px solid #000000;
+  border-radius: 0px !important;
+  background-color: #facc15;
+  color: #000000;
+  box-shadow: 4px 4px 0px 0px #000000;
+}
+
+.brutalist-btn {
+  border: 3px solid #000000;
+  border-radius: 0px !important;
+  background-color: #27272a;
+  color: #f4f4f5;
+  box-shadow: 3px 3px 0px 0px #000000;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.brutalist-btn-yellow {
+  border: 3px solid #000000;
+  border-radius: 0px !important;
+  background-color: #facc15;
+  color: #000000;
+  box-shadow: 3px 3px 0px 0px #000000;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #18181b; /* zinc-900 / surface */
+  border-left: 3px solid #000000;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #27272a; /* zinc-800 */
+  border: 2px solid #181c20;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #facc15; /* caution yellow */
+}
+
+/* Flickering LED animations for retro arcade atmosphere */
+@keyframes neon-flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+    opacity: 1;
+  }
+  20%, 24%, 55% {
+    opacity: 0.4;
+  }
+}
+
+.led-flicker {
+  animation: neon-flicker 4s infinite alternate;
+}
