@@ -1,0 +1,199 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" role="img" aria-label="REDDY Agent — operational AI cockpit hero with animated THINK, SELECT TOOL, EXECUTE, OBSERVE, RESPOND loop">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#F4F1EB" stroke-opacity="0.05" stroke-width="1"/>
+    </pattern>
+    <pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse">
+      <rect y="0" width="4" height="1.6" fill="#06080B" fill-opacity="0.22"/>
+    </pattern>
+    <radialGradient id="sweepGrad" gradientUnits="userSpaceOnUse" cx="855" cy="330" r="200">
+      <stop offset="0%" stop-color="#A9E838" stop-opacity="0.30"/>
+      <stop offset="70%" stop-color="#A9E838" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#A9E838" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="vig" cx="50%" cy="45%" r="80%">
+      <stop offset="62%" stop-color="#06080B" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#06080B" stop-opacity="0.92"/>
+    </radialGradient>
+  </defs>
+
+  <!-- CRT base -->
+  <rect x="0" y="0" width="1200" height="630" fill="#06080B"/>
+  <rect x="0" y="0" width="1200" height="630" fill="url(#grid)"/>
+
+  <!-- corner brackets -->
+  <g stroke="#A9E838" stroke-width="2" fill="none">
+    <path d="M 24 44 L 24 24 L 44 24"/>
+    <path d="M 1156 24 L 1176 24 L 1176 44"/>
+    <path d="M 24 586 L 24 606 L 44 606"/>
+    <path d="M 1156 606 L 1176 606 L 1176 586"/>
+  </g>
+
+  <!-- top status bar -->
+  <text x="60" y="52" font-size="12" letter-spacing="3" fill="#F4F1EB" fill-opacity="0.55">REDDY // AGENT RUNTIME</text>
+  <circle cx="34" cy="48" r="4" fill="#D60019">
+    <animate attributeName="opacity" values="1;0.25;1" dur="2.5s" repeatCount="indefinite"/>
+  </circle>
+  <text x="1140" y="52" font-size="11" letter-spacing="2" fill="#F4F1EB" fill-opacity="0.4" text-anchor="end">PORT 3000 &#183; GEMINI-1.5-FLASH &#183; SESSION ISOLATED</text>
+  <line x1="60" y1="66" x2="1140" y2="66" stroke="#F4F1EB" stroke-opacity="0.14" stroke-width="1"/>
+
+  <!-- wordmark -->
+  <text x="58" y="128" font-size="86" font-weight="700" letter-spacing="10" fill="#F4F1EB">REDDY</text>
+  <rect x="60" y="142" width="330" height="4" fill="#A9E838"/>
+  <text x="60" y="172" font-size="17" letter-spacing="5" fill="#A9E838">OPERATIONAL AI COCKPIT</text>
+  <text x="60" y="194" font-size="11" letter-spacing="2.5" fill="#F4F1EB" fill-opacity="0.45">MEMORY &#183; TOOLS &#183; SKILLS &#183; KNOWLEDGE &#183; DIAGNOSTICS &#183; WORKSPACE</text>
+
+  <!-- ============ FIVE-STAGE EXECUTION PIPELINE (animated) ============ -->
+  <!-- cycle: 12.5s, each stage active for 2.5s in sequence -->
+  <g>
+    <!-- 01 THINK -->
+    <g>
+      <animate attributeName="opacity" dur="12.5s" repeatCount="indefinite"
+        values="1;1;1;0.28;0.28" keyTimes="0;0.02;0.18;0.2;1"/>
+      <rect x="60" y="216" width="450" height="56" fill="#F4F1EB" fill-opacity="0.05" stroke="#A9E838" stroke-width="1.5"/>
+      <circle cx="86" cy="244" r="5" fill="#A9E838"/>
+      <text x="106" y="240" font-size="15" font-weight="700" letter-spacing="2" fill="#F4F1EB">01 THINK</text>
+      <text x="106" y="258" font-size="10.5" letter-spacing="1" fill="#F4F1EB" fill-opacity="0.55">CONTEXT ASSEMBLY &#8212; MEMORYVAULT + ACTIVE_CAPABILITIES</text>
+      <text x="498" y="249" font-size="12" fill="#22D3EE" text-anchor="end">&#9656;</text>
+    </g>
+    <!-- 02 SELECT TOOL -->
+    <g>
+      <animate attributeName="opacity" dur="12.5s" repeatCount="indefinite"
+        values="0.28;0.28;1;1;1;0.28;0.28" keyTimes="0;0.2;0.22;0.38;0.4;0.42;1"/>
+      <rect x="60" y="284" width="450" height="56" fill="#F4F1EB" fill-opacity="0.05" stroke="#22D3EE" stroke-width="1.5"/>
+      <circle cx="86" cy="312" r="5" fill="#22D3EE"/>
+      <text x="106" y="308" font-size="15" font-weight="700" letter-spacing="2" fill="#F4F1EB">02 SELECT TOOL</text>
+      <text x="106" y="326" font-size="10.5" letter-spacing="1" fill="#F4F1EB" fill-opacity="0.55">GEMINI FUNCTION CALL ROUTED TO TOOL REGISTRY</text>
+      <text x="498" y="317" font-size="12" fill="#22D3EE" text-anchor="end">&#9656;</text>
+    </g>
+    <!-- 03 EXECUTE -->
+    <g>
+      <animate attributeName="opacity" dur="12.5s" repeatCount="indefinite"
+        values="0.28;0.28;1;1;1;0.28;0.28" keyTimes="0;0.4;0.42;0.58;0.6;0.62;1"/>
+      <rect x="60" y="352" width="450" height="56" fill="#F4F1EB" fill-opacity="0.05" stroke="#A9E838" stroke-width="1.5"/>
+      <circle cx="86" cy="380" r="5" fill="#A9E838"/>
+      <text x="106" y="376" font-size="15" font-weight="700" letter-spacing="2" fill="#F4F1EB">03 EXECUTE</text>
+      <text x="106" y="394" font-size="10.5" letter-spacing="1" fill="#F4F1EB" fill-opacity="0.55">TOOL LOGIC RUNS &#8212; RESULT JSON-SERIALIZED</text>
+      <text x="498" y="385" font-size="12" fill="#22D3EE" text-anchor="end">&#9656;</text>
+    </g>
+    <!-- 04 OBSERVE -->
+    <g>
+      <animate attributeName="opacity" dur="12.5s" repeatCount="indefinite"
+        values="0.28;0.28;1;1;1;0.28;0.28" keyTimes="0;0.6;0.62;0.78;0.8;0.82;1"/>
+      <rect x="60" y="420" width="450" height="56" fill="#F4F1EB" fill-opacity="0.05" stroke="#22D3EE" stroke-width="1.5"/>
+      <circle cx="86" cy="448" r="5" fill="#22D3EE"/>
+      <text x="106" y="444" font-size="15" font-weight="700" letter-spacing="2" fill="#F4F1EB">04 OBSERVE</text>
+      <text x="106" y="462" font-size="10.5" letter-spacing="1" fill="#F4F1EB" fill-opacity="0.55">TOOL RESULT APPENDED TO SESSION MEMORY</text>
+      <text x="498" y="453" font-size="12" fill="#22D3EE" text-anchor="end">&#9656;</text>
+    </g>
+    <!-- 05 RESPOND -->
+    <g>
+      <animate attributeName="opacity" dur="12.5s" repeatCount="indefinite"
+        values="0.28;0.28;1;1;1" keyTimes="0;0.8;0.82;0.98;1"/>
+      <rect x="60" y="488" width="450" height="56" fill="#F4F1EB" fill-opacity="0.05" stroke="#A9E838" stroke-width="1.5"/>
+      <circle cx="86" cy="516" r="5" fill="#A9E838"/>
+      <text x="106" y="512" font-size="15" font-weight="700" letter-spacing="2" fill="#F4F1EB">05 RESPOND</text>
+      <text x="106" y="530" font-size="10.5" letter-spacing="1" fill="#F4F1EB" fill-opacity="0.55">FINAL CONTENT RETURNED TO THE CONSOLE</text>
+      <text x="498" y="521" font-size="12" fill="#D60019" text-anchor="end">&#8635;</text>
+    </g>
+  </g>
+
+  <!-- ============ RADAR INSTRUMENT ============ -->
+  <g>
+    <!-- bezel -->
+    <circle cx="855" cy="330" r="212" fill="#F4F1EB" fill-opacity="0.02" stroke="#F4F1EB" stroke-opacity="0.18" stroke-width="1.5"/>
+    <circle cx="855" cy="330" r="160" fill="none" stroke="#F4F1EB" stroke-opacity="0.10" stroke-width="1"/>
+    <circle cx="855" cy="330" r="110" fill="none" stroke="#F4F1EB" stroke-opacity="0.10" stroke-width="1"/>
+    <circle cx="855" cy="330" r="60" fill="none" stroke="#F4F1EB" stroke-opacity="0.10" stroke-width="1"/>
+    <line x1="855" y1="118" x2="855" y2="542" stroke="#F4F1EB" stroke-opacity="0.08" stroke-width="1"/>
+    <line x1="643" y1="330" x2="1067" y2="330" stroke="#F4F1EB" stroke-opacity="0.08" stroke-width="1"/>
+    <!-- degree ticks -->
+    <g stroke="#F4F1EB" stroke-opacity="0.25" stroke-width="1.5">
+      <line x1="855" y1="118" x2="855" y2="128"/>
+      <line x1="855" y1="532" x2="855" y2="542"/>
+      <line x1="643" y1="330" x2="653" y2="330"/>
+      <line x1="1057" y1="330" x2="1067" y2="330"/>
+    </g>
+
+    <!-- rotating sweep: wedge + leading edge, one revolution = one full pipeline cycle -->
+    <g>
+      <animateTransform attributeName="transform" type="rotate" from="0 855 330" to="360 855 330" dur="12.5s" repeatCount="indefinite"/>
+      <path d="M 855 330 L 855 130 A 200 200 0 0 1 1045 272 Z" fill="url(#sweepGrad)"/>
+      <line x1="855" y1="330" x2="855" y2="130" stroke="#A9E838" stroke-width="2"/>
+    </g>
+
+    <!-- stage nodes on the sweep ring (pentagon) -->
+    <!-- THINK top -->
+    <g>
+      <circle cx="855" cy="170" r="22" fill="#06080B" stroke="#A9E838" stroke-width="1.5"/>
+      <circle cx="855" cy="170" r="6" fill="#A9E838"/>
+      <circle cx="855" cy="170" r="8" fill="none" stroke="#A9E838" stroke-width="1.5">
+        <animate attributeName="r" values="8;24" dur="2.5s" begin="0s" repeatCount="indefinite"/>
+        <animate attributeName="stroke-opacity" values="0.8;0" dur="2.5s" begin="0s" repeatCount="indefinite"/>
+      </circle>
+      <text x="855" y="142" font-size="11" letter-spacing="2" fill="#A9E838" text-anchor="middle">THINK</text>
+    </g>
+    <!-- SELECT TOOL upper right -->
+    <g>
+      <circle cx="1007" cy="281" r="22" fill="#06080B" stroke="#22D3EE" stroke-width="1.5"/>
+      <circle cx="1007" cy="281" r="6" fill="#22D3EE"/>
+      <circle cx="1007" cy="281" r="8" fill="none" stroke="#22D3EE" stroke-width="1.5">
+        <animate attributeName="r" values="8;24" dur="2.5s" begin="2.5s" repeatCount="indefinite"/>
+        <animate attributeName="stroke-opacity" values="0.8;0" dur="2.5s" begin="2.5s" repeatCount="indefinite"/>
+      </circle>
+      <text x="1038" y="278" font-size="11" letter-spacing="2" fill="#22D3EE">SELECT</text>
+      <text x="1038" y="292" font-size="11" letter-spacing="2" fill="#22D3EE">TOOL</text>
+    </g>
+    <!-- EXECUTE lower right -->
+    <g>
+      <circle cx="949" cy="459" r="22" fill="#06080B" stroke="#A9E838" stroke-width="1.5"/>
+      <circle cx="949" cy="459" r="6" fill="#A9E838"/>
+      <circle cx="949" cy="459" r="8" fill="none" stroke="#A9E838" stroke-width="1.5">
+        <animate attributeName="r" values="8;24" dur="2.5s" begin="5s" repeatCount="indefinite"/>
+        <animate attributeName="stroke-opacity" values="0.8;0" dur="2.5s" begin="5s" repeatCount="indefinite"/>
+      </circle>
+      <text x="949" y="500" font-size="11" letter-spacing="2" fill="#A9E838" text-anchor="middle">EXECUTE</text>
+    </g>
+    <!-- OBSERVE lower left -->
+    <g>
+      <circle cx="761" cy="459" r="22" fill="#06080B" stroke="#22D3EE" stroke-width="1.5"/>
+      <circle cx="761" cy="459" r="6" fill="#22D3EE"/>
+      <circle cx="761" cy="459" r="8" fill="none" stroke="#22D3EE" stroke-width="1.5">
+        <animate attributeName="r" values="8;24" dur="2.5s" begin="7.5s" repeatCount="indefinite"/>
+        <animate attributeName="stroke-opacity" values="0.8;0" dur="2.5s" begin="7.5s" repeatCount="indefinite"/>
+      </circle>
+      <text x="761" y="500" font-size="11" letter-spacing="2" fill="#22D3EE" text-anchor="middle">OBSERVE</text>
+    </g>
+    <!-- RESPOND upper left -->
+    <g>
+      <circle cx="703" cy="281" r="22" fill="#06080B" stroke="#A9E838" stroke-width="1.5"/>
+      <circle cx="703" cy="281" r="6" fill="#A9E838"/>
+      <circle cx="703" cy="281" r="8" fill="none" stroke="#A9E838" stroke-width="1.5">
+        <animate attributeName="r" values="8;24" dur="2.5s" begin="10s" repeatCount="indefinite"/>
+        <animate attributeName="stroke-opacity" values="0.8;0" dur="2.5s" begin="10s" repeatCount="indefinite"/>
+      </circle>
+      <text x="672" y="278" font-size="11" letter-spacing="2" fill="#A9E838" text-anchor="end">RESPOND</text>
+    </g>
+
+    <!-- core -->
+    <circle cx="855" cy="330" r="34" fill="#06080B" stroke="#F4F1EB" stroke-opacity="0.5" stroke-width="1.5"/>
+    <text x="855" y="327" font-size="10" letter-spacing="1" fill="#A9E838" text-anchor="middle">AGENT</text>
+    <text x="855" y="341" font-size="10" letter-spacing="1" fill="#A9E838" text-anchor="middle">CORE</text>
+    <text x="855" y="566" font-size="10" letter-spacing="2.5" fill="#F4F1EB" fill-opacity="0.4" text-anchor="middle">RedAeyeEngine &#183; MAX 5 ITERATIONS &#183; SAFE TERMINATION</text>
+  </g>
+
+  <!-- bottom bar -->
+  <line x1="60" y1="580" x2="1140" y2="580" stroke="#F4F1EB" stroke-opacity="0.14" stroke-width="1"/>
+  <g>
+    <rect x="60" y="594" width="14" height="14" fill="#06080B" stroke="#A9E838"/>
+    <rect x="82" y="594" width="14" height="14" fill="#06080B" stroke="#22D3EE"/>
+    <rect x="104" y="594" width="14" height="14" fill="#06080B" stroke="#D60019"/>
+    <rect x="126" y="594" width="14" height="14" fill="#06080B" stroke="#F4F1EB"/>
+    <text x="152" y="605" font-size="10" letter-spacing="2" fill="#F4F1EB" fill-opacity="0.45">CRT #06080B &#183; LIME #A9E838 &#183; CYAN #22D3EE &#183; RED #D60019 &#183; INK #F4F1EB</text>
+  </g>
+  <text x="1140" y="605" font-size="10" letter-spacing="2" fill="#F4F1EB" fill-opacity="0.45" text-anchor="end">reARbitRA / Reddy-Agent</text>
+
+  <!-- scanlines + vignette -->
+  <rect x="0" y="0" width="1200" height="630" fill="url(#scan)"/>
+  <rect x="0" y="0" width="1200" height="630" fill="url(#vig)"/>
+</svg>

@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" role="img" aria-label="REDDY security boundary: browser zone with Firebase Google OAuth, Express server zone without route authentication holding the Gemini key, and external Google APIs">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#F4F1EB" stroke-opacity="0.05" stroke-width="1"/>
+    </pattern>
+    <pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse">
+      <rect width="4" height="1.6" fill="#06080B" fill-opacity="0.22"/>
+    </pattern>
+    <marker id="sbLime" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#A9E838"/>
+    </marker>
+    <marker id="sbCyan" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#22D3EE"/>
+    </marker>
+    <marker id="sbRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#D60019"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="720" fill="#06080B"/>
+  <rect width="1200" height="720" fill="url(#grid)"/>
+
+  <text x="60" y="52" font-size="12" letter-spacing="3" fill="#F4F1EB" fill-opacity="0.55">REDDY // SECURITY BOUNDARY</text>
+  <text x="1140" y="52" font-size="11" letter-spacing="2" fill="#F4F1EB" fill-opacity="0.4" text-anchor="end">lib/firebase.ts &#183; server.ts &#183; core/orchestrator.ts</text>
+  <line x1="60" y1="66" x2="1140" y2="66" stroke="#F4F1EB" stroke-opacity="0.14" stroke-width="1"/>
+  <text x="60" y="100" font-size="22" font-weight="700" letter-spacing="3" fill="#F4F1EB">WHAT IS AUTHENTICATED &#8212; AND WHAT IS NOT</text>
+  <text x="60" y="122" font-size="11" letter-spacing="1.5" fill="#F4F1EB" fill-opacity="0.45">two credentials, two zones, one unguarded API &#8212; the honest map</text>
+
+  <!-- ============ ZONE: BROWSER ============ -->
+  <rect x="60" y="150" width="340" height="390" fill="#22D3EE" fill-opacity="0.03" stroke="#22D3EE" stroke-width="1.5"/>
+  <text x="76" y="178" font-size="13" font-weight="700" letter-spacing="2" fill="#22D3EE">ZONE &#183; BROWSER</text>
+
+  <text x="76" y="208" font-size="10.5" fill="#F4F1EB" fill-opacity="0.6">FIREBASE GOOGLE OAUTH</text>
+  <rect x="76" y="218" width="308" height="86" fill="#06080B" stroke="#22D3EE" stroke-opacity="0.5"/>
+  <text x="90" y="240" font-size="10.5" fill="#22D3EE">signInWithPopup &#183; GoogleAuthProvider</text>
+  <text x="90" y="258" font-size="10" fill="#F4F1EB" fill-opacity="0.6">credential.accessToken</text>
+  <text x="90" y="274" font-size="10" fill="#F4F1EB" fill-opacity="0.6">cached in module memory</text>
+  <text x="90" y="290" font-size="10" fill="#F4F1EB" fill-opacity="0.6">cleared on sign-out</text>
+
+  <text x="76" y="328" font-size="10.5" fill="#F4F1EB" fill-opacity="0.6">PUBLIC CLIENT CONFIG</text>
+  <rect x="76" y="338" width="308" height="64" fill="#06080B" stroke="#F4F1EB" stroke-opacity="0.25"/>
+  <text x="90" y="358" font-size="10" fill="#F4F1EB" fill-opacity="0.7">firebase-applet-config.json</text>
+  <text x="90" y="374" font-size="10" fill="#F4F1EB" fill-opacity="0.5">project + app identifiers shipped to</text>
+  <text x="90" y="390" font-size="10" fill="#F4F1EB" fill-opacity="0.5">the client by design (not secrets)</text>
+
+  <text x="76" y="428" font-size="10.5" fill="#F4F1EB" fill-opacity="0.6">LOCAL STATE</text>
+  <text x="76" y="448" font-size="10" fill="#F4F1EB" fill-opacity="0.5">&#9632; chat log mirror in localStorage</text>
+  <text x="76" y="464" font-size="10" fill="#F4F1EB" fill-opacity="0.5">&#9632; system instruction draft</text>
+  <text x="76" y="480" font-size="10" fill="#F4F1EB" fill-opacity="0.5">&#9632; guestbook entries</text>
+
+  <text x="76" y="512" font-size="10.5" fill="#22D3EE">GOOGLE WORKSPACE CALLS</text>
+  <text x="76" y="530" font-size="10" fill="#F4F1EB" fill-opacity="0.5">leave the browser directly with the</text>
+  <text x="76" y="546" font-size="10" fill="#F4F1EB" fill-opacity="0.5">user&#8217;s OAuth consent &#8212; the Express</text>
+  <text x="76" y="562" font-size="10" fill="#F4F1EB" fill-opacity="0.5">server never sees that token.</text>
+
+  <!-- ============ ZONE: SERVER ============ -->
+  <rect x="440" y="150" width="340" height="390" fill="#A9E838" fill-opacity="0.03" stroke="#A9E838" stroke-width="1.5"/>
+  <text x="456" y="178" font-size="13" font-weight="700" letter-spacing="2" fill="#A9E838">ZONE &#183; EXPRESS :3000</text>
+
+  <rect x="456" y="196" width="308" height="66" fill="#D60019" fill-opacity="0.07" stroke="#D60019" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="470" y="220" font-size="11" font-weight="700" fill="#D60019">API ROUTES &#183; NO AUTH</text>
+  <text x="470" y="238" font-size="10" fill="#F4F1EB" fill-opacity="0.55">no session check, no token check</text>
+  <text x="470" y="254" font-size="10" fill="#F4F1EB" fill-opacity="0.55">on any of the 14 routes</text>
+
+  <text x="456" y="288" font-size="10.5" fill="#F4F1EB" fill-opacity="0.6">SERVER-ONLY CREDENTIAL</text>
+  <rect x="456" y="298" width="308" height="82" fill="#06080B" stroke="#A9E838" stroke-opacity="0.7"/>
+  <text x="470" y="320" font-size="10.5" fill="#A9E838">GEMINI key</text>
+  <text x="470" y="338" font-size="10" fill="#F4F1EB" fill-opacity="0.55">env var or KeyDeck injection &#183;</text>
+  <text x="470" y="354" font-size="10" fill="#F4F1EB" fill-opacity="0.55">held in ProviderOrchestrator state,</text>
+  <text x="470" y="370" font-size="10" fill="#F4F1EB" fill-opacity="0.55">never returned to the browser</text>
+
+  <text x="456" y="404" font-size="10.5" fill="#F4F1EB" fill-opacity="0.6">PROCESS-MEMORY STATE</text>
+  <text x="456" y="424" font-size="10" fill="#F4F1EB" fill-opacity="0.5">&#9632; session vaults + protocols</text>
+  <text x="456" y="440" font-size="10" fill="#F4F1EB" fill-opacity="0.5">&#9632; knowledge vault</text>
+  <text x="456" y="456" font-size="10" fill="#F4F1EB" fill-opacity="0.5">&#9632; task telemetry buffer</text>
+  <text x="456" y="472" font-size="10" fill="#F4F1EB" fill-opacity="0.5">&#9632; registered skills</text>
+
+  <text x="456" y="504" font-size="10.5" fill="#D60019">FILESYSTEM WRITE CAPABILITY</text>
+  <text x="456" y="524" font-size="10" fill="#F4F1EB" fill-opacity="0.5">POST /api/purge/execute rewrites</text>
+  <text x="456" y="540" font-size="10" fill="#F4F1EB" fill-opacity="0.5">source files under the project root</text>
+  <text x="456" y="556" font-size="10" fill="#F4F1EB" fill-opacity="0.5">&#8212; treat as privileged by default.</text>
+
+  <!-- ============ ZONE: EXTERNAL ============ -->
+  <rect x="820" y="150" width="320" height="390" fill="#F4F1EB" fill-opacity="0.03" stroke="#F4F1EB" stroke-opacity="0.45" stroke-width="1.5"/>
+  <text x="836" y="178" font-size="13" font-weight="700" letter-spacing="2" fill="#F4F1EB">ZONE &#183; EXTERNAL APIS</text>
+
+  <rect x="836" y="196" width="288" height="96" fill="#06080B" stroke="#A9E838" stroke-opacity="0.7"/>
+  <text x="850" y="220" font-size="11" font-weight="700" fill="#A9E838">GOOGLE GEMINI</text>
+  <text x="850" y="240" font-size="10" fill="#F4F1EB" fill-opacity="0.55">generativelanguage.googleapis.com</text>
+  <text x="850" y="256" font-size="10" fill="#F4F1EB" fill-opacity="0.55">gemini-1.5-flash</text>
+  <text x="850" y="276" font-size="10" fill="#F4F1EB" fill-opacity="0.55">contacted only by the server</text>
+
+  <rect x="836" y="308" width="288" height="110" fill="#06080B" stroke="#22D3EE" stroke-opacity="0.6"/>
+  <text x="850" y="332" font-size="11" font-weight="700" fill="#22D3EE">GOOGLE WORKSPACE</text>
+  <text x="850" y="352" font-size="10" fill="#F4F1EB" fill-opacity="0.55">sheets.googleapis.com &#183; v4</text>
+  <text x="850" y="368" font-size="10" fill="#F4F1EB" fill-opacity="0.55">gmail.googleapis.com &#183; v1</text>
+  <text x="850" y="384" font-size="10" fill="#F4F1EB" fill-opacity="0.55">docs.googleapis.com &#183; v1</text>
+  <text x="850" y="400" font-size="10" fill="#F4F1EB" fill-opacity="0.55">googleapis.com/drive &#183; v3</text>
+
+  <text x="836" y="446" font-size="10.5" fill="#F4F1EB" fill-opacity="0.6">AUTH MODEL</text>
+  <text x="836" y="466" font-size="10" fill="#F4F1EB" fill-opacity="0.5">&#9632; Gemini &#8592; server API key</text>
+  <text x="836" y="482" font-size="10" fill="#F4F1EB" fill-opacity="0.5">&#9632; Workspace &#8592; browser OAuth</text>
+  <text x="836" y="498" font-size="10" fill="#F4F1EB" fill-opacity="0.5">&#160;&#160;&#160;&#160;token, per-user consent</text>
+
+  <text x="836" y="528" font-size="10" fill="#F4F1EB" fill-opacity="0.4">Each zone fails independently:</text>
+  <text x="836" y="544" font-size="10" fill="#F4F1EB" fill-opacity="0.4">losing Google sign-in leaves the</text>
+  <text x="836" y="560" font-size="10" fill="#F4F1EB" fill-opacity="0.4">agent loop fully operable.</text>
+
+  <!-- ============ boundary crossings ============ -->
+  <line x1="400" y1="230" x2="440" y2="230" stroke="#D60019" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#sbRed)"/>
+  <text x="420" y="216" font-size="9" fill="#D60019" text-anchor="middle">fetch /api/*</text>
+  <text x="420" y="248" font-size="8.5" fill="#D60019" text-anchor="middle">no auth</text>
+
+  <line x1="780" y1="230" x2="820" y2="230" stroke="#A9E838" stroke-width="2" marker-end="url(#sbLime)"/>
+  <text x="800" y="216" font-size="9" fill="#A9E838" text-anchor="middle">api key</text>
+  <text x="800" y="248" font-size="8.5" fill="#A9E838" text-anchor="middle">server only</text>
+
+  <!-- browser to workspace, bypassing server -->
+  <path d="M 230 540 L 230 600 L 980 600 L 980 540" fill="none" stroke="#22D3EE" stroke-width="2" marker-end="url(#sbCyan)"/>
+  <text x="600" y="590" font-size="9.5" fill="#22D3EE" text-anchor="middle">Bearer OAuth token &#183; browser &#8594; Google Workspace &#183; bypasses the REDDY server</text>
+
+  <!-- ============ posture strip ============ -->
+  <rect x="60" y="620" width="1080" height="44" fill="#F4F1EB" fill-opacity="0.03" stroke="#F4F1EB" stroke-opacity="0.3"/>
+  <text x="76" y="638" font-size="10" fill="#A9E838">HARDENING PATH:</text>
+  <text x="76" y="654" font-size="10" fill="#F4F1EB" fill-opacity="0.6">front the API with an authenticating proxy &#183; scope OAuth to the minimum set &#183; rate-limit chat + purge &#183; encrypt keys if persistence lands</text>
+
+  <!-- footer -->
+  <line x1="60" y1="688" x2="1140" y2="688" stroke="#F4F1EB" stroke-opacity="0.14" stroke-width="1"/>
+  <text x="60" y="708" font-size="10" letter-spacing="2" fill="#F4F1EB" fill-opacity="0.4">REDDY AGENT &#183; TRUST BOUNDARIES STATED PLAINLY</text>
+  <text x="1140" y="708" font-size="10" letter-spacing="2" fill="#F4F1EB" fill-opacity="0.4" text-anchor="end">assets/readme/security-boundary.svg</text>
+
+  <rect width="1200" height="720" fill="url(#scan)"/>
+</svg>

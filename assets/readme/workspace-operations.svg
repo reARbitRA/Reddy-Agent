@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" role="img" aria-label="REDDY Google Workspace operations: Firebase Google sign-in issues an OAuth token used by the browser to operate Sheets, Gmail, Docs and Drive through the Google APIs">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#F4F1EB" stroke-opacity="0.05" stroke-width="1"/>
+    </pattern>
+    <pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse">
+      <rect width="4" height="1.6" fill="#06080B" fill-opacity="0.22"/>
+    </pattern>
+    <marker id="wLime" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#A9E838"/>
+    </marker>
+    <marker id="wCyan" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#22D3EE"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="680" fill="#06080B"/>
+  <rect width="1200" height="680" fill="url(#grid)"/>
+
+  <text x="60" y="52" font-size="12" letter-spacing="3" fill="#F4F1EB" fill-opacity="0.55">REDDY // GOOGLE WORKSPACE OPERATIONS</text>
+  <text x="1140" y="52" font-size="11" letter-spacing="2" fill="#F4F1EB" fill-opacity="0.4" text-anchor="end">WorkspaceWidget.tsx &#183; lib/firebase.ts</text>
+  <line x1="60" y1="66" x2="1140" y2="66" stroke="#F4F1EB" stroke-opacity="0.14" stroke-width="1"/>
+  <text x="60" y="100" font-size="22" font-weight="700" letter-spacing="3" fill="#F4F1EB">GMAIL &#183; DRIVE &#183; SHEETS &#183; DOCS</text>
+  <text x="60" y="122" font-size="11" letter-spacing="1.5" fill="#F4F1EB" fill-opacity="0.45">browser-side operations on your own Google account &#183; OAuth token never touches the REDDY server</text>
+
+  <!-- ============ OAUTH CHAIN ============ -->
+  <rect x="60" y="150" width="560" height="130" fill="#F4F1EB" fill-opacity="0.03" stroke="#A9E838" stroke-width="1.5"/>
+  <text x="76" y="176" font-size="12" font-weight="700" letter-spacing="2" fill="#A9E838">FIREBASE GOOGLE OAUTH CHAIN</text>
+
+  <rect x="76" y="192" width="150" height="44" fill="#06080B" stroke="#22D3EE" stroke-opacity="0.6"/>
+  <text x="90" y="210" font-size="10.5" fill="#22D3EE">WorkspaceWidget</text>
+  <text x="90" y="226" font-size="9" fill="#F4F1EB" fill-opacity="0.5">3 tabs + action log</text>
+  <line x1="226" y1="214" x2="252" y2="214" stroke="#A9E838" stroke-width="1.5" marker-end="url(#wLime)"/>
+  <rect x="256" y="192" width="150" height="44" fill="#06080B" stroke="#A9E838" stroke-opacity="0.7"/>
+  <text x="270" y="210" font-size="10.5" fill="#A9E838">signInWithPopup</text>
+  <text x="270" y="226" font-size="9" fill="#F4F1EB" fill-opacity="0.5">Firebase Auth</text>
+  <line x1="406" y1="214" x2="432" y2="214" stroke="#A9E838" stroke-width="1.5" marker-end="url(#wLime)"/>
+  <rect x="436" y="192" width="166" height="44" fill="#A9E838" fill-opacity="0.12" stroke="#A9E838"/>
+  <text x="450" y="210" font-size="10.5" fill="#A9E838">credential.access</text>
+  <text x="450" y="226" font-size="10.5" fill="#A9E838">Token &#183; cached</text>
+
+  <text x="76" y="262" font-size="9.5" fill="#F4F1EB" fill-opacity="0.5">token kept in browser memory only &#183; sign-out clears it &#183; requests go browser &#8594; googleapis.com</text>
+
+  <!-- ============ SCOPES ============ -->
+  <rect x="644" y="150" width="496" height="130" fill="#F4F1EB" fill-opacity="0.03" stroke="#22D3EE" stroke-width="1.5"/>
+  <text x="660" y="176" font-size="12" font-weight="700" letter-spacing="2" fill="#22D3EE">REQUESTED OAUTH SCOPES</text>
+  <g font-size="9.5">
+    <rect x="660" y="190" width="150" height="22" fill="#22D3EE" fill-opacity="0.1"/>
+    <text x="670" y="205" fill="#22D3EE">spreadsheets</text>
+    <rect x="818" y="190" width="150" height="22" fill="#22D3EE" fill-opacity="0.1"/>
+    <text x="828" y="205" fill="#22D3EE">gmail.modify</text>
+    <rect x="976" y="190" width="150" height="22" fill="#22D3EE" fill-opacity="0.1"/>
+    <text x="986" y="205" fill="#22D3EE">gmail.send</text>
+    <rect x="660" y="218" width="150" height="22" fill="#22D3EE" fill-opacity="0.1"/>
+    <text x="670" y="233" fill="#22D3EE">gmail.compose</text>
+    <rect x="818" y="218" width="150" height="22" fill="#22D3EE" fill-opacity="0.1"/>
+    <text x="828" y="233" fill="#22D3EE">documents</text>
+    <rect x="976" y="218" width="150" height="22" fill="#22D3EE" fill-opacity="0.1"/>
+    <text x="986" y="233" fill="#22D3EE">drive.file</text>
+    <rect x="660" y="246" width="150" height="22" fill="#22D3EE" fill-opacity="0.1"/>
+    <text x="670" y="261" fill="#22D3EE">mail.google.com</text>
+    <rect x="818" y="246" width="150" height="22" fill="#22D3EE" fill-opacity="0.1"/>
+    <text x="828" y="261" fill="#22D3EE">drive.readonly</text>
+  </g>
+  <text x="976" y="261" font-size="9.5" fill="#F4F1EB" fill-opacity="0.5">8 scopes total</text>
+
+  <line x1="340" y1="280" x2="340" y2="306" stroke="#A9E838" stroke-width="1.5" marker-end="url(#wLime)"/>
+  <line x1="892" y1="280" x2="892" y2="306" stroke="#22D3EE" stroke-width="1.5" marker-end="url(#wCyan)"/>
+
+  <!-- ============ OPERATION LANES ============ -->
+  <text x="60" y="330" font-size="11" letter-spacing="2.5" fill="#F4F1EB" fill-opacity="0.6">GOOGLE API SURFACE &#8212; BROWSER CALLS WITH Bearer TOKEN</text>
+
+  <!-- SHEETS lane -->
+  <rect x="60" y="344" width="340" height="220" fill="#F4F1EB" fill-opacity="0.03" stroke="#A9E838" stroke-width="1.5"/>
+  <rect x="60" y="344" width="340" height="30" fill="#A9E838" fill-opacity="0.12"/>
+  <text x="76" y="364" font-size="12" font-weight="700" letter-spacing="2" fill="#A9E838">SHEETS</text>
+  <text x="76" y="396" font-size="10" fill="#22D3EE">DRIVE v3</text>
+  <text x="76" y="412" font-size="9.5" fill="#F4F1EB" fill-opacity="0.6">list spreadsheets by mimeType</text>
+  <text x="76" y="436" font-size="10" fill="#22D3EE">SHEETS v4</text>
+  <text x="76" y="452" font-size="9.5" fill="#F4F1EB" fill-opacity="0.6">create &#183; { properties: { title } }</text>
+  <text x="76" y="468" font-size="9.5" fill="#F4F1EB" fill-opacity="0.6">read &#183; Sheet1!A1:Z50</text>
+  <text x="76" y="484" font-size="9.5" fill="#F4F1EB" fill-opacity="0.6">append &#183; USER_ENTERED + header row</text>
+  <text x="76" y="512" font-size="9.5" fill="#D60019">&#9632; append requires confirmation</text>
+  <text x="76" y="534" font-size="9.5" fill="#F4F1EB" fill-opacity="0.45">row log: timestamp, category,</text>
+  <text x="76" y="550" font-size="9.5" fill="#F4F1EB" fill-opacity="0.45">value &#8594; live row preview</text>
+
+  <!-- GMAIL lane -->
+  <rect x="430" y="344" width="340" height="220" fill="#F4F1EB" fill-opacity="0.03" stroke="#D60019" stroke-width="1.5"/>
+  <rect x="430" y="344" width="340" height="30" fill="#D60019" fill-opacity="0.14"/>
+  <text x="446" y="364" font-size="12" font-weight="700" letter-spacing="2" fill="#D60019">GMAIL</text>
+  <text x="446" y="396" font-size="10" fill="#22D3EE">GMAIL v1</text>
+  <text x="446" y="412" font-size="9.5" fill="#F4F1EB" fill-opacity="0.6">list recent &#183; maxResults=8</text>
+  <text x="446" y="428" font-size="9.5" fill="#F4F1EB" fill-opacity="0.6">get &#183; subject / from / snippet</text>
+  <text x="446" y="452" font-size="9.5" fill="#F4F1EB" fill-opacity="0.6">send &#183; raw base64url message</text>
+  <text x="446" y="480" font-size="9.5" fill="#D60019">&#9632; send requires confirmation</text>
+  <text x="446" y="502" font-size="9.5" fill="#F4F1EB" fill-opacity="0.45">draft form: to / subject / body</text>
+  <text x="446" y="518" font-size="9.5" fill="#F4F1EB" fill-opacity="0.45">sent mail refreshes the list</text>
+  <text x="446" y="540" font-size="9.5" fill="#F4F1EB" fill-opacity="0.45">externally visible action &#8212;</text>
+  <text x="446" y="556" font-size="9.5" fill="#F4F1EB" fill-opacity="0.45">gated on purpose</text>
+
+  <!-- DOCS lane -->
+  <rect x="800" y="344" width="340" height="220" fill="#F4F1EB" fill-opacity="0.03" stroke="#22D3EE" stroke-width="1.5"/>
+  <rect x="800" y="344" width="340" height="30" fill="#22D3EE" fill-opacity="0.14"/>
+  <text x="816" y="364" font-size="12" font-weight="700" letter-spacing="2" fill="#22D3EE">DOCS + DRIVE</text>
+  <text x="816" y="396" font-size="10" fill="#22D3EE">DOCS v1</text>
+  <text x="816" y="412" font-size="9.5" fill="#F4F1EB" fill-opacity="0.6">create &#183; { title }</text>
+  <text x="816" y="428" font-size="9.5" fill="#F4F1EB" fill-opacity="0.6">get &#183; parse body.content &#8594; text</text>
+  <text x="816" y="444" font-size="9.5" fill="#F4F1EB" fill-opacity="0.6">batchUpdate &#183; insertText</text>
+  <text x="816" y="460" font-size="9.5" fill="#F4F1EB" fill-opacity="0.6">endOfSegmentLocation: {}</text>
+  <text x="816" y="484" font-size="10" fill="#22D3EE">DRIVE v3</text>
+  <text x="816" y="500" font-size="9.5" fill="#F4F1EB" fill-opacity="0.6">list documents by mimeType</text>
+  <text x="816" y="524" font-size="9.5" fill="#D60019">&#9632; append requires confirmation</text>
+  <text x="816" y="546" font-size="9.5" fill="#F4F1EB" fill-opacity="0.45">live document text preview</text>
+
+  <!-- server bypass note -->
+  <rect x="60" y="582" width="1080" height="40" fill="#F4F1EB" fill-opacity="0.03" stroke="#F4F1EB" stroke-opacity="0.3"/>
+  <text x="76" y="607" font-size="10.5" fill="#F4F1EB" fill-opacity="0.6">These calls bypass the REDDY Express server entirely &#8212; your Google data flows browser &#8594; Google, authorized by your own OAuth consent.</text>
+
+  <!-- footer -->
+  <line x1="60" y1="640" x2="1140" y2="640" stroke="#F4F1EB" stroke-opacity="0.14" stroke-width="1"/>
+  <text x="60" y="660" font-size="10" letter-spacing="2" fill="#F4F1EB" fill-opacity="0.4">REDDY AGENT &#183; WORKSPACE PANEL &#183; OAUTH-SCOPED OPERATIONS</text>
+  <text x="1140" y="660" font-size="10" letter-spacing="2" fill="#F4F1EB" fill-opacity="0.4" text-anchor="end">assets/readme/workspace-operations.svg</text>
+
+  <rect width="1200" height="680" fill="url(#scan)"/>
+</svg>

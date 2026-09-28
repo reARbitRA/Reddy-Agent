@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" role="img" aria-label="REDDY provider orchestrator: resolves the Gemini key from environment or key deck, translates agent messages to Gemini contents, and normalizes errors">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#F4F1EB" stroke-opacity="0.05" stroke-width="1"/>
+    </pattern>
+    <pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse">
+      <rect width="4" height="1.6" fill="#06080B" fill-opacity="0.22"/>
+    </pattern>
+    <marker id="pLime" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#A9E838"/>
+    </marker>
+    <marker id="pCyan" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#22D3EE"/>
+    </marker>
+    <marker id="pRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#D60019"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="700" fill="#06080B"/>
+  <rect width="1200" height="700" fill="url(#grid)"/>
+
+  <text x="60" y="52" font-size="12" letter-spacing="3" fill="#F4F1EB" fill-opacity="0.55">REDDY // PROVIDER ORCHESTRATOR</text>
+  <text x="1140" y="52" font-size="11" letter-spacing="2" fill="#F4F1EB" fill-opacity="0.4" text-anchor="end">core/orchestrator.ts &#183; @google/genai</text>
+  <line x1="60" y1="66" x2="1140" y2="66" stroke="#F4F1EB" stroke-opacity="0.14" stroke-width="1"/>
+  <text x="60" y="100" font-size="22" font-weight="700" letter-spacing="3" fill="#F4F1EB">GEMINI ORCHESTRATION + ERROR NORMALIZATION</text>
+  <text x="60" y="122" font-size="11" letter-spacing="1.5" fill="#F4F1EB" fill-opacity="0.45">one provider client &#183; two key sources &#183; explicit message translation &#183; normalized failures</text>
+
+  <!-- ============ LEFT: key resolution ============ -->
+  <rect x="60" y="150" width="500" height="230" fill="#F4F1EB" fill-opacity="0.03" stroke="#A9E838" stroke-width="1.5"/>
+  <text x="76" y="176" font-size="12" font-weight="700" letter-spacing="2" fill="#A9E838">KEY RESOLUTION &#183; init()</text>
+
+  <rect x="76" y="192" width="222" height="58" fill="#06080B" stroke="#22D3EE" stroke-opacity="0.6"/>
+  <text x="90" y="212" font-size="10.5" fill="#22D3EE">GEMINI_API_KEY</text>
+  <text x="90" y="230" font-size="9.5" fill="#F4F1EB" fill-opacity="0.55">process environment</text>
+  <text x="90" y="244" font-size="9.5" fill="#F4F1EB" fill-opacity="0.55">server-side only</text>
+
+  <rect x="322" y="192" width="222" height="58" fill="#06080B" stroke="#A9E838" stroke-opacity="0.7"/>
+  <text x="336" y="212" font-size="10.5" fill="#A9E838">KeyDeck deploy</text>
+  <text x="336" y="230" font-size="9.5" fill="#F4F1EB" fill-opacity="0.55">POST /api/keys/save</text>
+  <text x="336" y="244" font-size="9.5" fill="#F4F1EB" fill-opacity="0.55">setKey() resets the client</text>
+
+  <line x1="298" y1="221" x2="318" y2="221" stroke="#F4F1EB" stroke-opacity="0.4" stroke-width="1.5"/>
+  <text x="308" y="210" font-size="11" fill="#F4F1EB" fill-opacity="0.6" text-anchor="middle">||</text>
+  <text x="76" y="276" font-size="10" fill="#F4F1EB" fill-opacity="0.55">precedence: custom key first, then environment variable</text>
+
+  <line x1="187" y1="250" x2="187" y2="274" stroke="#A9E838" stroke-width="1.5" marker-end="url(#pLime)"/>
+  <rect x="76" y="278" width="468" height="36" fill="#A9E838" fill-opacity="0.1" stroke="#A9E838"/>
+  <text x="90" y="301" font-size="10.5" fill="#A9E838">new GoogleGenAI({ apiKey }) &#183; models.generateContent</text>
+
+  <line x1="187" y1="314" x2="187" y2="334" stroke="#D60019" stroke-width="1.5" marker-end="url(#pRed)"/>
+  <rect x="76" y="338" width="468" height="30" fill="#D60019" fill-opacity="0.08" stroke="#D60019" stroke-dasharray="5 3"/>
+  <text x="90" y="358" font-size="10" fill="#D60019">no key &#8594; throws SECURE_GATEWAY_FAILURE: NO_KEY_DETECTED</text>
+
+  <!-- ============ RIGHT: validation + status ============ -->
+  <rect x="600" y="150" width="540" height="230" fill="#F4F1EB" fill-opacity="0.03" stroke="#22D3EE" stroke-width="1.5"/>
+  <text x="616" y="176" font-size="12" font-weight="700" letter-spacing="2" fill="#22D3EE">KEY VALIDATION + STATUS</text>
+
+  <text x="616" y="204" font-size="10.5" fill="#F4F1EB" fill-opacity="0.6">LIVE PING</text>
+  <rect x="616" y="214" width="508" height="60" fill="#06080B" stroke="#22D3EE" stroke-opacity="0.5"/>
+  <text x="630" y="234" font-size="10" fill="#F4F1EB" fill-opacity="0.7">POST /api/keys/validate { key }</text>
+  <text x="630" y="250" font-size="10" fill="#F4F1EB" fill-opacity="0.55">&#8594; fresh client &#183; models.generateContent(&#8220;ping&#8221;)</text>
+  <text x="630" y="266" font-size="10" fill="#A9E838">&#8594; { valid: true } or { valid: false } &#8212; never a crash</text>
+
+  <text x="616" y="300" font-size="10.5" fill="#F4F1EB" fill-opacity="0.6">STATUS REPORT</text>
+  <rect x="616" y="310" width="508" height="56" fill="#06080B" stroke="#A9E838" stroke-opacity="0.5"/>
+  <text x="630" y="330" font-size="10" fill="#F4F1EB" fill-opacity="0.7">GET /api/keys/status</text>
+  <text x="630" y="348" font-size="10" fill="#F4F1EB" fill-opacity="0.55">{ active: true, source: &#8220;SYSTEM_ENV&#8221; | &#8220;USER_INJECTED&#8221; }</text>
+
+  <!-- ============ BOTTOM LEFT: translation ============ -->
+  <text x="60" y="414" font-size="11" letter-spacing="2.5" fill="#A9E838">MESSAGE TRANSLATION &#183; AgentMessage &#8594; Gemini contents</text>
+  <rect x="60" y="426" width="560" height="180" fill="#F4F1EB" fill-opacity="0.03" stroke="#A9E838" stroke-width="1.5"/>
+  <g font-size="10.5">
+    <rect x="76" y="442" width="120" height="28" fill="#A9E838" fill-opacity="0.14"/>
+    <text x="88" y="461" fill="#A9E838">system</text>
+    <text x="208" y="461" fill="#F4F1EB" fill-opacity="0.55">&#8594;</text>
+    <text x="232" y="461" fill="#F4F1EB">role user &#183; &#8220;SYSTEM_INSTRUCTION: &#8230;&#8221;</text>
+
+    <rect x="76" y="478" width="120" height="28" fill="#22D3EE" fill-opacity="0.14"/>
+    <text x="88" y="497" fill="#22D3EE">tool</text>
+    <text x="208" y="497" fill="#F4F1EB" fill-opacity="0.55">&#8594;</text>
+    <text x="232" y="497" fill="#F4F1EB">role user &#183; &#8220;TOOL_RESULT [name]: &#8230;&#8221;</text>
+
+    <rect x="76" y="514" width="120" height="28" fill="#F4F1EB" fill-opacity="0.1"/>
+    <text x="88" y="533" fill="#F4F1EB" fill-opacity="0.85">assistant</text>
+    <text x="208" y="533" fill="#F4F1EB" fill-opacity="0.55">&#8594;</text>
+    <text x="232" y="533" fill="#F4F1EB">role model</text>
+
+    <rect x="76" y="550" width="120" height="28" fill="#F4F1EB" fill-opacity="0.1"/>
+    <text x="88" y="569" fill="#F4F1EB" fill-opacity="0.85">user</text>
+    <text x="208" y="569" fill="#F4F1EB" fill-opacity="0.55">&#8594;</text>
+    <text x="232" y="569" fill="#F4F1EB">role user</text>
+  </g>
+  <text x="76" y="598" font-size="9.5" fill="#F4F1EB" fill-opacity="0.45">flat mapping in generate() &#8212; visible, debuggable, no hidden rewrites</text>
+
+  <!-- ============ BOTTOM RIGHT: request/response ============ -->
+  <text x="660" y="414" font-size="11" letter-spacing="2.5" fill="#22D3EE">REQUEST / RESPONSE SHAPE</text>
+  <rect x="660" y="426" width="480" height="180" fill="#F4F1EB" fill-opacity="0.03" stroke="#22D3EE" stroke-width="1.5"/>
+  <text x="676" y="450" font-size="10.5" fill="#22D3EE">models.generateContent({</text>
+  <text x="690" y="466" font-size="10.5" fill="#F4F1EB" fill-opacity="0.75">model: &#8220;gemini-1.5-flash&#8221;,</text>
+  <text x="690" y="482" font-size="10.5" fill="#F4F1EB" fill-opacity="0.75">contents,</text>
+  <text x="690" y="498" font-size="10.5" fill="#F4F1EB" fill-opacity="0.75">config: { tools: [functionDeclarations] }</text>
+  <text x="676" y="514" font-size="10.5" fill="#22D3EE">})</text>
+  <line x1="676" y1="524" x2="1124" y2="524" stroke="#F4F1EB" stroke-opacity="0.15"/>
+  <text x="676" y="546" font-size="10" fill="#A9E838">&#9632; response.text &#8594; final content</text>
+  <text x="676" y="566" font-size="10" fill="#22D3EE">&#9632; parts[].functionCall &#8594; tool_calls[] for the registry</text>
+  <text x="676" y="586" font-size="10" fill="#F4F1EB" fill-opacity="0.5">both may arrive on the same response</text>
+
+  <!-- footer -->
+  <line x1="60" y1="636" x2="1140" y2="636" stroke="#F4F1EB" stroke-opacity="0.14" stroke-width="1"/>
+  <text x="60" y="656" font-size="10" letter-spacing="2" fill="#F4F1EB" fill-opacity="0.4">REDDY AGENT &#183; SINGLE PROVIDER CLIENT &#183; EXPLICIT TRANSLATION &#183; NORMALIZED FAILURES</text>
+  <text x="1140" y="656" font-size="10" letter-spacing="2" fill="#F4F1EB" fill-opacity="0.4" text-anchor="end">assets/readme/provider-orchestrator.svg</text>
+
+  <rect width="1200" height="700" fill="url(#scan)"/>
+</svg>

@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="660" viewBox="0 0 1200 660" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" role="img" aria-label="REDDY task telemetry: every chat execution writes a timestamp, message, success flag and latency record into a 50 entry history that drives the dashboard chart">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#F4F1EB" stroke-opacity="0.05" stroke-width="1"/>
+    </pattern>
+    <pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse">
+      <rect width="4" height="1.6" fill="#06080B" fill-opacity="0.22"/>
+    </pattern>
+    <linearGradient id="areaFill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#A9E838" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#A9E838" stop-opacity="0.02"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="660" fill="#06080B"/>
+  <rect width="1200" height="660" fill="url(#grid)"/>
+
+  <text x="60" y="52" font-size="12" letter-spacing="3" fill="#F4F1EB" fill-opacity="0.55">REDDY // TASK TELEMETRY</text>
+  <text x="1140" y="52" font-size="11" letter-spacing="2" fill="#F4F1EB" fill-opacity="0.4" text-anchor="end">server.ts &#183; TaskTracker.tsx</text>
+  <line x1="60" y1="66" x2="1140" y2="66" stroke="#F4F1EB" stroke-opacity="0.14" stroke-width="1"/>
+  <text x="60" y="100" font-size="22" font-weight="700" letter-spacing="3" fill="#F4F1EB">TASK HISTORY + LATENCY + SUCCESS</text>
+  <text x="60" y="122" font-size="11" letter-spacing="1.5" fill="#F4F1EB" fill-opacity="0.45">every /api/chat execution is recorded &#8212; success and failure alike &#8212; into a bounded history buffer</text>
+
+  <!-- ============ LEFT: record contract ============ -->
+  <text x="60" y="156" font-size="11" letter-spacing="2.5" fill="#A9E838">RECORD CONTRACT</text>
+  <rect x="60" y="168" width="330" height="180" fill="#F4F1EB" fill-opacity="0.04" stroke="#A9E838" stroke-width="1.5"/>
+  <text x="76" y="192" font-size="11" fill="#A9E838">task record</text>
+  <text x="76" y="218" font-size="11" fill="#F4F1EB">timestamp : number</text>
+  <text x="76" y="240" font-size="11" fill="#F4F1EB">message &#160;&#160;: string</text>
+  <text x="76" y="262" font-size="11" fill="#F4F1EB">success &#160;&#160;: boolean</text>
+  <text x="76" y="284" font-size="11" fill="#F4F1EB">latency &#160;&#160;&#160;: number (ms)</text>
+  <line x1="76" y1="298" x2="374" y2="298" stroke="#F4F1EB" stroke-opacity="0.15"/>
+  <text x="76" y="320" font-size="10" fill="#F4F1EB" fill-opacity="0.5">latency measured around engine.execute()</text>
+  <text x="76" y="336" font-size="10" fill="#F4F1EB" fill-opacity="0.5">Date.now() delta, millisecond precision</text>
+
+  <text x="60" y="384" font-size="11" letter-spacing="2.5" fill="#22D3EE">WRITE PATHS</text>
+  <rect x="60" y="396" width="330" height="168" fill="#F4F1EB" fill-opacity="0.03" stroke="#22D3EE" stroke-width="1.5"/>
+  <text x="76" y="420" font-size="10.5" fill="#A9E838">&#9632; boot: 15 seeded entries</text>
+  <text x="76" y="436" font-size="10" fill="#F4F1EB" fill-opacity="0.5">&#160;&#160;&#160;&#160;timestamped, ~1min apart</text>
+  <text x="76" y="458" font-size="10.5" fill="#A9E838">&#9632; success: push after execute()</text>
+  <text x="76" y="480" font-size="10.5" fill="#D60019">&#9632; failure: push in the catch path</text>
+  <text x="76" y="502" font-size="10.5" fill="#F4F1EB">&#9632; cap: 50 entries</text>
+  <text x="76" y="518" font-size="10" fill="#F4F1EB" fill-opacity="0.5">&#160;&#160;&#160;&#160;overflow drops the oldest (shift)</text>
+  <text x="76" y="540" font-size="10" fill="#F4F1EB" fill-opacity="0.5">served by GET /api/tasks/history</text>
+
+  <!-- ============ CENTER: chart panel ============ -->
+  <rect x="426" y="150" width="440" height="414" fill="#F4F1EB" fill-opacity="0.03" stroke="#F4F1EB" stroke-opacity="0.4" stroke-width="1.5"/>
+  <text x="442" y="178" font-size="12" font-weight="700" letter-spacing="2" fill="#F4F1EB">AI QUERY LATENCY</text>
+  <circle cx="836" cy="173" r="4" fill="#A9E838">
+    <animate attributeName="opacity" values="1;0.25;1" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  <text x="442" y="196" font-size="9.5" fill="#F4F1EB" fill-opacity="0.45">AREA CHART &#183; stepAfter &#183; recharts</text>
+
+  <!-- stat chips -->
+  <g>
+    <rect x="442" y="210" width="122" height="44" fill="#06080B" stroke="#A9E838"/>
+    <text x="454" y="228" font-size="9" fill="#F4F1EB" fill-opacity="0.5">OK</text>
+    <text x="454" y="246" font-size="13" font-weight="700" fill="#A9E838">14 / 15</text>
+    <rect x="574" y="210" width="122" height="44" fill="#06080B" stroke="#22D3EE"/>
+    <text x="586" y="228" font-size="9" fill="#F4F1EB" fill-opacity="0.5">AVG LATENCY</text>
+    <text x="586" y="246" font-size="13" font-weight="700" fill="#22D3EE">421 ms</text>
+    <rect x="706" y="210" width="122" height="44" fill="#06080B" stroke="#A9E838"/>
+    <text x="718" y="228" font-size="9" fill="#F4F1EB" fill-opacity="0.5">STABILITY</text>
+    <text x="718" y="246" font-size="13" font-weight="700" fill="#A9E838">93%</text>
+  </g>
+
+  <!-- area chart -->
+  <g>
+    <line x1="442" y1="290" x2="850" y2="290" stroke="#F4F1EB" stroke-opacity="0.15"/>
+    <line x1="442" y1="340" x2="850" y2="340" stroke="#F4F1EB" stroke-opacity="0.15"/>
+    <line x1="442" y1="390" x2="850" y2="390" stroke="#F4F1EB" stroke-opacity="0.15"/>
+    <line x1="442" y1="440" x2="850" y2="440" stroke="#F4F1EB" stroke-opacity="0.15"/>
+    <text x="852" y="294" font-size="8.5" fill="#F4F1EB" fill-opacity="0.35">900</text>
+    <text x="852" y="344" font-size="8.5" fill="#F4F1EB" fill-opacity="0.35">600</text>
+    <text x="852" y="394" font-size="8.5" fill="#F4F1EB" fill-opacity="0.35">300</text>
+    <text x="852" y="444" font-size="8.5" fill="#F4F1EB" fill-opacity="0.35">0</text>
+
+    <path d="M 442 418 L 472 418 L 472 372 L 502 372 L 502 402 L 532 402 L 532 348 L 562 348 L 562 394 L 592 394 L 592 430 L 622 430 L 622 312 L 652 312 L 652 356 L 682 356 L 682 384 L 712 384 L 712 336 L 742 336 L 742 408 L 772 408 L 772 366 L 802 366 L 802 422 L 832 422 L 832 422"
+      fill="none" stroke="#A9E838" stroke-width="2.5"/>
+    <path d="M 442 418 L 472 418 L 472 372 L 502 372 L 502 402 L 532 402 L 532 348 L 562 348 L 562 394 L 592 394 L 592 430 L 622 430 L 622 312 L 652 312 L 652 356 L 682 356 L 682 384 L 712 384 L 712 336 L 742 336 L 742 408 L 772 408 L 772 366 L 802 366 L 802 422 L 832 422 L 832 440 L 442 440 Z"
+      fill="url(#areaFill)"/>
+
+    <!-- failure marker -->
+    <circle cx="742" cy="408" r="4" fill="#D60019"/>
+    <text x="742" y="394" font-size="8.5" fill="#D60019" text-anchor="middle">FAIL</text>
+
+    <text x="442" y="462" font-size="8.5" fill="#F4F1EB" fill-opacity="0.35">t-14</text>
+    <text x="632" y="462" font-size="8.5" fill="#F4F1EB" fill-opacity="0.35">t-7</text>
+    <text x="820" y="462" font-size="8.5" fill="#F4F1EB" fill-opacity="0.35">t-0</text>
+  </g>
+
+  <text x="442" y="490" font-size="9.5" fill="#F4F1EB" fill-opacity="0.5">SAMPLE PANEL STATE &#8212; the shape of data the live chart renders</text>
+  <rect x="442" y="504" width="384 " height="44" fill="#06080B" stroke="#F4F1EB" stroke-opacity="0.25"/>
+  <text x="456" y="522" font-size="10" fill="#22D3EE">LOAD FACTOR</text>
+  <rect x="456" y="530" width="360" height="10" fill="#F4F1EB" fill-opacity="0.06"/>
+  <rect x="456" y="530" width="76" height="10" fill="#22D3EE" fill-opacity="0.8"/>
+  <text x="462" y="539" font-size="7.5" fill="#06080B">avg / 2000ms</text>
+
+  <!-- ============ RIGHT: widget wiring ============ -->
+  <text x="906" y="156" font-size="11" letter-spacing="2.5" fill="#22D3EE">TASK TRACKER WIRING</text>
+  <rect x="906" y="168" width="234" height="396" fill="#F4F1EB" fill-opacity="0.03" stroke="#22D3EE" stroke-width="1.5"/>
+  <text x="920" y="192" font-size="10.5" fill="#F4F1EB" fill-opacity="0.6">POLL LOOP</text>
+  <rect x="920" y="202" width="206" height="34" fill="#06080B" stroke="#22D3EE" stroke-opacity="0.6"/>
+  <text x="932" y="224" font-size="10" fill="#22D3EE">every 5000 ms</text>
+  <text x="920" y="262" font-size="10.5" fill="#F4F1EB" fill-opacity="0.6">FETCH</text>
+  <rect x="920" y="272" width="206" height="34" fill="#06080B" stroke="#A9E838" stroke-opacity="0.6"/>
+  <text x="932" y="294" font-size="10" fill="#A9E838">GET /api/tasks/history</text>
+  <text x="920" y="332" font-size="10.5" fill="#F4F1EB" fill-opacity="0.6">CHART DATA</text>
+  <text x="920" y="352" font-size="10" fill="#F4F1EB" fill-opacity="0.5">name &#183; latency &#183; status</text>
+  <text x="920" y="368" font-size="10" fill="#F4F1EB" fill-opacity="0.5">timestamp (locale time)</text>
+  <text x="920" y="396" font-size="10.5" fill="#F4F1EB" fill-opacity="0.6">DERIVED</text>
+  <text x="920" y="416" font-size="10" fill="#F4F1EB" fill-opacity="0.5">success count / total</text>
+  <text x="920" y="432" font-size="10" fill="#F4F1EB" fill-opacity="0.5">avg latency (rounded ms)</text>
+  <text x="920" y="448" font-size="10" fill="#F4F1EB" fill-opacity="0.5">stability = ok / total %</text>
+  <text x="920" y="464" font-size="10" fill="#F4F1EB" fill-opacity="0.5">load = avg / 2000 ms</text>
+  <text x="920" y="496" font-size="10.5" fill="#F4F1EB" fill-opacity="0.6">NOTES</text>
+  <text x="920" y="516" font-size="9.5" fill="#F4F1EB" fill-opacity="0.45">seeded entries keep the panel</text>
+  <text x="920" y="532" font-size="9.5" fill="#F4F1EB" fill-opacity="0.45">alive before real traffic</text>
+  <text x="920" y="548" font-size="9.5" fill="#F4F1EB" fill-opacity="0.45">history resets on restart</text>
+
+  <!-- footer -->
+  <line x1="60" y1="600" x2="1140" y2="600" stroke="#F4F1EB" stroke-opacity="0.14" stroke-width="1"/>
+  <text x="60" y="620" font-size="10" letter-spacing="2" fill="#F4F1EB" fill-opacity="0.4">REDDY AGENT &#183; TELEMETRY BUFFER 50 &#183; SUCCESS + LATENCY PER EXECUTION</text>
+  <text x="1140" y="620" font-size="10" letter-spacing="2" fill="#F4F1EB" fill-opacity="0.4" text-anchor="end">assets/readme/task-telemetry.svg</text>
+
+  <rect width="1200" height="660" fill="url(#scan)"/>
+</svg>
