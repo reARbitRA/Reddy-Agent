@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" role="img" aria-label="REDDY tool registry: skill packages register dynamically into skills and tools maps, exposing schemas to Gemini and normalized execution to the agent loop">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#F4F1EB" stroke-opacity="0.05" stroke-width="1"/>
+    </pattern>
+    <pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse">
+      <rect width="4" height="1.6" fill="#06080B" fill-opacity="0.22"/>
+    </pattern>
+    <marker id="aLime" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#A9E838"/>
+    </marker>
+    <marker id="aCyan" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#22D3EE"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="700" fill="#06080B"/>
+  <rect width="1200" height="700" fill="url(#grid)"/>
+
+  <text x="60" y="52" font-size="12" letter-spacing="3" fill="#F4F1EB" fill-opacity="0.55">REDDY // TOOL REGISTRY</text>
+  <text x="1140" y="52" font-size="11" letter-spacing="2" fill="#F4F1EB" fill-opacity="0.4" text-anchor="end">core/registry.ts &#183; ToolRegistry</text>
+  <line x1="60" y1="66" x2="1140" y2="66" stroke="#F4F1EB" stroke-opacity="0.14" stroke-width="1"/>
+  <text x="60" y="100" font-size="22" font-weight="700" letter-spacing="3" fill="#F4F1EB">DYNAMIC SKILL + TOOL REGISTRATION</text>
+  <text x="60" y="122" font-size="11" letter-spacing="1.5" fill="#F4F1EB" fill-opacity="0.45">skills are registered at boot or injected at runtime &#8212; every tool lands in one registry</text>
+
+  <!-- ============ LEFT: skill packages ============ -->
+  <text x="60" y="156" font-size="11" letter-spacing="2.5" fill="#A9E838">SKILL PACKAGES</text>
+
+  <!-- built-in skill -->
+  <rect x="60" y="168" width="330" height="196" fill="#F4F1EB" fill-opacity="0.04" stroke="#A9E838" stroke-width="1.5"/>
+  <rect x="60" y="168" width="330" height="30" fill="#A9E838" fill-opacity="0.1"/>
+  <text x="74" y="188" font-size="12" font-weight="700" letter-spacing="1.5" fill="#A9E838">BUILT-IN &#183; plugins/system.ts</text>
+  <text x="74" y="222" font-size="11" fill="#F4F1EB">name: System_Info</text>
+  <text x="74" y="240" font-size="10.5" fill="#F4F1EB" fill-opacity="0.55">description: CPU, memory + OS diagnostics</text>
+  <text x="74" y="258" font-size="10.5" fill="#F4F1EB" fill-opacity="0.55">guidelines: monitor available resources</text>
+  <line x1="74" y1="270" x2="376" y2="270" stroke="#F4F1EB" stroke-opacity="0.15"/>
+  <text x="74" y="290" font-size="11" fill="#22D3EE">tools[0].schema</text>
+  <text x="74" y="308" font-size="10.5" fill="#F4F1EB" fill-opacity="0.55">name: get_system_metrics</text>
+  <text x="74" y="326" font-size="10.5" fill="#F4F1EB" fill-opacity="0.55">parameters: metric &#8712; [cpu, memory, os]</text>
+  <text x="74" y="346" font-size="10.5" fill="#F4F1EB" fill-opacity="0.55">logic: node os &#8594; {usage, cores, total, &#8230;}</text>
+
+  <!-- injected skill -->
+  <rect x="60" y="392" width="330" height="120" fill="#F4F1EB" fill-opacity="0.04" stroke="#22D3EE" stroke-width="1.5"/>
+  <rect x="60" y="392" width="330" height="30" fill="#22D3EE" fill-opacity="0.1"/>
+  <text x="74" y="412" font-size="12" font-weight="700" letter-spacing="1.5" fill="#22D3EE">RUNTIME &#183; POST /api/skills/inject</text>
+  <text x="74" y="446" font-size="11" fill="#F4F1EB">name: any text skill</text>
+  <text x="74" y="464" font-size="10.5" fill="#F4F1EB" fill-opacity="0.55">guidelines: injected prompt context</text>
+  <text x="74" y="482" font-size="10.5" fill="#F4F1EB" fill-opacity="0.55">tools: [] &#8212; guidance only, no tool slot</text>
+  <text x="74" y="500" font-size="10.5" fill="#F4F1EB" fill-opacity="0.55">registered through the same registerSkill()</text>
+
+  <line x1="390" y1="266" x2="438" y2="266" stroke="#A9E838" stroke-width="1.5" marker-end="url(#aLime)"/>
+  <line x1="390" y1="452" x2="438" y2="452" stroke="#22D3EE" stroke-width="1.5" marker-end="url(#aCyan)"/>
+  <text x="414" y="252" font-size="10" fill="#A9E838" text-anchor="middle">registerSkill()</text>
+
+  <!-- ============ CENTER: registry ============ -->
+  <rect x="442" y="150" width="330" height="470" fill="#F4F1EB" fill-opacity="0.03" stroke="#F4F1EB" stroke-opacity="0.4" stroke-width="1.5"/>
+  <text x="458" y="178" font-size="13" font-weight="700" letter-spacing="2" fill="#F4F1EB">TOOL REGISTRY</text>
+  <circle cx="712" cy="173" r="4" fill="#A9E838">
+    <animate attributeName="opacity" values="1;0.25;1" dur="2s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- skills map -->
+  <rect x="458" y="196" width="298" height="130" fill="#06080B" stroke="#A9E838" stroke-width="1"/>
+  <text x="472" y="218" font-size="11" letter-spacing="1.5" fill="#A9E838">skills: Map&lt;name, Skill&gt;</text>
+  <rect x="472" y="230" width="270" height="26" fill="#A9E838" fill-opacity="0.12"/>
+  <text x="484" y="247" font-size="10.5" fill="#F4F1EB">System_Info</text>
+  <text x="708" y="247" font-size="9" fill="#A9E838" text-anchor="end">BOOT</text>
+  <rect x="472" y="262" width="270" height="26" fill="#22D3EE" fill-opacity="0.1"/>
+  <text x="484" y="279" font-size="10.5" fill="#F4F1EB">runtime text skill</text>
+  <text x="708" y="279" font-size="9" fill="#22D3EE" text-anchor="end">INJECT</text>
+  <rect x="472" y="294" width="270" height="26" fill="none" stroke="#F4F1EB" stroke-opacity="0.2" stroke-dasharray="4 3"/>
+  <text x="484" y="311" font-size="10.5" fill="#F4F1EB" fill-opacity="0.4">next registerSkill(&#8230;) lands here</text>
+
+  <!-- tools map -->
+  <rect x="458" y="344" width="298" height="150" fill="#06080B" stroke="#22D3EE" stroke-width="1"/>
+  <text x="472" y="366" font-size="11" letter-spacing="1.5" fill="#22D3EE">tools: Map&lt;name, logic&gt;</text>
+  <rect x="472" y="378" width="270" height="30" fill="#22D3EE" fill-opacity="0.12"/>
+  <text x="484" y="397" font-size="10.5" fill="#F4F1EB">get_system_metrics</text>
+  <circle cx="700" cy="393" r="3.5" fill="#A9E838"/>
+  <rect x="472" y="416" width="270" height="30" fill="none" stroke="#F4F1EB" stroke-opacity="0.2" stroke-dasharray="4 3"/>
+  <text x="484" y="435" font-size="10.5" fill="#F4F1EB" fill-opacity="0.4">dynamic slot &#8212; filled by future skills</text>
+  <text x="472" y="474" font-size="9.5" fill="#F4F1EB" fill-opacity="0.45">re-registering a skill name</text>
+  <text x="472" y="488" font-size="9.5" fill="#F4F1EB" fill-opacity="0.45">replaces its tool bindings in place</text>
+
+  <!-- dispatch note -->
+  <rect x="458" y="512" width="298" height="92" fill="#06080B" stroke="#F4F1EB" stroke-opacity="0.3" stroke-width="1"/>
+  <text x="472" y="534" font-size="11" letter-spacing="1.5" fill="#F4F1EB">DISPATCH CONTRACT</text>
+  <text x="472" y="554" font-size="10" fill="#F4F1EB" fill-opacity="0.55">executeTool(name, args)</text>
+  <text x="472" y="572" font-size="10" fill="#F4F1EB" fill-opacity="0.55">unknown &#8594; PROTOCOL_ERROR string</text>
+  <text x="472" y="590" font-size="10" fill="#F4F1EB" fill-opacity="0.55">throw &#8594; EXECUTION_ERROR string</text>
+
+  <!-- ============ RIGHT: outputs ============ -->
+  <line x1="772" y1="266" x2="810" y2="266" stroke="#A9E838" stroke-width="1.5" marker-end="url(#aLime)"/>
+  <line x1="772" y1="452" x2="810" y2="452" stroke="#22D3EE" stroke-width="1.5" marker-end="url(#aCyan)"/>
+
+  <text x="814" y="156" font-size="11" letter-spacing="2.5" fill="#A9E838">REGISTRY OUTPUTS</text>
+
+  <rect x="814" y="168" width="326" height="150" fill="#F4F1EB" fill-opacity="0.04" stroke="#A9E838" stroke-width="1.5"/>
+  <text x="828" y="192" font-size="12" font-weight="700" letter-spacing="1.5" fill="#A9E838">getToolSchemas() &#8594; GEMINI</text>
+  <text x="828" y="216" font-size="10.5" fill="#F4F1EB" fill-opacity="0.7">{ "function": {</text>
+  <text x="840" y="232" font-size="10.5" fill="#F4F1EB" fill-opacity="0.7">"name": "get_system_metrics",</text>
+  <text x="840" y="248" font-size="10.5" fill="#F4F1EB" fill-opacity="0.7">"description": "&#8230;",</text>
+  <text x="840" y="264" font-size="10.5" fill="#F4F1EB" fill-opacity="0.7">"parameters": { &#8230; } }</text>
+  <text x="828" y="290" font-size="10" fill="#F4F1EB" fill-opacity="0.45">sent as functionDeclarations on</text>
+  <text x="828" y="304" font-size="10" fill="#F4F1EB" fill-opacity="0.45">every provider request</text>
+
+  <rect x="814" y="344" width="326" height="120" fill="#F4F1EB" fill-opacity="0.04" stroke="#22D3EE" stroke-width="1.5"/>
+  <text x="828" y="368" font-size="12" font-weight="700" letter-spacing="1.5" fill="#22D3EE">executeTool() &#8594; AGENT LOOP</text>
+  <text x="828" y="392" font-size="10.5" fill="#A9E838">&#9632; result (JSON-stringified to memory)</text>
+  <text x="828" y="412" font-size="10.5" fill="#D60019">&#9632; PROTOCOL_ERROR: Tool &#8216;x&#8217; undefined.</text>
+  <text x="828" y="432" font-size="10.5" fill="#D60019">&#9632; EXECUTION_ERROR in x: message</text>
+  <text x="828" y="452" font-size="10" fill="#F4F1EB" fill-opacity="0.45">tool failure never crashes the loop</text>
+
+  <rect x="814" y="490" width="326" height="130" fill="#F4F1EB" fill-opacity="0.04" stroke="#F4F1EB" stroke-opacity="0.5" stroke-width="1.5"/>
+  <text x="828" y="514" font-size="12" font-weight="700" letter-spacing="1.5" fill="#F4F1EB">getSkillGuidelines() &#8594; CONTEXT</text>
+  <text x="828" y="538" font-size="10.5" fill="#F4F1EB" fill-opacity="0.7">[SKILL: System_Info]</text>
+  <text x="828" y="554" font-size="10.5" fill="#F4F1EB" fill-opacity="0.7">[SKILL: runtime text skill]</text>
+  <text x="828" y="578" font-size="10" fill="#F4F1EB" fill-opacity="0.45">compiled into the ACTIVE_CAPABILITIES</text>
+  <text x="828" y="592" font-size="10" fill="#F4F1EB" fill-opacity="0.45">system message each iteration</text>
+
+  <!-- footer -->
+  <line x1="60" y1="656" x2="1140" y2="656" stroke="#F4F1EB" stroke-opacity="0.14" stroke-width="1"/>
+  <text x="60" y="676" font-size="10" letter-spacing="2" fill="#F4F1EB" fill-opacity="0.4">REDDY AGENT &#183; TOOL CONTRACTS + DYNAMIC REGISTRATION</text>
+  <text x="1140" y="676" font-size="10" letter-spacing="2" fill="#F4F1EB" fill-opacity="0.4" text-anchor="end">assets/readme/tool-registry.svg</text>
+
+  <rect width="1200" height="700" fill="url(#scan)"/>
+</svg>

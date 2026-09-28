@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="660" viewBox="0 0 1200 660" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" role="img" aria-label="REDDY deployment map: development lane runs tsx with Vite middleware, production lane builds the frontend and bundles the server then serves static files">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#F4F1EB" stroke-opacity="0.05" stroke-width="1"/>
+    </pattern>
+    <pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse">
+      <rect width="4" height="1.6" fill="#06080B" fill-opacity="0.22"/>
+    </pattern>
+    <marker id="dLime" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#A9E838"/>
+    </marker>
+    <marker id="dCyan" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#22D3EE"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="660" fill="#06080B"/>
+  <rect width="1200" height="660" fill="url(#grid)"/>
+
+  <text x="60" y="52" font-size="12" letter-spacing="3" fill="#F4F1EB" fill-opacity="0.55">REDDY // DEPLOYMENT MAP</text>
+  <text x="1140" y="52" font-size="11" letter-spacing="2" fill="#F4F1EB" fill-opacity="0.4" text-anchor="end">package.json scripts &#183; vite.config.ts</text>
+  <line x1="60" y1="66" x2="1140" y2="66" stroke="#F4F1EB" stroke-opacity="0.14" stroke-width="1"/>
+  <text x="60" y="100" font-size="22" font-weight="700" letter-spacing="3" fill="#F4F1EB">TWO WAYS TO RUN THE COCKPIT</text>
+
+  <!-- ============ DEV LANE ============ -->
+  <rect x="60" y="126" width="1080" height="196" fill="#A9E838" fill-opacity="0.03" stroke="#A9E838" stroke-width="1.5"/>
+  <text x="76" y="152" font-size="12" font-weight="700" letter-spacing="2" fill="#A9E838">DEVELOPMENT LANE</text>
+  <text x="1128" y="152" font-size="10" fill="#F4F1EB" fill-opacity="0.45" text-anchor="end">hot reload &#183; single process</text>
+
+  <rect x="80" y="170" width="180" height="64" fill="#06080B" stroke="#A9E838" stroke-opacity="0.7"/>
+  <text x="94" y="192" font-size="11" fill="#A9E838">npm run dev</text>
+  <text x="94" y="208" font-size="9.5" fill="#F4F1EB" fill-opacity="0.55">tsx server.ts</text>
+  <text x="94" y="222" font-size="9.5" fill="#F4F1EB" fill-opacity="0.55">TypeScript, no prebuild</text>
+
+  <line x1="260" y1="202" x2="292" y2="202" stroke="#A9E838" stroke-width="1.5" marker-end="url(#dLime)"/>
+
+  <rect x="296" y="170" width="200" height="64" fill="#06080B" stroke="#A9E838" stroke-opacity="0.7"/>
+  <text x="310" y="192" font-size="11" fill="#A9E838">Express :3000</text>
+  <text x="310" y="208" font-size="9.5" fill="#F4F1EB" fill-opacity="0.55">14 API routes under</text>
+  <text x="310" y="222" font-size="9.5" fill="#F4F1EB" fill-opacity="0.55">/api &#183; JSON body parser</text>
+
+  <line x1="496" y1="202" x2="528" y2="202" stroke="#A9E838" stroke-width="1.5" marker-end="url(#dLime)"/>
+
+  <rect x="532" y="170" width="220" height="64" fill="#06080B" stroke="#A9E838" stroke-opacity="0.7"/>
+  <text x="546" y="192" font-size="11" fill="#A9E838">Vite middleware</text>
+  <text x="546" y="208" font-size="9.5" fill="#F4F1EB" fill-opacity="0.55">middlewareMode + spa</text>
+  <text x="546" y="222" font-size="9.5" fill="#F4F1EB" fill-opacity="0.55">HMR on by default</text>
+
+  <line x1="752" y1="202" x2="784" y2="202" stroke="#A9E838" stroke-width="1.5" marker-end="url(#dLime)"/>
+
+  <rect x="788" y="170" width="180" height="64" fill="#06080B" stroke="#F4F1EB" stroke-opacity="0.4"/>
+  <text x="802" y="192" font-size="11" fill="#F4F1EB">Browser</text>
+  <text x="802" y="208" font-size="9.5" fill="#F4F1EB" fill-opacity="0.55">dashboard + console,</text>
+  <text x="802" y="222" font-size="9.5" fill="#F4F1EB" fill-opacity="0.55">one origin, one port</text>
+
+  <text x="80" y="266" font-size="10" fill="#F4F1EB" fill-opacity="0.5">DISABLE_HMR=true turns off HMR + file watching &#183; API and UI stay on the same origin, so the dashboard&#8217;s relative fetches just work</text>
+  <text x="80" y="290" font-size="10" fill="#F4F1EB" fill-opacity="0.5">same-origin design: the frontend never hardcodes a backend URL</text>
+
+  <!-- ============ PROD LANE ============ -->
+  <rect x="60" y="340" width="1080" height="196" fill="#22D3EE" fill-opacity="0.03" stroke="#22D3EE" stroke-width="1.5"/>
+  <text x="76" y="366" font-size="12" font-weight="700" letter-spacing="2" fill="#22D3EE">PRODUCTION LANE</text>
+  <text x="1128" y="366" font-size="10" fill="#F4F1EB" fill-opacity="0.45" text-anchor="end">prebuilt artifacts &#183; static serving</text>
+
+  <rect x="80" y="384" width="180" height="64" fill="#06080B" stroke="#22D3EE" stroke-opacity="0.7"/>
+  <text x="94" y="406" font-size="11" fill="#22D3EE">npm run build</text>
+  <text x="94" y="422" font-size="9.5" fill="#F4F1EB" fill-opacity="0.55">vite build</text>
+  <text x="94" y="436" font-size="9.5" fill="#F4F1EB" fill-opacity="0.55">+ esbuild server</text>
+
+  <line x1="260" y1="402" x2="292" y2="384" stroke="#22D3EE" stroke-width="1.5" marker-end="url(#dCyan)"/>
+  <line x1="260" y1="430" x2="292" y2="448" stroke="#22D3EE" stroke-width="1.5" marker-end="url(#dCyan)"/>
+
+  <rect x="296" y="368" width="210" height="50" fill="#06080B" stroke="#22D3EE" stroke-opacity="0.7"/>
+  <text x="310" y="388" font-size="10.5" fill="#22D3EE">dist/assets/*</text>
+  <text x="310" y="404" font-size="9.5" fill="#F4F1EB" fill-opacity="0.55">hashed frontend bundle</text>
+
+  <rect x="296" y="428" width="210" height="50" fill="#06080B" stroke="#22D3EE" stroke-opacity="0.7"/>
+  <text x="310" y="448" font-size="10.5" fill="#22D3EE">dist/server.cjs</text>
+  <text x="310" y="464" font-size="9.5" fill="#F4F1EB" fill-opacity="0.55">bundled Node server</text>
+
+  <line x1="506" y1="416" x2="538" y2="416" stroke="#22D3EE" stroke-width="1.5" marker-end="url(#dCyan)"/>
+
+  <rect x="542" y="384" width="250" height="64" fill="#06080B" stroke="#22D3EE" stroke-opacity="0.7"/>
+  <text x="556" y="406" font-size="11" fill="#22D3EE">NODE_ENV=production</text>
+  <text x="556" y="422" font-size="9.5" fill="#F4F1EB" fill-opacity="0.55">npm start &#8594; node dist/server.cjs</text>
+  <text x="556" y="436" font-size="9.5" fill="#F4F1EB" fill-opacity="0.55">static dist/ + SPA fallback</text>
+
+  <line x1="792" y1="416" x2="824" y2="416" stroke="#22D3EE" stroke-width="1.5" marker-end="url(#dCyan)"/>
+
+  <rect x="828" y="384" width="180" height="64" fill="#06080B" stroke="#F4F1EB" stroke-opacity="0.4"/>
+  <text x="842" y="406" font-size="11" fill="#F4F1EB">Any host</text>
+  <text x="842" y="422" font-size="9.5" fill="#F4F1EB" fill-opacity="0.55">binds 0.0.0.0,</text>
+  <text x="842" y="436" font-size="9.5" fill="#F4F1EB" fill-opacity="0.55">PORT overridable</text>
+
+  <text x="80" y="480" font-size="10" fill="#F4F1EB" fill-opacity="0.5">GET * fallback returns index.html for the SPA &#183; API routes keep the same paths in both lanes</text>
+  <text x="80" y="504" font-size="10" fill="#F4F1EB" fill-opacity="0.5">state is in-memory in both lanes &#8212; restart resets sessions, knowledge, telemetry and injected skills</text>
+
+  <!-- ============ ENV STRIP ============ -->
+  <text x="60" y="560" font-size="11" letter-spacing="2.5" fill="#F4F1EB" fill-opacity="0.6">ENVIRONMENT VARIABLES</text>
+  <g font-size="10">
+    <rect x="60" y="572" width="255" height="44" fill="#06080B" stroke="#A9E838"/>
+    <text x="74" y="590" fill="#A9E838">GEMINI_API_KEY</text>
+    <text x="74" y="606" fill="#F4F1EB" fill-opacity="0.55">required for AI features</text>
+    <rect x="330" y="572" width="255" height="44" fill="#06080B" stroke="#22D3EE"/>
+    <text x="344" y="590" fill="#22D3EE">PORT</text>
+    <text x="344" y="606" fill="#F4F1EB" fill-opacity="0.55">optional &#183; defaults to 3000</text>
+    <rect x="600" y="572" width="255" height="44" fill="#06080B" stroke="#22D3EE"/>
+    <text x="614" y="590" fill="#22D3EE">NODE_ENV</text>
+    <text x="614" y="606" fill="#F4F1EB" fill-opacity="0.55">production &#8594; static serving</text>
+    <rect x="870" y="572" width="270" height="44" fill="#06080B" stroke="#F4F1EB" stroke-opacity="0.4"/>
+    <text x="884" y="590" fill="#F4F1EB" fill-opacity="0.85">DISABLE_HMR</text>
+    <text x="884" y="606" fill="#F4F1EB" fill-opacity="0.55">dev only &#183; stops file watching</text>
+  </g>
+
+  <!-- footer -->
+  <line x1="60" y1="636" x2="1140" y2="636" stroke="#F4F1EB" stroke-opacity="0.14" stroke-width="1"/>
+  <text x="60" y="654" font-size="10" letter-spacing="2" fill="#F4F1EB" fill-opacity="0.4">REDDY AGENT &#183; DEV = TSX + MIDDLEWARE &#183; PROD = VITE BUILD + ESBUILD SERVER</text>
+  <text x="1140" y="654" font-size="10" letter-spacing="2" fill="#F4F1EB" fill-opacity="0.4" text-anchor="end">assets/readme/deployment-map.svg</text>
+
+  <rect width="1200" height="660" fill="url(#scan)"/>
+</svg>

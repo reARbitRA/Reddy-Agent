@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" role="img" aria-label="REDDY memory vault: per-session MemoryVault instances hold a 50 message working window with a pinned system prompt, and prune older messages into an episodic summary">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#F4F1EB" stroke-opacity="0.05" stroke-width="1"/>
+    </pattern>
+    <pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse">
+      <rect width="4" height="1.6" fill="#06080B" fill-opacity="0.22"/>
+    </pattern>
+    <marker id="mLime" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#A9E838"/>
+    </marker>
+    <marker id="mCyan" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#22D3EE"/>
+    </marker>
+    <marker id="mRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#D60019"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="700" fill="#06080B"/>
+  <rect width="1200" height="700" fill="url(#grid)"/>
+
+  <text x="60" y="52" font-size="12" letter-spacing="3" fill="#F4F1EB" fill-opacity="0.55">REDDY // SESSION MEMORY VAULT</text>
+  <text x="1140" y="52" font-size="11" letter-spacing="2" fill="#F4F1EB" fill-opacity="0.4" text-anchor="end">core/memory.ts &#183; MemoryVault</text>
+  <line x1="60" y1="66" x2="1140" y2="66" stroke="#F4F1EB" stroke-opacity="0.14" stroke-width="1"/>
+  <text x="60" y="100" font-size="22" font-weight="700" letter-spacing="3" fill="#F4F1EB">SESSION MEMORY + CONTEXT PRUNING</text>
+  <text x="60" y="122" font-size="11" letter-spacing="1.5" fill="#F4F1EB" fill-opacity="0.45">every session id owns an isolated vault &#183; the system prompt is pinned &#183; overflow folds into a summary</text>
+
+  <!-- ============ LEFT: sessions ============ -->
+  <text x="60" y="156" font-size="11" letter-spacing="2.5" fill="#A9E838">SERVER RUNTIME</text>
+  <rect x="60" y="168" width="270" height="462" fill="#F4F1EB" fill-opacity="0.03" stroke="#F4F1EB" stroke-opacity="0.4" stroke-width="1.5"/>
+  <text x="76" y="196" font-size="11" letter-spacing="1.5" fill="#F4F1EB">memories:</text>
+  <text x="76" y="212" font-size="11" letter-spacing="1.5" fill="#F4F1EB">Map&lt;session_id, MemoryVault&gt;</text>
+
+  <rect x="76" y="228" width="238" height="34" fill="#A9E838" fill-opacity="0.12" stroke="#A9E838" stroke-width="1"/>
+  <text x="90" y="250" font-size="11" fill="#F4F1EB">&#8220;default&#8221; &#183; ACTIVE</text>
+  <rect x="76" y="270" width="238" height="34" fill="#F4F1EB" fill-opacity="0.04" stroke="#F4F1EB" stroke-opacity="0.25" stroke-width="1"/>
+  <text x="90" y="292" font-size="11" fill="#F4F1EB" fill-opacity="0.7">&#8220;ops-42&#8221;</text>
+  <rect x="76" y="312" width="238" height="34" fill="#F4F1EB" fill-opacity="0.04" stroke="#F4F1EB" stroke-opacity="0.25" stroke-width="1"/>
+  <text x="90" y="334" font-size="11" fill="#F4F1EB" fill-opacity="0.7">&#8220;research&#8221;</text>
+  <rect x="76" y="354" width="238" height="34" fill="none" stroke="#F4F1EB" stroke-opacity="0.2" stroke-dasharray="4 3"/>
+  <text x="90" y="376" font-size="11" fill="#F4F1EB" fill-opacity="0.4">new session id &#8594; new vault</text>
+
+  <line x1="76" y1="410" x2="314" y2="410" stroke="#F4F1EB" stroke-opacity="0.15"/>
+  <text x="76" y="436" font-size="10.5" fill="#F4F1EB" fill-opacity="0.6">FIRST CONTACT</text>
+  <text x="76" y="456" font-size="10" fill="#F4F1EB" fill-opacity="0.45">POST /api/chat with an unseen</text>
+  <text x="76" y="472" font-size="10" fill="#F4F1EB" fill-opacity="0.45">session_id creates a vault seeded</text>
+  <text x="76" y="488" font-size="10" fill="#F4F1EB" fill-opacity="0.45">with the AGENTS.md instruction</text>
+  <text x="76" y="504" font-size="10" fill="#F4F1EB" fill-opacity="0.45">(or the session protocol saved via</text>
+  <text x="76" y="520" font-size="10" fill="#F4F1EB" fill-opacity="0.45">POST /api/settings).</text>
+  <text x="76" y="552" font-size="10.5" fill="#F4F1EB" fill-opacity="0.6">PROMPT REWRITE</text>
+  <text x="76" y="572" font-size="10" fill="#F4F1EB" fill-opacity="0.45">updateSystemPrompt() replaces</text>
+  <text x="76" y="588" font-size="10" fill="#F4F1EB" fill-opacity="0.45">slot 0 in place, or unshifts one</text>
+  <text x="76" y="604" font-size="10" fill="#F4F1EB" fill-opacity="0.45">if the vault has no system entry.</text>
+
+  <line x1="330" y1="330" x2="368" y2="330" stroke="#A9E838" stroke-width="1.5" marker-end="url(#mLime)"/>
+
+  <!-- ============ CENTER: one vault ============ -->
+  <rect x="372" y="150" width="410" height="480" fill="#F4F1EB" fill-opacity="0.03" stroke="#F4F1EB" stroke-opacity="0.4" stroke-width="1.5"/>
+  <text x="388" y="178" font-size="13" font-weight="700" letter-spacing="2" fill="#F4F1EB">MEMORY VAULT &#183; ONE SESSION</text>
+
+  <!-- pinned system -->
+  <rect x="388" y="194" width="378" height="44" fill="#A9E838" fill-opacity="0.14" stroke="#A9E838" stroke-width="2"/>
+  <text x="402" y="212" font-size="11" font-weight="700" fill="#A9E838">[0] SYSTEM &#183; PINNED</text>
+  <text x="402" y="228" font-size="9.5" fill="#F4F1EB" fill-opacity="0.6">AGENTS.md instruction / session protocol</text>
+  <text x="754" y="220" font-size="13" fill="#A9E838" text-anchor="end">&#128274;</text>
+
+  <!-- message rows -->
+  <rect x="388" y="246" width="378" height="34" fill="#22D3EE" fill-opacity="0.08" stroke="#22D3EE" stroke-opacity="0.5" stroke-width="1"/>
+  <text x="402" y="268" font-size="10.5" fill="#F4F1EB">user &#183; &#8220;check host memory&#8221;</text>
+  <rect x="388" y="288" width="378" height="34" fill="#F4F1EB" fill-opacity="0.05" stroke="#F4F1EB" stroke-opacity="0.25" stroke-width="1"/>
+  <text x="402" y="310" font-size="10.5" fill="#F4F1EB" fill-opacity="0.8">assistant &#183; tool request</text>
+  <rect x="388" y="330" width="378" height="34" fill="#A9E838" fill-opacity="0.08" stroke="#A9E838" stroke-opacity="0.5" stroke-width="1"/>
+  <text x="402" y="352" font-size="10.5" fill="#F4F1EB">tool &#183; tool_call_id &#183; name &#183; JSON result</text>
+
+  <rect x="388" y="372" width="378" height="34" fill="#22D3EE" fill-opacity="0.08" stroke="#22D3EE" stroke-opacity="0.5" stroke-width="1"/>
+  <text x="402" y="394" font-size="10.5" fill="#F4F1EB">user &#183; follow-up message</text>
+  <rect x="388" y="414" width="378" height="34" fill="#F4F1EB" fill-opacity="0.05" stroke="#F4F1EB" stroke-opacity="0.25" stroke-width="1"/>
+  <text x="402" y="436" font-size="10.5" fill="#F4F1EB" fill-opacity="0.8">assistant &#183; final answer</text>
+  <text x="402" y="470" font-size="10.5" fill="#F4F1EB" fill-opacity="0.4">&#8230; conversation continues &#8230;</text>
+
+  <!-- window bracket -->
+  <path d="M 780 194 L 790 194 L 790 470 L 780 470" fill="none" stroke="#A9E838" stroke-width="1.5"/>
+  <text x="798" y="336" font-size="10" letter-spacing="1.5" fill="#A9E838" transform="rotate(-90 798 336)">WORKING WINDOW &#8804; 50 MESSAGES</text>
+
+  <!-- prune cut -->
+  <line x1="388" y1="492" x2="766" y2="492" stroke="#D60019" stroke-width="2" stroke-dasharray="8 5"/>
+  <text x="388" y="510" font-size="10.5" font-weight="700" fill="#D60019">prune() &#8212; while length &gt; 50: splice(1, 1)</text>
+  <text x="388" y="526" font-size="9.5" fill="#F4F1EB" fill-opacity="0.5">oldest non-system messages leave the window</text>
+
+  <!-- episodic summary bin -->
+  <path d="M 560 492 L 560 540" stroke="#D60019" stroke-width="1.5" marker-end="url(#mRed)"/>
+  <rect x="388" y="544" width="378" height="70" fill="#22D3EE" fill-opacity="0.06" stroke="#22D3EE" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="402" y="566" font-size="11" font-weight="700" letter-spacing="1.5" fill="#22D3EE">EPISODIC SUMMARY BIN</text>
+  <text x="402" y="584" font-size="9.5" fill="#F4F1EB" fill-opacity="0.55">removed message contents accumulate as text</text>
+  <text x="402" y="600" font-size="9.5" fill="#F4F1EB" fill-opacity="0.55">reinjected as &#8220;EPISODIC_SUMMARY: &#8230;&#8221; context</text>
+
+  <!-- ============ RIGHT: getContext order ============ -->
+  <line x1="782" y1="330" x2="820" y2="330" stroke="#22D3EE" stroke-width="1.5" marker-end="url(#mCyan)"/>
+  <text x="824" y="156" font-size="11" letter-spacing="2.5" fill="#22D3EE">GETCONTEXT() &#8594; PROVIDER</text>
+
+  <rect x="824" y="168" width="316" height="240" fill="#F4F1EB" fill-opacity="0.04" stroke="#22D3EE" stroke-width="1.5"/>
+  <text x="840" y="194" font-size="11" fill="#F4F1EB" fill-opacity="0.6">EMISSION ORDER</text>
+  <circle cx="846" cy="216" r="9" fill="#A9E838" fill-opacity="0.2" stroke="#A9E838"/>
+  <text x="860" y="220" font-size="11" fill="#F4F1EB">1 &#183; system prompt (if present)</text>
+  <circle cx="846" cy="248" r="9" fill="#22D3EE" fill-opacity="0.2" stroke="#22D3EE"/>
+  <text x="860" y="252" font-size="11" fill="#F4F1EB">2 &#183; EPISODIC_SUMMARY: &#8230;</text>
+  <circle cx="846" cy="280" r="9" fill="#F4F1EB" fill-opacity="0.1" stroke="#F4F1EB" stroke-opacity="0.6"/>
+  <text x="860" y="284" font-size="11" fill="#F4F1EB">3 &#183; remaining working window</text>
+  <line x1="840" y1="304" x2="1124" y2="304" stroke="#F4F1EB" stroke-opacity="0.15"/>
+  <text x="840" y="328" font-size="10" fill="#F4F1EB" fill-opacity="0.55">the pinned system prompt is re-sent</text>
+  <text x="840" y="344" font-size="10" fill="#F4F1EB" fill-opacity="0.55">on every iteration of the agent loop</text>
+  <text x="840" y="360" font-size="10" fill="#F4F1EB" fill-opacity="0.55">alongside the ACTIVE_CAPABILITIES</text>
+  <text x="840" y="376" font-size="10" fill="#F4F1EB" fill-opacity="0.55">message from the skill registry.</text>
+  <text x="840" y="398" font-size="10" fill="#F4F1EB" fill-opacity="0.55">pruned history is never lost to the</text>
+  <text x="840" y="414" font-size="10" fill="#F4F1EB" fill-opacity="0.55">provider &#8212; it rides in the summary.</text>
+
+  <rect x="824" y="428" width="316" height="202" fill="#F4F1EB" fill-opacity="0.03" stroke="#F4F1EB" stroke-opacity="0.3" stroke-width="1"/>
+  <text x="840" y="452" font-size="11" letter-spacing="1.5" fill="#F4F1EB">RUNTIME CHARACTER</text>
+  <text x="840" y="476" font-size="10" fill="#F4F1EB" fill-opacity="0.55">&#9632; vaults live in server process memory</text>
+  <text x="840" y="496" font-size="10" fill="#F4F1EB" fill-opacity="0.55">&#9632; a restart starts every session fresh</text>
+  <text x="840" y="516" font-size="10" fill="#F4F1EB" fill-opacity="0.55">&#9632; chat logs additionally persist in the</text>
+  <text x="840" y="532" font-size="10" fill="#F4F1EB" fill-opacity="0.55">&#160;&#160;&#160;browser via localStorage</text>
+  <text x="840" y="556" font-size="10" fill="#F4F1EB" fill-opacity="0.55">&#9632; persistence swap-in point: replace the</text>
+  <text x="840" y="572" font-size="10" fill="#F4F1EB" fill-opacity="0.55">&#160;&#160;&#160;sessions Map with a database</text>
+  <text x="840" y="596" font-size="10" fill="#F4F1EB" fill-opacity="0.55">&#9632; MemoryVault has no dependency on</text>
+  <text x="840" y="612" font-size="10" fill="#F4F1EB" fill-opacity="0.55">&#160;&#160;&#160;Express &#8212; it is a pure data structure</text>
+
+  <!-- footer -->
+  <line x1="60" y1="656" x2="1140" y2="656" stroke="#F4F1EB" stroke-opacity="0.14" stroke-width="1"/>
+  <text x="60" y="676" font-size="10" letter-spacing="2" fill="#F4F1EB" fill-opacity="0.4">REDDY AGENT &#183; MEMORY WINDOW 50 &#183; PINNED SYSTEM PROMPT &#183; EPISODIC SUMMARY</text>
+  <text x="1140" y="676" font-size="10" letter-spacing="2" fill="#F4F1EB" fill-opacity="0.4" text-anchor="end">assets/readme/memory-vault.svg</text>
+
+  <rect width="1200" height="700" fill="url(#scan)"/>
+</svg>

@@ -21,14 +21,14 @@ export class ProviderOrchestrator {
       throw new Error("SECURE_GATEWAY_FAILURE: NO_KEY_DETECTED. Please insert a valid OMEGA key.");
     }
     this.genAI = new GoogleGenAI({ apiKey } as any);
-    this.model = (this.genAI as any).getGenerativeModel({ model: "gemini-1.5-flash" });
+    // @google/genai v2 surface: ai.models.generateContent(...)
+    this.model = (this.genAI as any).models;
   }
 
   async validateKey(key: string): Promise<boolean> {
     try {
       const tester = new GoogleGenAI({ apiKey: key } as any);
-      const testModel = (tester as any).getGenerativeModel({ model: "gemini-1.5-flash" });
-      await testModel.generateContent("ping");
+      await (tester as any).models.generateContent({ model: "gemini-1.5-flash", contents: "ping" });
       return true;
     } catch (e) {
       console.error("Key Validation Failed", e);
@@ -48,13 +48,13 @@ export class ProviderOrchestrator {
       };
     });
 
-    const result = await this.model.generateContent({
+    const response = await (this.model as any).generateContent({
+      model: "gemini-1.5-flash",
       contents,
-      tools: tools ? [{ functionDeclarations: tools.map((t: any) => t.function) }] : undefined,
+      config: tools ? { tools: [{ functionDeclarations: tools.map((t: any) => t.function) }] } : undefined,
     });
 
-    const response = result.response;
-    const content = response.text();
+    const content = response.text;
     const functionCalls = response.candidates?.[0]?.content?.parts?.filter((p: any) => p.functionCall).map((p: any) => p.functionCall);
 
     return {

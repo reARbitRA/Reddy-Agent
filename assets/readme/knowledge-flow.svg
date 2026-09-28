@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" role="img" aria-label="REDDY knowledge vault: entries are created, listed and deleted through the knowledge API, and every chat request carries the vault contents as context">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#F4F1EB" stroke-opacity="0.05" stroke-width="1"/>
+    </pattern>
+    <pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse">
+      <rect width="4" height="1.6" fill="#06080B" fill-opacity="0.22"/>
+    </pattern>
+    <marker id="kLime" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#A9E838"/>
+    </marker>
+    <marker id="kCyan" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#22D3EE"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="620" fill="#06080B"/>
+  <rect width="1200" height="620" fill="url(#grid)"/>
+
+  <text x="60" y="52" font-size="12" letter-spacing="3" fill="#F4F1EB" fill-opacity="0.55">REDDY // KNOWLEDGE VAULT</text>
+  <text x="1140" y="52" font-size="11" letter-spacing="2" fill="#F4F1EB" fill-opacity="0.4" text-anchor="end">server.ts &#183; KnowledgeVault.tsx</text>
+  <line x1="60" y1="66" x2="1140" y2="66" stroke="#F4F1EB" stroke-opacity="0.14" stroke-width="1"/>
+  <text x="60" y="100" font-size="22" font-weight="700" letter-spacing="3" fill="#F4F1EB">KNOWLEDGE FLOW &#8212; VAULT TO CONTEXT</text>
+  <text x="60" y="122" font-size="11" letter-spacing="1.5" fill="#F4F1EB" fill-opacity="0.45">reusable reference entries stored on the server, injected into every chat request</text>
+
+  <!-- ============ LEFT: entry contract ============ -->
+  <text x="60" y="156" font-size="11" letter-spacing="2.5" fill="#A9E838">ENTRY CONTRACT</text>
+  <rect x="60" y="168" width="300" height="200" fill="#F4F1EB" fill-opacity="0.04" stroke="#A9E838" stroke-width="1.5"/>
+  <text x="76" y="194" font-size="11" fill="#22D3EE">knowledge entry</text>
+  <text x="76" y="222" font-size="11" fill="#F4F1EB">id: string</text>
+  <text x="76" y="244" font-size="11" fill="#F4F1EB">name: string</text>
+  <text x="76" y="266" font-size="11" fill="#F4F1EB">content: string</text>
+  <text x="76" y="288" font-size="11" fill="#F4F1EB">category: string</text>
+  <line x1="76" y1="302" x2="344" y2="302" stroke="#F4F1EB" stroke-opacity="0.15"/>
+  <text x="76" y="324" font-size="10" fill="#F4F1EB" fill-opacity="0.5">ids are generated server-side</text>
+  <text x="76" y="340" font-size="10" fill="#F4F1EB" fill-opacity="0.5">(base36, 6 chars)</text>
+  <text x="76" y="356" font-size="10" fill="#F4F1EB" fill-opacity="0.5">name + category are searchable</text>
+
+  <text x="60" y="404" font-size="11" letter-spacing="2.5" fill="#22D3EE">VAULT ROUTES</text>
+  <rect x="60" y="416" width="300" height="136" fill="#F4F1EB" fill-opacity="0.03" stroke="#F4F1EB" stroke-opacity="0.35"/>
+  <g font-size="11">
+    <rect x="76" y="430" width="44" height="20" fill="#A9E838" fill-opacity="0.2"/>
+    <text x="82" y="444" fill="#A9E838" font-size="10">GET</text>
+    <text x="132" y="444" fill="#F4F1EB" fill-opacity="0.75">/api/knowledge</text>
+    <rect x="76" y="458" width="44" height="20" fill="#22D3EE" fill-opacity="0.2"/>
+    <text x="82" y="472" fill="#22D3EE" font-size="10">POST</text>
+    <text x="132" y="472" fill="#F4F1EB" fill-opacity="0.75">/api/knowledge</text>
+    <rect x="76" y="486" width="60" height="20" fill="#D60019" fill-opacity="0.2"/>
+    <text x="82" y="500" fill="#D60019" font-size="10">DELETE</text>
+    <text x="148" y="500" fill="#F4F1EB" fill-opacity="0.75">/api/knowledge/:id</text>
+  </g>
+  <text x="76" y="528" font-size="10" fill="#F4F1EB" fill-opacity="0.5">dashboard search filters client-side</text>
+
+  <line x1="360" y1="300" x2="398" y2="300" stroke="#A9E838" stroke-width="1.5" marker-end="url(#kLime)"/>
+
+  <!-- ============ CENTER: server store ============ -->
+  <rect x="402" y="150" width="360" height="402" fill="#F4F1EB" fill-opacity="0.03" stroke="#F4F1EB" stroke-opacity="0.4" stroke-width="1.5"/>
+  <text x="418" y="178" font-size="13" font-weight="700" letter-spacing="2" fill="#F4F1EB">SERVER VAULT</text>
+  <text x="418" y="198" font-size="10" fill="#F4F1EB" fill-opacity="0.5">knowledgeVault: Map&lt;id, entry&gt;</text>
+
+  <rect x="418" y="214" width="328" height="58" fill="#06080B" stroke="#A9E838" stroke-opacity="0.7"/>
+  <text x="432" y="236" font-size="11" fill="#A9E838">Deploy Runbook &#183; OPS</text>
+  <text x="432" y="256" font-size="9.5" fill="#F4F1EB" fill-opacity="0.55">npm run build before npm start &#8230;</text>
+  <rect x="418" y="282" width="328" height="58" fill="#06080B" stroke="#22D3EE" stroke-opacity="0.6"/>
+  <text x="432" y="304" font-size="11" fill="#22D3EE">API Notes &#183; RESEARCH</text>
+  <text x="432" y="324" font-size="9.5" fill="#F4F1EB" fill-opacity="0.55">provider surfaces, route map &#8230;</text>
+  <rect x="418" y="350" width="328" height="58" fill="#06080B" stroke="#F4F1EB" stroke-opacity="0.3"/>
+  <text x="432" y="372" font-size="11" fill="#F4F1EB" fill-opacity="0.75">Port Layout &#183; OPS</text>
+  <text x="432" y="392" font-size="9.5" fill="#F4F1EB" fill-opacity="0.55">Express on 3000 &#8230;</text>
+  <rect x="418" y="418" width="328" height="42" fill="none" stroke="#F4F1EB" stroke-opacity="0.2" stroke-dasharray="4 3"/>
+  <text x="432" y="444" font-size="10.5" fill="#F4F1EB" fill-opacity="0.4">next entry lands here</text>
+
+  <text x="418" y="490" font-size="10.5" fill="#F4F1EB" fill-opacity="0.6">RUNTIME CHARACTER</text>
+  <text x="418" y="510" font-size="10" fill="#F4F1EB" fill-opacity="0.45">&#9632; stored in process memory</text>
+  <text x="418" y="526" font-size="10" fill="#F4F1EB" fill-opacity="0.45">&#9632; cleared when the server restarts</text>
+  <text x="418" y="542" font-size="10" fill="#F4F1EB" fill-opacity="0.45">&#9632; shared across all sessions</text>
+
+  <line x1="762" y1="300" x2="800" y2="300" stroke="#22D3EE" stroke-width="1.5" marker-end="url(#kCyan)"/>
+  <text x="781" y="286" font-size="10" fill="#22D3EE" text-anchor="middle">chat</text>
+
+  <!-- ============ RIGHT: injection ============ -->
+  <rect x="804" y="150" width="336" height="402" fill="#F4F1EB" fill-opacity="0.03" stroke="#22D3EE" stroke-width="1.5"/>
+  <text x="820" y="178" font-size="13" font-weight="700" letter-spacing="2" fill="#22D3EE">CONTEXT INJECTION</text>
+  <text x="820" y="198" font-size="10" fill="#F4F1EB" fill-opacity="0.5">POST /api/chat &#8594; engine.execute()</text>
+
+  <rect x="820" y="214" width="304" height="44" fill="#06080B" stroke="#22D3EE" stroke-opacity="0.6"/>
+  <text x="834" y="232" font-size="10.5" fill="#F4F1EB">user message</text>
+  <text x="834" y="248" font-size="9.5" fill="#F4F1EB" fill-opacity="0.55">&#8220;how do I ship a build?&#8221;</text>
+
+  <text x="820" y="284" font-size="10.5" fill="#F4F1EB" fill-opacity="0.6">APPENDED BEFORE EXECUTION</text>
+  <rect x="820" y="296" width="304" height="118" fill="#06080B" stroke="#A9E838" stroke-opacity="0.7"/>
+  <text x="834" y="316" font-size="10" fill="#A9E838">CONTEXT FROM VAULT:</text>
+  <text x="834" y="336" font-size="9.5" fill="#F4F1EB" fill-opacity="0.7">[KNOWLEDGE]: Deploy Runbook (OPS)</text>
+  <text x="846" y="352" font-size="9.5" fill="#F4F1EB" fill-opacity="0.55">npm run build before npm start &#8230;</text>
+  <text x="834" y="372" font-size="9.5" fill="#F4F1EB" fill-opacity="0.7">[KNOWLEDGE]: Port Layout (OPS)</text>
+  <text x="846" y="388" font-size="9.5" fill="#F4F1EB" fill-opacity="0.55">Express on 3000 &#8230;</text>
+  <text x="834" y="406" font-size="9.5" fill="#F4F1EB" fill-opacity="0.45">every vault entry rides along</text>
+
+  <line x1="972" y1="414" x2="972" y2="436" stroke="#22D3EE" stroke-width="1.5" marker-end="url(#kCyan)"/>
+  <rect x="820" y="440" width="304" height="46" fill="#22D3EE" fill-opacity="0.1" stroke="#22D3EE"/>
+  <text x="834" y="460" font-size="10.5" fill="#22D3EE">agent loop &#8594; gemini-1.5-flash</text>
+  <text x="834" y="476" font-size="9.5" fill="#F4F1EB" fill-opacity="0.55">answer grounded in stored entries</text>
+
+  <text x="820" y="512" font-size="10" fill="#F4F1EB" fill-opacity="0.45">&#9632; injection is all-or-nothing: the full</text>
+  <text x="820" y="528" font-size="10" fill="#F4F1EB" fill-opacity="0.45">&#160;&#160;&#160;vault is appended to each message</text>
+  <text x="820" y="544" font-size="10" fill="#F4F1EB" fill-opacity="0.45">&#9632; large vaults consume context window</text>
+
+  <!-- footer -->
+  <line x1="60" y1="580" x2="1140" y2="580" stroke="#F4F1EB" stroke-opacity="0.14" stroke-width="1"/>
+  <text x="60" y="600" font-size="10" letter-spacing="2" fill="#F4F1EB" fill-opacity="0.4">REDDY AGENT &#183; REUSABLE CONTEXT STORE &#183; PER-REQUEST INJECTION</text>
+  <text x="1140" y="600" font-size="10" letter-spacing="2" fill="#F4F1EB" fill-opacity="0.4" text-anchor="end">assets/readme/knowledge-flow.svg</text>
+
+  <rect width="1200" height="620" fill="url(#scan)"/>
+</svg>

@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" role="img" aria-label="REDDY API console listing the fourteen real Express routes on port 3000 with methods and purposes">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#F4F1EB" stroke-opacity="0.05" stroke-width="1"/>
+    </pattern>
+    <pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse">
+      <rect width="4" height="1.6" fill="#06080B" fill-opacity="0.22"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="760" fill="#06080B"/>
+  <rect width="1200" height="760" fill="url(#grid)"/>
+
+  <text x="60" y="52" font-size="12" letter-spacing="3" fill="#F4F1EB" fill-opacity="0.55">REDDY // API CONSOLE</text>
+  <text x="1140" y="52" font-size="11" letter-spacing="2" fill="#F4F1EB" fill-opacity="0.4" text-anchor="end">server.ts &#183; Express &#183; port 3000</text>
+  <line x1="60" y1="66" x2="1140" y2="66" stroke="#F4F1EB" stroke-opacity="0.14" stroke-width="1"/>
+  <text x="60" y="100" font-size="22" font-weight="700" letter-spacing="3" fill="#F4F1EB">14 ROUTES &#183; ONE SERVER</text>
+  <text x="60" y="122" font-size="11" letter-spacing="1.5" fill="#F4F1EB" fill-opacity="0.45">every route below exists in server.ts &#8212; agent, skills, settings, knowledge, keys, telemetry, purge</text>
+
+  <!-- terminal window -->
+  <rect x="60" y="146" width="1080" height="460" fill="#F4F1EB" fill-opacity="0.03" stroke="#F4F1EB" stroke-opacity="0.45" stroke-width="1.5"/>
+  <rect x="60" y="146" width="1080" height="34" fill="#F4F1EB" fill-opacity="0.07"/>
+  <circle cx="82" cy="163" r="6" fill="#D60019"/>
+  <circle cx="102" cy="163" r="6" fill="#A9E838"/>
+  <circle cx="122" cy="163" r="6" fill="#22D3EE"/>
+  <text x="600" y="167" font-size="11" letter-spacing="2" fill="#F4F1EB" fill-opacity="0.6" text-anchor="middle">REDDY API CONSOLE &#8212; express on :3000</text>
+
+  <!-- left column -->
+  <g>
+    <rect x="84" y="200" width="56" height="24" fill="#22D3EE" fill-opacity="0.16"/>
+    <text x="96" y="217" font-size="10.5" fill="#22D3EE">POST</text>
+    <text x="156" y="217" font-size="12" fill="#F4F1EB">/api/chat</text>
+    <text x="360" y="217" font-size="10" fill="#F4F1EB" fill-opacity="0.45">agent execution &#183; { message, session_id }</text>
+
+    <rect x="84" y="236" width="56" height="24" fill="#A9E838" fill-opacity="0.16"/>
+    <text x="98" y="253" font-size="10.5" fill="#A9E838">GET</text>
+    <text x="156" y="253" font-size="12" fill="#F4F1EB">/api/skills</text>
+    <text x="360" y="253" font-size="10" fill="#F4F1EB" fill-opacity="0.45">list registered skills</text>
+
+    <rect x="84" y="272" width="56" height="24" fill="#22D3EE" fill-opacity="0.16"/>
+    <text x="96" y="289" font-size="10.5" fill="#22D3EE">POST</text>
+    <text x="156" y="289" font-size="12" fill="#F4F1EB">/api/skills/inject</text>
+    <text x="360" y="289" font-size="10" fill="#F4F1EB" fill-opacity="0.45">register a runtime text skill</text>
+
+    <rect x="84" y="308" width="56" height="24" fill="#A9E838" fill-opacity="0.16"/>
+    <text x="98" y="325" font-size="10.5" fill="#A9E838">GET</text>
+    <text x="156" y="325" font-size="12" fill="#F4F1EB">/api/settings</text>
+    <text x="360" y="325" font-size="10" fill="#F4F1EB" fill-opacity="0.45">read a session&#8217;s instruction</text>
+
+    <rect x="84" y="344" width="56" height="24" fill="#22D3EE" fill-opacity="0.16"/>
+    <text x="96" y="361" font-size="10.5" fill="#22D3EE">POST</text>
+    <text x="156" y="361" font-size="12" fill="#F4F1EB">/api/settings</text>
+    <text x="360" y="361" font-size="10" fill="#F4F1EB" fill-opacity="0.45">update a session&#8217;s instruction</text>
+
+    <rect x="84" y="380" width="56" height="24" fill="#A9E838" fill-opacity="0.16"/>
+    <text x="98" y="397" font-size="10.5" fill="#A9E838">GET</text>
+    <text x="156" y="397" font-size="12" fill="#F4F1EB">/api/tasks/history</text>
+    <text x="360" y="397" font-size="10" fill="#F4F1EB" fill-opacity="0.45">telemetry buffer &#183; success + latency</text>
+
+    <rect x="84" y="416" width="56" height="24" fill="#A9E838" fill-opacity="0.16"/>
+    <text x="98" y="433" font-size="10.5" fill="#A9E838">GET</text>
+    <text x="156" y="433" font-size="12" fill="#F4F1EB">/api/keys/status</text>
+    <text x="360" y="433" font-size="10" fill="#F4F1EB" fill-opacity="0.45">active key source report</text>
+  </g>
+
+  <line x1="570" y1="196" x2="570" y2="448" stroke="#F4F1EB" stroke-opacity="0.12"/>
+
+  <!-- right column -->
+  <g>
+    <rect x="596" y="200" width="56" height="24" fill="#22D3EE" fill-opacity="0.16"/>
+    <text x="608" y="217" font-size="10.5" fill="#22D3EE">POST</text>
+    <text x="668" y="217" font-size="12" fill="#F4F1EB">/api/keys/validate</text>
+    <text x="880" y="217" font-size="10" fill="#F4F1EB" fill-opacity="0.45">live ping with candidate key</text>
+
+    <rect x="596" y="236" width="56" height="24" fill="#22D3EE" fill-opacity="0.16"/>
+    <text x="608" y="253" font-size="10.5" fill="#22D3EE">POST</text>
+    <text x="668" y="253" font-size="12" fill="#F4F1EB">/api/keys/save</text>
+    <text x="880" y="253" font-size="10" fill="#F4F1EB" fill-opacity="0.45">deploy key to the process</text>
+
+    <rect x="596" y="272" width="56" height="24" fill="#A9E838" fill-opacity="0.16"/>
+    <text x="610" y="289" font-size="10.5" fill="#A9E838">GET</text>
+    <text x="668" y="289" font-size="12" fill="#F4F1EB">/api/knowledge</text>
+    <text x="880" y="289" font-size="10" fill="#F4F1EB" fill-opacity="0.45">list vault entries</text>
+
+    <rect x="596" y="308" width="56" height="24" fill="#22D3EE" fill-opacity="0.16"/>
+    <text x="608" y="325" font-size="10.5" fill="#22D3EE">POST</text>
+    <text x="668" y="325" font-size="12" fill="#F4F1EB">/api/knowledge</text>
+    <text x="880" y="325" font-size="10" fill="#F4F1EB" fill-opacity="0.45">create a vault entry</text>
+
+    <rect x="596" y="344" width="72" height="24" fill="#D60019" fill-opacity="0.16"/>
+    <text x="606" y="361" font-size="10.5" fill="#D60019">DELETE</text>
+    <text x="684" y="361" font-size="12" fill="#F4F1EB">/api/knowledge/:id</text>
+    <text x="880" y="361" font-size="10" fill="#F4F1EB" fill-opacity="0.45">delete a vault entry</text>
+
+    <rect x="596" y="380" width="56" height="24" fill="#A9E838" fill-opacity="0.16"/>
+    <text x="610" y="397" font-size="10.5" fill="#A9E838">GET</text>
+    <text x="668" y="397" font-size="12" fill="#F4F1EB">/api/purge/audit</text>
+    <text x="880" y="397" font-size="10" fill="#F4F1EB" fill-opacity="0.45">scan src/ for TODOs + mock arrays</text>
+
+    <rect x="596" y="416" width="56" height="24" fill="#22D3EE" fill-opacity="0.16"/>
+    <text x="608" y="433" font-size="10.5" fill="#22D3EE">POST</text>
+    <text x="668" y="433" font-size="12" fill="#F4F1EB">/api/purge/execute</text>
+    <text x="880" y="433" font-size="10" fill="#F4F1EB" fill-opacity="0.45">rewrite flagged lines &#183; destructive</text>
+  </g>
+
+  <!-- terminal output strip -->
+  <rect x="84" y="456" width="1032" height="134" fill="#06080B" stroke="#F4F1EB" stroke-opacity="0.2"/>
+  <text x="100" y="480" font-size="11" fill="#A9E838">$ curl -s localhost:3000/api/skills</text>
+  <text x="100" y="498" font-size="11" fill="#F4F1EB" fill-opacity="0.75">{ &#8220;skills&#8221;: [ &#8220;System_Info&#8221; ] }</text>
+  <text x="100" y="526" font-size="11" fill="#A9E838">$ curl -s -X POST localhost:3000/api/chat -H &#8220;content-type: application/json&#8221; \</text>
+  <text x="118" y="544" font-size="11" fill="#A9E838">-d &#8216;{ &#8220;message&#8221;: &#8220;hello&#8221;, &#8220;session_id&#8221;: &#8220;default&#8221; }&#8217;</text>
+  <text x="100" y="562" font-size="11" fill="#D60019">{ &#8220;error&#8221;: &#8220;SECURE_GATEWAY_FAILURE: NO_KEY_DETECTED. &#8230;&#8221; } &#8592; without a key, 500 + normalized error</text>
+  <text x="100" y="582" font-size="10" fill="#F4F1EB" fill-opacity="0.4">responses above observed from a live local server</text>
+
+  <!-- security note -->
+  <rect x="60" y="622" width="1080" height="40" fill="#D60019" fill-opacity="0.05" stroke="#D60019" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="76" y="647" font-size="10.5" fill="#D60019">No route-level authentication is implemented &#8212; run REDDY on a trusted network or front it with an authenticating proxy before exposure.</text>
+
+  <!-- footer -->
+  <line x1="60" y1="686" x2="1140" y2="686" stroke="#F4F1EB" stroke-opacity="0.14" stroke-width="1"/>
+  <text x="60" y="706" font-size="10" letter-spacing="2" fill="#F4F1EB" fill-opacity="0.4">REDDY AGENT &#183; JSON IN / JSON OUT &#183; EXPRESS 4</text>
+  <text x="1140" y="706" font-size="10" letter-spacing="2" fill="#F4F1EB" fill-opacity="0.4" text-anchor="end">assets/readme/api-console.svg</text>
+
+  <rect width="1200" height="760" fill="url(#scan)"/>
+</svg>

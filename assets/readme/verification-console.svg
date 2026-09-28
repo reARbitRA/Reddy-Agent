@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="780" viewBox="0 0 1200 780" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" role="img" aria-label="REDDY verification console: lint, build, test, asset verification and readme verification commands with their observed results">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#F4F1EB" stroke-opacity="0.05" stroke-width="1"/>
+    </pattern>
+    <pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse">
+      <rect width="4" height="1.6" fill="#06080B" fill-opacity="0.22"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="780" fill="#06080B"/>
+  <rect width="1200" height="780" fill="url(#grid)"/>
+
+  <text x="60" y="52" font-size="12" letter-spacing="3" fill="#F4F1EB" fill-opacity="0.55">REDDY // VERIFICATION CONSOLE</text>
+  <text x="1140" y="52" font-size="11" letter-spacing="2" fill="#F4F1EB" fill-opacity="0.4" text-anchor="end">results observed in this repository, this session</text>
+  <line x1="60" y1="66" x2="1140" y2="66" stroke="#F4F1EB" stroke-opacity="0.14" stroke-width="1"/>
+  <text x="60" y="100" font-size="22" font-weight="700" letter-spacing="3" fill="#F4F1EB">VERIFY BEFORE YOU BELIEVE</text>
+
+  <!-- terminal -->
+  <rect x="60" y="124" width="1080" height="330" fill="#F4F1EB" fill-opacity="0.03" stroke="#F4F1EB" stroke-opacity="0.45" stroke-width="1.5"/>
+  <rect x="60" y="124" width="1080" height="30" fill="#F4F1EB" fill-opacity="0.07"/>
+  <circle cx="82" cy="139" r="5" fill="#D60019"/>
+  <circle cx="100" cy="139" r="5" fill="#A9E838"/>
+  <circle cx="118" cy="139" r="5" fill="#22D3EE"/>
+  <text x="600" y="143" font-size="10.5" letter-spacing="2" fill="#F4F1EB" fill-opacity="0.6" text-anchor="middle">sh &#8212; reddy-agent</text>
+
+  <g font-size="11.5">
+    <text x="84" y="184" fill="#A9E838">$ npm run lint</text>
+    <text x="84" y="202" fill="#F4F1EB" fill-opacity="0.6">tsc --noEmit</text>
+    <text x="84" y="220" fill="#A9E838">&#10003; PASS &#8212; type check clean, zero errors</text>
+
+    <text x="84" y="252" fill="#A9E838">$ npm run build</text>
+    <text x="84" y="270" fill="#F4F1EB" fill-opacity="0.6">vite build &#8594; dist/assets/index-*.js 943.23 kB &#183; css 44.52 kB</text>
+    <text x="84" y="288" fill="#F4F1EB" fill-opacity="0.6">esbuild &#8594; dist/server.cjs 17.8 kB (+ sourcemap)</text>
+    <text x="84" y="306" fill="#A9E838">&#10003; PASS &#8212; frontend bundle + server bundle produced</text>
+
+    <text x="84" y="338" fill="#A9E838">$ npm test</text>
+    <text x="84" y="356" fill="#F4F1EB" fill-opacity="0.6">vitest run &#8594; 7 files &#183; 57 tests</text>
+    <text x="84" y="374" fill="#A9E838">&#10003; PASS &#8212; 57 / 57 green (unit + live-server integration)</text>
+
+    <text x="84" y="406" fill="#A9E838">$ npm run verify:assets &#183; npm run verify:readme</text>
+    <text x="84" y="424" fill="#F4F1EB" fill-opacity="0.6">15 / 15 SVGs valid + Camo-safe &#183; every README image path + anchor resolves</text>
+    <text x="84" y="442" fill="#A9E838">&#10003; PASS</text>
+  </g>
+
+  <!-- test matrix -->
+  <text x="60" y="488" font-size="11" letter-spacing="2.5" fill="#22D3EE">TEST MATRIX &#8212; WHAT THE 57 TESTS ACTUALLY PIN DOWN</text>
+  <g font-size="10.5">
+    <rect x="60" y="500" width="528" height="40" fill="#06080B" stroke="#A9E838" stroke-opacity="0.5"/>
+    <text x="76" y="517" fill="#F4F1EB">tests/memory.test.ts</text>
+    <text x="76" y="532" font-size="9.5" fill="#F4F1EB" fill-opacity="0.5">session storage &#183; pinned prompt &#183; pruning &#183; summary</text>
+    <text x="576" y="524" fill="#A9E838" text-anchor="end">10</text>
+
+    <rect x="604" y="500" width="528" height="40" fill="#06080B" stroke="#A9E838" stroke-opacity="0.5"/>
+    <text x="620" y="517" fill="#F4F1EB">tests/registry.test.ts</text>
+    <text x="620" y="532" font-size="9.5" fill="#F4F1EB" fill-opacity="0.5">registration &#183; schemas &#183; replacement &#183; error strings</text>
+    <text x="1120" y="524" fill="#A9E838" text-anchor="end">9</text>
+
+    <rect x="60" y="548" width="528" height="40" fill="#06080B" stroke="#A9E838" stroke-opacity="0.5"/>
+    <text x="76" y="565" fill="#F4F1EB">tests/skills.test.ts</text>
+    <text x="76" y="580" font-size="9.5" fill="#F4F1EB" fill-opacity="0.5">System_Info contract &#183; tool results &#183; text-skill loading</text>
+    <text x="576" y="572" fill="#A9E838" text-anchor="end">8</text>
+
+    <rect x="604" y="548" width="528" height="40" fill="#06080B" stroke="#A9E838" stroke-opacity="0.5"/>
+    <text x="620" y="565" fill="#F4F1EB">tests/engine.test.ts</text>
+    <text x="620" y="580" font-size="9.5" fill="#F4F1EB" fill-opacity="0.5">loop order &#183; tool flow &#183; parallel calls &#183; 5-iteration cap</text>
+    <text x="1120" y="572" fill="#A9E838" text-anchor="end">6</text>
+
+    <rect x="60" y="596" width="528" height="40" fill="#06080B" stroke="#A9E838" stroke-opacity="0.5"/>
+    <text x="76" y="613" fill="#F4F1EB">tests/orchestrator.test.ts</text>
+    <text x="76" y="628" font-size="9.5" fill="#F4F1EB" fill-opacity="0.5">missing-key normalization &#183; invalid key &#8594; false</text>
+    <text x="576" y="620" fill="#A9E838" text-anchor="end">5</text>
+
+    <rect x="604" y="596" width="528" height="40" fill="#06080B" stroke="#22D3EE" stroke-opacity="0.6"/>
+    <text x="620" y="613" fill="#F4F1EB">tests/api.test.ts</text>
+    <text x="620" y="628" font-size="9.5" fill="#F4F1EB" fill-opacity="0.5">live server &#183; 14 routes &#183; validation &#183; key status &#183; telemetry</text>
+    <text x="1120" y="620" fill="#22D3EE" text-anchor="end">14</text>
+
+    <rect x="60" y="644" width="528" height="40" fill="#06080B" stroke="#22D3EE" stroke-opacity="0.6"/>
+    <text x="76" y="661" fill="#F4F1EB">tests/purge.test.ts</text>
+    <text x="76" y="676" font-size="9.5" fill="#F4F1EB" fill-opacity="0.5">audit scan &#183; rewrite rules &#183; stale-line skip (fixture copy)</text>
+    <text x="576" y="668" fill="#22D3EE" text-anchor="end">5</text>
+
+    <rect x="604" y="644" width="528" height="40" fill="#06080B" stroke="#F4F1EB" stroke-opacity="0.3"/>
+    <text x="620" y="661" fill="#F4F1EB">TOTAL</text>
+    <text x="620" y="676" font-size="9.5" fill="#F4F1EB" fill-opacity="0.5">no network mocks pretending to be Gemini &#8212; stubs are labeled stubs</text>
+    <text x="1120" y="668" fill="#F4F1EB" text-anchor="end">57</text>
+  </g>
+
+  <!-- footer -->
+  <line x1="60" y1="708" x2="1140" y2="708" stroke="#F4F1EB" stroke-opacity="0.14" stroke-width="1"/>
+  <text x="60" y="728" font-size="10" letter-spacing="2" fill="#F4F1EB" fill-opacity="0.4">REDDY AGENT &#183; LINT + BUILD + TEST + ASSET + README VERIFICATION</text>
+  <text x="1140" y="728" font-size="10" letter-spacing="2" fill="#F4F1EB" fill-opacity="0.4" text-anchor="end">assets/readme/verification-console.svg</text>
+
+  <rect width="1200" height="780" fill="url(#scan)"/>
+</svg>
