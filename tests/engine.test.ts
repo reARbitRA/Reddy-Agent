@@ -152,3 +152,40 @@ describe("RedAeyeEngine — agent loop", () => {
     expect(memory.getContext().filter((m) => m.role === "tool")).toHaveLength(5);
   });
 });
+
+describe("RedAeyeEngine — tool-call turn is recorded (T-006)", () => {
+  it("replays the assistant tool-call turn before the tool result", async () => {
+    const { engine, orchestrator } = makeEngine();
+    orchestrator.enqueue({
+      content: null,
+      tool_calls: [{ name: "get_system_metrics", args: { metric: "os" }, id: "call_os" }],
+    });
+    orchestrator.enqueue({ content: "done", tool_calls: null });
+
+    await engine.execute("check os");
+
+    const second = orchestrator.requests[1].messages;
+    const callIdx = second.findIndex(
+      (m) => m.role === "assistant" && Array.isArray(m.tool_calls) && m.tool_calls.length > 0
+    );
+    const resultIdx = second.findIndex((m) => m.role === "tool");
+    expect(callIdx).toBeGreaterThan(-1);
+    expect(resultIdx).toBeGreaterThan(-1);
+    expect(callIdx).toBeLessThan(resultIdx);
+    expect(second[callIdx].tool_calls[0].name).toBe("get_system_metrics");
+  });
+
+  it("records one assistant tool-call turn per iteration at the five-round cap", async () => {
+    const { engine, orchestrator, memory } = makeEngine();
+    for (let i = 0; i < 10; i++) {
+      orchestrator.enqueue({
+        content: null,
+        tool_calls: [{ name: "get_system_metrics", args: { metric: "os" }, id: `c${i}` }],
+      });
+    }
+    await engine.execute("loop");
+    const ctx = memory.getContext();
+    expect(ctx.filter((m) => m.role === "assistant" && Array.isArray(m.tool_calls))).toHaveLength(5);
+    expect(ctx.filter((m) => m.role === "tool")).toHaveLength(5);
+  });
+});

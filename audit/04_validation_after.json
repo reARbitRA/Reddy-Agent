@@ -1,0 +1,50 @@
+{
+  "validator_model": "NONE_AVAILABLE",
+  "validation_stamp": "VALIDATION: DEGRADED — SINGLE-MODEL",
+  "method": "cross-implementation arithmetic re-derivation (Node/JS) against the Python engine; NOT independent discovery",
+  "arithmetic_pass_criteria": {
+    "MAD_LE": 7,
+    "MAX_DEV_LE": 15,
+    "dR_LE": 5,
+    "P0_Jaccard_GE": 0.8,
+    "HALLUC_EQ": 0
+  },
+  "metrics": {
+    "MAD": 0.000002,
+    "MAX_DEV": 0.000029,
+    "dR": 0,
+    "P0_Jaccard": 1,
+    "HALLUC": 0,
+    "HALLUC_detail": [],
+    "spot_check": "10/10 (re-opened verbatim in this session, incl. live re-execution of [E:cmd#9])"
+  },
+  "arithmetic_pass": true,
+  "validator_dimension_scores": {
+    "D1": 30,
+    "D2": 70.8214,
+    "D3": 85.54,
+    "D4": 95.68,
+    "D5": 82,
+    "D6": 94,
+    "D7": 100,
+    "D8": 97.69,
+    "D9": 100,
+    "D10": 94,
+    "D11": 100,
+    "D12": 77.68
+  },
+  "validator_R_point": 77.9168,
+  "validator_SUL": 0.801,
+  "validator_monte_carlo_mean": 77.6181,
+  "honest_limitations": [
+    "No second model was available, so discovery and severity assignment are single-model. Agreement on arithmetic is necessary but NOT sufficient evidence that the finding set is complete.",
+    "Because the validator re-derived scores from the SAME 01_findings.json, MAD/MAX_DEV/ΔR measure implementation agreement only. A missed P0 would not be detected by this procedure.",
+    "The P0_Jaccard comparison is between the assigned severities and an independent re-application of the written severity rules to the same evidence — a consistency check, not an independent audit.",
+    "J1/J2 BROKEN status for F-EXEC-001 rests on Grade C evidence (Google published lifecycle documentation) because outbound TLS to generativelanguage.googleapis.com is blocked in this sandbox."
+  ],
+  "reconciliation": {
+    "iterations_used": 1,
+    "unresolved_divergences": [],
+    "note": "No divergence to reconcile — MAD, MAX_DEV and ΔR are 0 to six decimal places because both implementations encode the same fixed constants over the same findings."
+  }
+}

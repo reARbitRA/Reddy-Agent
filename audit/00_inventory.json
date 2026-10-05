@@ -1,0 +1,233 @@
+{
+  "phase": "PHASE 0/1 — BOOTSTRAP + STRUCTURAL RECONNAISSANCE",
+  "generated_at": "2026-10-05T00:42:00Z",
+  "audit_branch_contract": {
+    "requested_by_spec": "audit/mvp-readiness-b88f913",
+    "actual": "arena/01a1097d-reddy-agent",
+    "reason": "Host platform pins this session to branch arena/01a1097d-reddy-agent; creating/pushing other branches is prohibited by the environment. Per-task fix/* branches are likewise prohibited, so Phase 7 commits directly to the session branch with [T-xxx] trailers.",
+    "evidence": ["[E:cmd#1]"]
+  },
+  "git_state": {
+    "head_sha": "b88f913ff9da55e755560e9cef43d4bb2f1fbc14",
+    "head_short": "b88f913",
+    "head_commit_date": "2026-09-29T02:02:16+03:30",
+    "head_subject": "Merge pull request #1 from reARbitRA/arena/01a0e9fa-reddy-agent",
+    "reachable_commits": 1,
+    "history_objects": 78,
+    "contributors": 1,
+    "working_tree_clean_at_start": true,
+    "default_branch": "main",
+    "evidence": ["[E:cmd#1]", "[E:cmd#16]"]
+  },
+  "repo_physics": {
+    "tracked_files": 62,
+    "total_lines_all_tracked": 16018,
+    "prod_ts_tsx_lines": 5362,
+    "test_lines": 1071,
+    "lines_by_extension": {
+      ".json": { "files": 5, "lines": 6107 },
+      ".tsx": { "files": 15, "lines": 4648 },
+      ".svg": { "files": 15, "lines": 1826 },
+      ".ts": { "files": 18, "lines": 1785 },
+      ".md": { "files": 2, "lines": 1132 },
+      ".mjs": { "files": 2, "lines": 361 },
+      ".css": { "files": 1, "lines": 113 },
+      ".example": { "files": 1, "lines": 24 },
+      ".html": { "files": 1, "lines": 13 },
+      "(none)": { "files": 2, "lines": 9 }
+    },
+    "scale_rule_triggered": false,
+    "scale_rule_note": "62 files / 16,018 lines is far below the 2,000-file / 200k-LOC sampling threshold. FULL-POPULATION AUDIT, sampling ratio 1.00.",
+    "god_files_over_600_loc": [
+      { "path": "src/App.tsx", "lines": 1186 },
+      { "path": "src/components/WorkspaceWidget.tsx", "lines": 845 },
+      { "path": "src/components/AnimatedVectorIcons.tsx", "lines": 602 }
+    ],
+    "evidence": ["[E:cmd#15]", "[E:cmd#17]"]
+  },
+  "manifests_present": ["package.json", "package-lock.json", "tsconfig.json", "vite.config.ts", "vitest.config.ts"],
+  "manifests_absent": [
+    "pnpm-lock.yaml", "bun.lockb", "pyproject.toml", "uv.lock", "requirements.txt", "go.mod",
+    "Cargo.toml", "pom.xml", "build.gradle", "Gemfile", "composer.json", "*.csproj",
+    "Dockerfile", "docker-compose.yml", "*.tf", "k8s/*.yaml", "helm/**",
+    ".github/workflows/*", "mise.toml", ".nvmrc", "LICENSE"
+  ],
+  "resolved_dependency_versions": {
+    "express": "4.22.2",
+    "@google/genai": "2.8.0",
+    "firebase": "12.15.0",
+    "vite": "6.4.3",
+    "vitest": "5.0.2",
+    "esbuild": "0.25.12",
+    "typescript": "~5.8.2 (declared)",
+    "react": "^19.0.1 (declared)",
+    "evidence": ["[E:cmd#18]", "[E:cmd#19]"]
+  },
+  "toolchain_available_in_sandbox": {
+    "node": "v22.22.3",
+    "npm": "10.9.8",
+    "git": "2.39.5",
+    "gh": "2.23.0",
+    "python3": "present",
+    "cloc": "NOT_FOUND",
+    "osv-scanner": "NOT_FOUND",
+    "pip-audit": "NOT_FOUND",
+    "docker": "NOT_FOUND",
+    "outbound_tls_to_generativelanguage.googleapis.com": "BLOCKED (ECONNRESET before TLS handshake)",
+    "evidence": ["[E:cmd#3]", "[E:cmd#2]"]
+  },
+  "mvp_definition": {
+    "scope_inferred": false,
+    "source_of_truth": "README.md (471 lines) + AGENTS.md (661 lines) + observed route surface in server.ts",
+    "product": "REDDY Agent — a browser dashboard over an Express server that runs an iterative Gemini tool-calling agent loop with session memory, a skill/tool registry, a knowledge vault, Google Workspace actions, and a codebase 'purge' utility.",
+    "primary_user_journeys": [
+      {
+        "id": "J1",
+        "actor": "Operator",
+        "action": "Sends a chat message in the cockpit terminal",
+        "expected_observable_outcome": "POST /api/chat returns {response, session_id} produced by the Gemini agent loop; message + latency appear in the telemetry buffer",
+        "source_of_truth": "README.md 'Agent loop' + server.ts:235-276"
+      },
+      {
+        "id": "J2",
+        "actor": "Operator",
+        "action": "Deploys a Gemini API key through the KeyDeck panel",
+        "expected_observable_outcome": "Key validates, is stored in the process, and GET /api/keys/status reports USER_INJECTED",
+        "source_of_truth": "README.md 'API-key management' + src/components/KeyDeck.tsx:25-55"
+      },
+      {
+        "id": "J3",
+        "actor": "Operator",
+        "action": "Creates, lists and deletes Knowledge Vault entries",
+        "expected_observable_outcome": "Entries persist in-process and are injected into the next chat turn as CONTEXT FROM VAULT",
+        "source_of_truth": "README.md 'Knowledge Vault' + server.ts:169-183"
+      },
+      {
+        "id": "J4",
+        "actor": "Operator",
+        "action": "Injects a runtime text skill and lists registered skills",
+        "expected_observable_outcome": "GET /api/skills lists the injected skill; its guidelines join ACTIVE_CAPABILITIES",
+        "source_of_truth": "README.md 'Dynamic skill loading' + server.ts:224-233"
+      },
+      {
+        "id": "J5",
+        "actor": "Operator",
+        "action": "Edits the per-session system protocol",
+        "expected_observable_outcome": "POST /api/settings updates that session only; other sessions keep the AGENTS.md default",
+        "source_of_truth": "README.md 'Session memory' + server.ts:207-222"
+      },
+      {
+        "id": "J6",
+        "actor": "Operator",
+        "action": "Runs the MOCK_PURGE audit and executes confirmed rewrites",
+        "expected_observable_outcome": "GET /api/purge/audit lists TODO/mock findings; POST /api/purge/execute rewrites exactly those lines",
+        "source_of_truth": "README.md 'Purge and reset operations' + server.ts:66-165"
+      },
+      {
+        "id": "J7",
+        "actor": "Operator",
+        "action": "Watches live task telemetry",
+        "expected_observable_outcome": "GET /api/tasks/history returns the rolling 50-record latency/success buffer",
+        "source_of_truth": "README.md 'Task history and telemetry' + server.ts:278-280"
+      },
+      {
+        "id": "J8",
+        "actor": "Signed-in operator",
+        "action": "Performs Google Workspace operations (Sheets/Gmail/Docs) from the browser",
+        "expected_observable_outcome": "Firebase Google sign-in yields an OAuth token; browser calls Google APIs directly with user confirmation for destructive actions",
+        "source_of_truth": "README.md 'Google Workspace operations' + src/lib/firebase.ts:44-61 + src/components/WorkspaceWidget.tsx"
+      },
+      {
+        "id": "J9",
+        "actor": "Deployer",
+        "action": "Builds and serves the production bundle",
+        "expected_observable_outcome": "npm run build emits dist/; NODE_ENV=production npm start serves the SPA at / and the API under /api",
+        "source_of_truth": "README.md 'Deployment' + package.json scripts"
+      }
+    ],
+    "in_scope": [
+      { "item": "Express API surface (14 /api routes)", "source_of_truth": "README.md API console table; server.ts" },
+      { "item": "Agent core: engine / orchestrator / memory / registry", "source_of_truth": "core/*.ts" },
+      { "item": "Built-in System_Info skill", "source_of_truth": "plugins/system.ts" },
+      { "item": "React dashboard (App + 12 widgets)", "source_of_truth": "src/App.tsx, src/components/" },
+      { "item": "Firebase Google OAuth browser flow", "source_of_truth": "src/lib/firebase.ts" },
+      { "item": "vitest suite (7 files)", "source_of_truth": "tests/, vitest.config.ts" },
+      { "item": "SVG + README verification scripts", "source_of_truth": "scripts/verify-svg.mjs, scripts/verify-readme.mjs" }
+    ],
+    "out_of_scope": [
+      { "item": "Multi-user persistence (in-memory by declared design)", "source_of_truth": "README.md 'Operational characteristics'" },
+      { "item": "Suno audio catalog backend (client-side widget only)", "source_of_truth": "src/components/SunoWidget.tsx" },
+      { "item": "Google Cloud project provisioning / OAuth app verification", "source_of_truth": "no IaC manifests present" }
+    ]
+  },
+  "architecture_ascii": "+--------------------------- BROWSER (untrusted zone) ---------------------------+\n  React 19 dashboard  src/App.tsx (1186 LOC)\n    |  ProfileStudio | SunoWidget | WorkspaceWidget | GuestbookWidget | TechStackGrid\n    |  ArcadeCabinetWidget(chat) | SystemStatusMonitor | KeyDeck | TaskTracker | KnowledgeVault\n    |  localStorage: reddy_chat_logs, reddy_system_instruction, guestbook_signatures\n    |\n    |  relative fetch('/api/...')                 | direct fetch() + Bearer <OAuth token>\n    v                                             v\n+---------------------- EXPRESS (trusted zone) ----------------+   +-- Google APIs --+\n  server.ts (310 LOC, 14 routes, NO AUTHN/AUTHZ)                |   | Drive/Sheets    |\n   /api/chat /api/skills{,/inject} /api/settings                |   | Gmail (send)    |\n   /api/knowledge{,/:id} /api/keys{validate,save,status}        |   | Docs            |\n   /api/tasks/history /api/purge/audit /api/purge/execute       |   +-----------------+\n   |                       |                      |             |\n   v                       v                      v             |\n RedAeyeEngine        ToolRegistry           MemoryVault        |\n core/engine.ts       core/registry.ts       core/memory.ts     |\n 5-iteration cap      skills+tools maps      50-msg window      |\n   |                                                              |\n   v                                                              |\n ProviderOrchestrator core/orchestrator.ts ---- HTTPS -----------> Gemini API\n   key: customKey || GEMINI_API_KEY                model pinned: gemini-1.5-flash\n   POST /api/purge/execute --fs.writeFileSync--> filesystem under process.cwd()\n+\n  Firebase Auth (browser only) -- src/lib/firebase.ts, 8 OAuth scopes\n",
+  "surface_inventory": [
+    { "name": "POST /api/chat",              "path_line": "server.ts:235", "auth_enforced": false, "input_validated": "none (message/session_id unvalidated)", "automated_tests": "partial (failure path only)", "journey_link": "J1" },
+    { "name": "GET /api/skills",             "path_line": "server.ts:282", "auth_enforced": false, "input_validated": "n/a", "automated_tests": "yes", "journey_link": "J4" },
+    { "name": "POST /api/skills/inject",     "path_line": "server.ts:224", "auth_enforced": false, "input_validated": "none", "automated_tests": "yes", "journey_link": "J4" },
+    { "name": "GET /api/settings",           "path_line": "server.ts:207", "auth_enforced": false, "input_validated": "none", "automated_tests": "yes", "journey_link": "J5" },
+    { "name": "POST /api/settings",          "path_line": "server.ts:213", "auth_enforced": false, "input_validated": "none", "automated_tests": "yes", "journey_link": "J5" },
+    { "name": "GET /api/knowledge",          "path_line": "server.ts:169", "auth_enforced": false, "input_validated": "n/a", "automated_tests": "yes", "journey_link": "J3" },
+    { "name": "POST /api/knowledge",         "path_line": "server.ts:173", "auth_enforced": false, "input_validated": "none", "automated_tests": "yes", "journey_link": "J3" },
+    { "name": "DELETE /api/knowledge/:id",   "path_line": "server.ts:180", "auth_enforced": false, "input_validated": "none", "automated_tests": "yes", "journey_link": "J3" },
+    { "name": "POST /api/keys/validate",     "path_line": "server.ts:185", "auth_enforced": false, "input_validated": "presence only", "automated_tests": "yes (400 path)", "journey_link": "J2" },
+    { "name": "POST /api/keys/save",         "path_line": "server.ts:192", "auth_enforced": false, "input_validated": "presence only", "automated_tests": "yes (400 path)", "journey_link": "J2" },
+    { "name": "GET /api/keys/status",        "path_line": "server.ts:199", "auth_enforced": false, "input_validated": "n/a", "automated_tests": "yes", "journey_link": "J2" },
+    { "name": "GET /api/tasks/history",      "path_line": "server.ts:278", "auth_enforced": false, "input_validated": "n/a", "automated_tests": "yes", "journey_link": "J7" },
+    { "name": "GET /api/purge/audit",        "path_line": "server.ts:66",  "auth_enforced": false, "input_validated": "n/a", "automated_tests": "yes", "journey_link": "J6" },
+    { "name": "POST /api/purge/execute",     "path_line": "server.ts:115", "auth_enforced": false, "input_validated": "array shape only — NO path containment", "automated_tests": "yes (happy path; traversal NOT covered)", "journey_link": "J6" }
+  ],
+  "data_model": {
+    "persistence": "process memory only: Map<session_id, MemoryVault>, Map<session_id, string> systemProtocols, Map<id, knowledgeEntry>, taskHistory[] (cap 50)",
+    "migrations": "NONE — no database, no ORM, no schema files",
+    "browser_persistence": "localStorage keys: reddy_chat_logs, reddy_system_instruction, guestbook_signatures",
+    "identifier_generation": "Math.random().toString(36).substring(7) at server.ts:169 — non-cryptographic, collision-prone",
+    "evidence": ["[E:server.ts:20-46]", "[E:server.ts:173-178]", "[E:src/App.tsx:132-133]"]
+  },
+  "config_three_way_diff": {
+    "read_in_code": ["GEMINI_API_KEY", "PORT", "NODE_ENV", "DISABLE_HMR"],
+    "documented_in_env_example": ["GEMINI_API_KEY", "PORT", "NODE_ENV", "DISABLE_HMR"],
+    "defined_in_ci_or_deploy": "N/A — no CI workflow and no deploy manifest exists in the repository",
+    "discrepancies": [],
+    "verdict": "CONSISTENT (4/4 env vars code-read are documented; zero undocumented reads)",
+    "evidence": ["[E:.env.example:1-24]", "[E:core/orchestrator.ts:19]", "[E:server.ts:16]", "[E:server.ts:287]", "[E:vite.config.ts:17]"]
+  },
+  "test_topology": {
+    "framework": "vitest 5.0.2",
+    "command": "npm test  (vitest run)",
+    "files": 7,
+    "tests": 57,
+    "expect_calls": 174,
+    "assertion_density_expects_per_test": 3.05,
+    "per_file": {
+      "tests/api.test.ts": { "it": 14, "expect": 55 },
+      "tests/engine.test.ts": { "it": 6, "expect": 22 },
+      "tests/memory.test.ts": { "it": 10, "expect": 30 },
+      "tests/orchestrator.test.ts": { "it": 5, "expect": 5 },
+      "tests/purge.test.ts": { "it": 5, "expect": 17 },
+      "tests/registry.test.ts": { "it": 9, "expect": 15 },
+      "tests/skills.test.ts": { "it": 8, "expect": 30 }
+    },
+    "assertion_quality_assessment": "GENUINE. tests/api.test.ts and tests/purge.test.ts spawn the real server.ts via tsx on a free port and assert HTTP status + body. tests/engine.test.ts uses an explicitly-labelled StubOrchestrator against the real engine/registry/memory. No .skip, no .only, no xfail observed.",
+    "coverage_tool": "NOT CONFIGURED — no coverage script, no v8/istanbul/c8 provider in vitest.config.ts",
+    "evidence": ["[E:cmd#2]", "[E:cmd#14]", "[E:vitest.config.ts:1-16]", "[E:tests/helpers/server.ts:45-113]"]
+  },
+  "prompt_injection_scan": {
+    "signatures_searched": ["ignore previous instructions", "disregard previous", "you are now", "act as admin/root", "override your", "jailbreak", "prompt injection", "do not report", "<system>", "as an AI language model"],
+    "matches_directed_at_an_auditor": 0,
+    "verdict": "No instruction-injection payloads found. All 'system prompt' hits are legitimate technical prose about MemoryVault slot 0.",
+    "evidence": ["[E:cmd#12]"]
+  },
+  "relevant_file_set": [
+    "server.ts", "core/engine.ts", "core/orchestrator.ts", "core/memory.ts", "core/registry.ts",
+    "plugins/system.ts", "src/types.ts", "src/App.tsx", "src/lib/firebase.ts",
+    "src/components/KeyDeck.tsx", "src/components/KnowledgeVault.tsx", "src/components/TaskTracker.tsx",
+    "src/components/WorkspaceWidget.tsx", "src/components/SystemStatusMonitor.tsx",
+    "src/components/GuestbookWidget.tsx", "src/components/SunoWidget.tsx",
+    "package.json", "tsconfig.json", "vite.config.ts", "vitest.config.ts", ".env.example", ".gitignore",
+    "firebase-applet-config.json", "metadata.json", "index.html",
+    "tests/api.test.ts", "tests/engine.test.ts", "tests/memory.test.ts", "tests/orchestrator.test.ts",
+    "tests/purge.test.ts", "tests/registry.test.ts", "tests/skills.test.ts", "tests/helpers/server.ts",
+    "scripts/verify-svg.mjs", "scripts/verify-readme.mjs", "README.md", "AGENTS.md"
+  ]
+}

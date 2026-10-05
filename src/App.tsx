@@ -218,7 +218,9 @@ export default function App() {
       gain.connect(ctx.destination);
       osc.start();
       osc.stop(ctx.currentTime + 0.5);
-    } catch(e) {}
+    } catch (e) {
+      console.warn('[reddy:audio] optional UI sound failed:', e);
+    }
   };
   const handleReaction = (id: string, reaction: 'useful' | 'incorrect') => {
     setLogs(prev => prev.map(log => 
@@ -239,7 +241,9 @@ export default function App() {
       gain.connect(ctx.destination);
       osc.start();
       osc.stop(ctx.currentTime + 0.1);
-    } catch(e) {}
+    } catch (e) {
+      console.warn('[reddy:audio] optional UI sound failed:', e);
+    }
   };
 
   const [isListening, setIsListening] = useState(false);
@@ -271,7 +275,9 @@ export default function App() {
         gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
         osc.connect(gain); gain.connect(ctx.destination);
         osc.start(); osc.stop(ctx.currentTime + 0.1);
-      } catch(e) {}
+      } catch (e) {
+        console.warn('[reddy:audio] optional UI sound failed:', e);
+      }
     };
 
     recognition.onresult = (event: any) => {
@@ -312,7 +318,9 @@ export default function App() {
       gain.connect(ctx.destination);
       osc.start();
       osc.stop(ctx.currentTime + 0.3);
-    } catch(e) {}
+    } catch (e) {
+      console.warn('[reddy:audio] optional UI sound failed:', e);
+    }
 
     try {
       const res = await fetch('/api/purge/audit');
@@ -359,7 +367,9 @@ export default function App() {
       gain.connect(ctx.destination);
       osc.start();
       osc.stop(ctx.currentTime + 0.5);
-    } catch (e) {}
+    } catch (e) {
+      console.warn('[reddy:audio] optional UI sound failed:', e);
+    }
 
     const selectedItems = activeAuditItems.filter(item => selectedAuditIds.includes(item.id));
 
@@ -586,7 +596,9 @@ export default function App() {
                   gain.connect(ctx.destination);
                   osc.start();
                   osc.stop(ctx.currentTime + 0.3);
-                } catch(e){}
+                } catch (e) {
+                  console.warn('[reddy:audio] optional UI sound failed:', e);
+                }
                 addLog("REDDY agent pinged manually.", "warn");
               }}
               className="mb-3 p-3 bg-black border-2 border-zinc-800 hover:border-red-500 relative overflow-hidden transition-all group cursor-pointer flex gap-4 select-none shadow-inner"
@@ -669,7 +681,9 @@ export default function App() {
                                     gain.connect(ctx.destination);
                                     osc.start();
                                     osc.stop(ctx.currentTime + 0.1);
-                                  } catch (e) {}
+                                  } catch (e) {
+                                    console.warn('[reddy:audio] optional UI sound failed:', e);
+                                  }
                                 }}
                                 className="text-[#facc15] hover:underline cursor-pointer flex items-center gap-1 active:scale-95 text-[7px]"
                               >
@@ -777,7 +791,9 @@ export default function App() {
                                     gain.connect(ctx.destination);
                                     osc.start();
                                     osc.stop(ctx.currentTime + 0.1);
-                                  } catch (e) {}
+                                  } catch (e) {
+                                    console.warn('[reddy:audio] optional UI sound failed:', e);
+                                  }
                                 }
                               }}
                               className="text-cyan-400 hover:text-[#facc15] cursor-pointer"
@@ -844,7 +860,9 @@ export default function App() {
                       gain.connect(ctx.destination);
                       osc.start();
                       osc.stop(ctx.currentTime + 0.05);
-                    } catch (e) {}
+                    } catch (e) {
+                      console.warn('[reddy:audio] optional UI sound failed:', e);
+                    }
                     
                     if (q.text === '/reboot') {
                       setLogs([
@@ -898,7 +916,9 @@ export default function App() {
                         gain.connect(ctx.destination);
                         osc.start();
                         osc.stop(ctx.currentTime + 0.06);
-                      } catch (e) {}
+                      } catch (e) {
+                        console.warn('[reddy:audio] optional UI sound failed:', e);
+                      }
                       handleSend();
                     }
                   }}
@@ -931,7 +951,9 @@ export default function App() {
                     gain.connect(ctx.destination);
                     osc.start();
                     osc.stop(ctx.currentTime + 0.08);
-                  } catch (e) {}
+                  } catch (e) {
+                    console.warn('[reddy:audio] optional UI sound failed:', e);
+                  }
                   handleSend();
                 }}
                 disabled={isProcessing}
@@ -1087,7 +1109,9 @@ export default function App() {
                                     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
                                     osc.connect(gain); gain.connect(ctx.destination);
                                     osc.start(); osc.stop(ctx.currentTime + 0.05);
-                                  } catch(e){}
+                                  } catch (e) {
+                                    console.warn('[reddy:audio] optional UI sound failed:', e);
+                                  }
 
                                   setSelectedAuditIds(prev => 
                                     prev.includes(item.id) 

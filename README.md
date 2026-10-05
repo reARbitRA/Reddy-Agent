@@ -11,7 +11,7 @@ REDDY is not a chat wrapper with extra chrome. Every panel on the screen maps to
 | Runtime | Node.js + Express 4 (`server.ts`), port 3000 by default (`PORT` overrides) |
 | Frontend | React 19 + Vite 6 + Tailwind CSS 4, `motion`, `recharts`, `lucide-react` |
 | Agent core | `RedAeyeEngine` — iterative tool-calling loop, 5-iteration safety cap |
-| Provider | Google Gemini `gemini-1.5-flash` via `@google/genai` |
+| Provider | Google Gemini via `@google/genai` — `gemini-3.8-flash` by default, `GEMINI_MODEL` overrides |
 | Skills | 1 built-in (`System_Info`) + runtime text-skill injection |
 | Memory | Per-session `MemoryVault`, 50-message window, episodic summary |
 | API surface | 14 JSON routes under `/api` |
@@ -119,7 +119,7 @@ The iteration cap is a hard bound, not a marketing number — it is the `maxIter
 
 - **Key resolution** — an in-process custom key (deployed from KeyDeck via `POST /api/keys/save`, which calls `setKey()` and resets the client) takes precedence over `GEMINI_API_KEY` from the environment. With neither, `init()` throws the normalized `SECURE_GATEWAY_FAILURE: NO_KEY_DETECTED` error rather than crashing the request path.
 - **Message translation** — an explicit, flat mapping from `AgentMessage[]` to Gemini `contents`: `system` becomes a user turn prefixed `SYSTEM_INSTRUCTION:`, `tool` becomes a user turn prefixed `TOOL_RESULT [name]:`, `assistant` maps to the `model` role. No hidden rewrites.
-- **Request** — one call surface, `models.generateContent({ model: "gemini-1.5-flash", contents, config: { tools } })`, with registry schemas passed as `functionDeclarations`.
+- **Request** — one call surface, `models.generateContent({ model: resolveModel(), contents, config: { tools } })`, with registry schemas passed as `functionDeclarations`. `resolveModel()` defaults to `gemini-3.8-flash`, honours `GEMINI_MODEL`, and throws `MODEL_RETIRED` for models Google has shut down.
 - **Response** — `response.text` becomes the final content; `parts[].functionCall` entries become `tool_calls[]` for the registry.
 - **Validation** — `validateKey()` verifies a candidate key with a live `"ping"` generation and normalizes every failure to `false`, never a throw.
 
@@ -270,6 +270,9 @@ Copy `.env.example` to `.env` and fill it in. Every variable in the template is 
 | Variable | Required | Read by | Default |
 |---|---|---|---|
 | `GEMINI_API_KEY` | For AI features | `core/orchestrator.ts`, `server.ts` | — |
+| `GEMINI_MODEL` | No | `core/orchestrator.ts` (`resolveModel`) | `gemini-3.8-flash` |
+| `REDDY_API_TOKEN` | **Yes for any non-localhost deployment** | `server.ts` (`requireApiAuth`) | unset → `INSECURE_ANONYMOUS_MODE` |
+| `ALLOWED_DEV_HOSTS` | No | `vite.config.ts` | `localhost,127.0.0.1` |
 | `PORT` | No | `server.ts` | `3000` |
 | `NODE_ENV` | No | `server.ts` (`production` serves `dist/` statically) | development mode |
 | `DISABLE_HMR` | No | `vite.config.ts` (`true` disables HMR + file watching) | HMR on |
@@ -389,8 +392,10 @@ Stated plainly, because a cockpit you can't trust is a toy:
 - Task history boots with **15 seeded entries** (labeled `Task Execution #N`) so the telemetry panel is populated before real executions arrive.
 - The `SystemStatusMonitor` gauges are **simulated UI state**, not host telemetry; real host metrics come from the `get_system_metrics` tool.
 - The Suno widget's preset tracks and the guestbook's default entries are local seed data.
-- The Gemini model is pinned to `gemini-1.5-flash` in `core/orchestrator.ts`.
+- The Gemini model defaults to `gemini-3.8-flash` and is resolved in one place (`resolveModel()` in `core/orchestrator.ts`). Models Google has shut down — `gemini-1.0-*`, `gemini-1.5-*`, `gemini-2.0-flash` — are rejected at resolution time with `MODEL_RETIRED` instead of 404ing at request time. Override with `GEMINI_MODEL`.
+- `firebase-applet-config.json` is public-by-design Firebase **web client** configuration, not a secret. Restrict that web API key by HTTP referrer in the Firebase console and enable App Check for Authentication; the repository cannot enforce either.
 - There is **no license file** in this repository — resolve licensing before redistributing.
+- **Dependency advisories.** `npm audit` reports four high advisories, all descending from `firebase` → `@firebase/firestore` → `@grpc/grpc-js@1.9.x`. They are **not reachable** in this application: the only Firebase imports are `firebase/app` and `firebase/auth` (`src/lib/firebase.ts`) and the repository contains zero `firestore` references. Upstream `firebase@12.19.0` still pins `@grpc/grpc-js ~1.9.0`, so no patched release exists; CI therefore treats *critical* advisories as a hard failure and *high* advisories as a warning with this note attached.
 - For a persistent multi-user deployment, replace the in-memory maps with a database and add authentication around the stateful routes; `MemoryVault` and `ToolRegistry` are dependency-light on purpose to make that swap straightforward.
 
 ### Troubleshooting
@@ -464,7 +469,7 @@ The honest backlog, in rough priority order:
 2. **Persistence** — sessions, knowledge, telemetry and injected skills live in process memory. Which store first: knowledge (small, valuable) or sessions (large, ephemeral)?
 3. **Google API key handling in the browser** — the OAuth flow is correct, but the widget stores the access token in a module-level cache; is a session-scoped store worth the added complexity?
 4. **Telemetry seeding** — should the boot-time seeded task entries be visually distinguished from real records in the chart?
-5. **Provider surface** — `gemini-1.5-flash` is pinned in code; should the model be configurable via settings without exposing model choice to the chat panel?
+5. **Provider surface** — the model is resolved in one place and configurable through `GEMINI_MODEL`; should model choice also be exposed in the settings panel?
 
 ---
 

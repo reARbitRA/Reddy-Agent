@@ -57,7 +57,17 @@ export class MemoryVault {
       const removed = this.workingMemory.splice(1, 1)[0];
       if (removed.content) {
         this.episodicSummary += " " + removed.content;
+        // The summary is re-sent on every request, so it must not grow without
+        // bound. Keep the most recent `limit` characters and drop the oldest.
+        if (this.episodicSummary.length > this.limit) {
+          this.episodicSummary = this.episodicSummary.slice(-this.limit);
+        }
       }
     }
+  }
+
+  /** Length of the rolling episodic summary, exposed for bounds testing. */
+  summaryLength(): number {
+    return this.episodicSummary.length;
   }
 }

@@ -1,0 +1,11 @@
+{
+  "cov_ratio": 0.8649,
+  "opened": 32,
+  "total": 37,
+  "grade_ab_share": 0.9655,
+  "spot_pass_rate": 1.0,
+  "audit_confidence": 92.21,
+  "blocking_effort_hours": 11.25,
+  "autonomous_blocking_effort_hours": 9.25,
+  "distance_to_go_points": 14.7084
+}

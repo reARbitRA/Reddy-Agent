@@ -39,6 +39,13 @@ export class RedAeyeEngine {
         return content;
       }
 
+      // Record the assistant turn that requested the tools BEFORE the results.
+      // Gemini's function-calling contract requires the model turn carrying the
+      // functionCall parts to precede the function responses; without this the
+      // loop degrades to unstructured text and tool results cannot be matched
+      // to the call that produced them.
+      this.memory.add("assistant", response.content ?? null, { tool_calls: response.tool_calls });
+
       // Execute tools
       const toolResults = await Promise.all(response.tool_calls.map(async (call: any) => {
         const result = await this.registry.executeTool(call.name, call.args);

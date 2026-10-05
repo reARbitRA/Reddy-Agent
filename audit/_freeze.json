@@ -1,0 +1,8 @@
+{
+  "sha256_mvp_definition": "13e423b848c53709681816bdef33e0402faae3a9d76f24c5b1ed1fbd14ecc515",
+  "sha256_01_findings_json": "777bcdbf6676815eced0e937c78b15f9ded6b0e48282db6674e21f0993d0eded",
+  "sha256_relevant_file_set": "efeb86863a3d35b5fdc96ae847374236856b47838d42670c2d06e7ed9301e34e",
+  "mvp_definition_canonical_bytes": 4147,
+  "findings_bytes": 43975,
+  "relevant_file_set_bytes": 827
+}

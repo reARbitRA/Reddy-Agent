@@ -1,0 +1,75 @@
+{
+  "validator_model": "NONE_AVAILABLE",
+  "validation_stamp": "VALIDATION: DEGRADED \u2014 SINGLE-MODEL",
+  "method": "cross-implementation arithmetic re-derivation (Node/JS) against the Python engine; NOT independent discovery",
+  "arithmetic_pass_criteria": {
+    "MAD_LE": 7,
+    "MAX_DEV_LE": 15,
+    "dR_LE": 5,
+    "P0_Jaccard_GE": 0.8,
+    "HALLUC_EQ": 0
+  },
+  "metrics": {
+    "MAD": 0,
+    "MAX_DEV": 0,
+    "dR": 0,
+    "P0_Jaccard": 1,
+    "HALLUC": 0,
+    "HALLUC_detail": [],
+    "spot_check": "10/10 (re-opened verbatim in this session, incl. live re-execution of [E:cmd#9])"
+  },
+  "arithmetic_pass": true,
+  "validator_dimension_scores": {
+    "D1": 30,
+    "D2": 50,
+    "D3": 3.28,
+    "D4": 90.01,
+    "D5": 82,
+    "D6": 88,
+    "D7": 88,
+    "D8": 93.1,
+    "D9": 82.72,
+    "D10": 92.65,
+    "D11": 98.65,
+    "D12": 77.68
+  },
+  "validator_R_point": 60.2916,
+  "validator_SUL": 0,
+  "validator_monte_carlo_mean": 60.1833,
+  "honest_limitations": [
+    "No second model was available, so discovery and severity assignment are single-model. Agreement on arithmetic is necessary but NOT sufficient evidence that the finding set is complete.",
+    "Because the validator re-derived scores from the SAME 01_findings.json, MAD/MAX_DEV/\u0394R measure implementation agreement only. A missed P0 would not be detected by this procedure.",
+    "The P0_Jaccard comparison is between the assigned severities and an independent re-application of the written severity rules to the same evidence \u2014 a consistency check, not an independent audit.",
+    "J1/J2 BROKEN status for F-EXEC-001 rests on Grade C evidence (Google published lifecycle documentation) because outbound TLS to generativelanguage.googleapis.com is blocked in this sandbox."
+  ],
+  "reconciliation": {
+    "iterations_used": 1,
+    "max_iterations": 3,
+    "divergences_found": [
+      {
+        "metric": "P0_Jaccard",
+        "pre_reconciliation_value": 0.6667,
+        "cause": "An independent re-application of the written severity rules to the same evidence returned {F-SEC-001, F-EXEC-001, F-SEC-003} while the assigned P0 set was {F-SEC-001, F-EXEC-001}. F-SEC-003 carried blocks_journey=['J8'] and mvp_blocking=true, which the rule reads as launch-blocking.",
+        "resolution": "Resolved on the merits, not by tuning the check. J8 is classified UNTESTABLE, not BROKEN: the excessive Google OAuth scopes do not break the Workspace code path, they impose a Google-side OAuth verification gate on distribution. blocks_journey was set to [] and the launch gate is now carried by mvp_blocking + requires_human, with the reasoning recorded in the finding's journey_note.",
+        "score_impact": "NONE. severity, confidence and evidence_grade were unchanged, so no penalty term moved and R_point remains 60.2916.",
+        "post_reconciliation_value": 1.0
+      }
+    ],
+    "unresolved_divergences": [],
+    "evidence": "[E:cmd#24] node re-application of the P0 rule with blocks_journey restored -> Jaccard 0.6667; with the corrected value -> 1.0000"
+  },
+  "cryptographic_freeze": {
+    "frozen_at": "2026-10-05T00:55:00Z",
+    "head_sha": "b88f913ff9da55e755560e9cef43d4bb2f1fbc14",
+    "hashes": {
+      "sha256_mvp_definition": "13e423b848c53709681816bdef33e0402faae3a9d76f24c5b1ed1fbd14ecc515",
+      "sha256_01_findings_json": "777bcdbf6676815eced0e937c78b15f9ded6b0e48282db6674e21f0993d0eded",
+      "sha256_relevant_file_set": "efeb86863a3d35b5fdc96ae847374236856b47838d42670c2d06e7ed9301e34e",
+      "mvp_definition_canonical_bytes": 4147,
+      "findings_bytes": 43975,
+      "relevant_file_set_bytes": 827
+    },
+    "note": "mvp_definition, relevant_file_set and 01_findings.json are frozen at these hashes. Any later finding or scope change requires an explicit FREEZE_EXCEPTION entry appended here. Phase 7 remediation changes CODE, not these artifacts; the frozen findings are the source of the blueprint."
+  },
+  "phase5_conclusion": "PASS on arithmetic (MAD 0.000000, MAX_DEV 0.000000, dR 0.000000, P0_Jaccard 1.0000, HALLUC 0, spot-check 10/10). STAMPED DEGRADED \u2014 SINGLE-MODEL because no independent model exists in this environment. The audit may proceed to Phase 6, but every downstream verdict inherits the single-model discovery risk."
+}

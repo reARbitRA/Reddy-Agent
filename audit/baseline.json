@@ -1,0 +1,174 @@
+{
+  "captured_at": "2026-10-05T00:42:00Z",
+  "head_sha": "b88f913ff9da55e755560e9cef43d4bb2f1fbc14",
+  "purpose": "Defines 'green' for Phase 7 regression guarding. Any check listed GREEN here must remain GREEN after every remediation task.",
+  "commands": [
+    {
+      "id": "cmd#1",
+      "command": "npm ci --ignore-scripts --no-audit --no-fund",
+      "exit_code": 0,
+      "status": "GREEN",
+      "observed": "added 355 packages in 11s; 1 deprecation warning (node-domexception@1.0.0)",
+      "grade": "A"
+    },
+    {
+      "id": "cmd#2",
+      "command": "npm run lint   (tsc --noEmit)",
+      "exit_code": 0,
+      "status": "GREEN",
+      "observed": "no diagnostics emitted",
+      "grade": "A"
+    },
+    {
+      "id": "cmd#3",
+      "command": "npm test   (vitest run)",
+      "exit_code": 0,
+      "status": "GREEN",
+      "observed": "Test Files 7 passed (7); Tests 57 passed (57); Duration 6.89s. One non-fatal stderr trace: tests/orchestrator.test.ts performs a LIVE outbound call to generativelanguage.googleapis.com which fails with ECONNRESET in this sandbox; the assertion (validateKey -> false) still passes.",
+      "grade": "A"
+    },
+    {
+      "id": "cmd#4",
+      "command": "npm run build   (vite build && esbuild server.ts ...)",
+      "exit_code": 0,
+      "status": "GREEN",
+      "observed": "dist/index.html 0.41 kB; dist/assets/index-DfbhtaQM.css 44.78 kB; dist/assets/index-BkWU8Cg-.js 943.84 kB (gzip 268.67 kB); dist/server.cjs 17.8kb. Vite emits the >500 kB chunk-size warning.",
+      "grade": "A"
+    },
+    {
+      "id": "cmd#5",
+      "command": "npm run verify:assets",
+      "exit_code": 0,
+      "status": "GREEN",
+      "observed": "RESULT: 15/15 SVG assets valid and Camo-safe",
+      "grade": "A"
+    },
+    {
+      "id": "cmd#6",
+      "command": "npm run verify:readme",
+      "exit_code": 0,
+      "status": "GREEN",
+      "observed": "RESULT: README paths and anchors verified (33 headings, 15 image refs, 37 anchors, 2 file links)",
+      "grade": "A"
+    },
+    {
+      "id": "cmd#7",
+      "command": "npm audit --json",
+      "exit_code": 1,
+      "status": "RED",
+      "observed": "metadata.vulnerabilities = {info:0, low:0, moderate:5, high:7, critical:0, total:12}. Direct: firebase@12.15.0 (high, via @firebase/firestore -> @grpc/grpc-js@1.9.16), express@4.22.2 (moderate, via qs). Fixable in place: browserslist, nanoid, postcss, body-parser, express, qs, protobufjs, baseline-browser-mapping.",
+      "grade": "A"
+    },
+    {
+      "id": "cmd#8",
+      "command": "PORT=3131 NODE_ENV=production node dist/server.cjs  + curl smoke",
+      "exit_code": 0,
+      "status": "GREEN (boot) / RED (contract)",
+      "observed": "GET / -> 200 text/html. GET /api/skills -> {\"skills\":[\"System_Info\"]}. GET /api/keys/status -> {\"active\":true,\"source\":\"USER_INJECTED\"}. POST /api/chat (no key) -> 500 SECURE_GATEWAY_FAILURE: NO_KEY_DETECTED. GET /api/health -> 200 (SPA catch-all swallows unknown /api paths instead of 404). Response header X-Powered-By: Express present; no other security headers.",
+      "grade": "A"
+    },
+    {
+      "id": "cmd#9",
+      "command": "Path-traversal PoC against POST /api/purge/execute",
+      "exit_code": 0,
+      "status": "RED (vulnerability CONFIRMED)",
+      "observed": "Server booted with cwd=/home/user/Reddy-Agent. POST body {items:[{file:'../../../tmp/reddy-poc-XXXX/outside/victim.txt', line:2, text:'const DEFAULT_ENTRIES = [1,2,3];', category:'MOCK_STATIC_DATA'}]} returned 200 {\"status\":\"success\",\"purgedDetails\":[\"Purged offline mockup flag in ../../../tmp/reddy-poc-XXXX/outside/victim.txt at line 2\"]}. The file OUTSIDE the project root was rewritten: line 2 became '// DEPLOYED PROSTHETIC CHIP // const DEFAULT_ENTRIES = [1,2,3];'.",
+      "grade": "A"
+    },
+    {
+      "id": "cmd#10",
+      "command": "git ls-files | grep -iE 'licen[cs]e|copying|notice'",
+      "exit_code": 1,
+      "status": "RED",
+      "observed": "NO_LICENSE_FILE_TRACKED",
+      "grade": "A"
+    }
+  ],
+  "green_definition_for_phase_7": [
+    "npm run lint exits 0",
+    "npm test exits 0 with >= 57 passing tests and 0 failures",
+    "npm run build exits 0",
+    "npm run verify:assets exits 0",
+    "npm run verify:readme exits 0"
+  ],
+  "baseline_notes": [
+    "Outbound TLS to generativelanguage.googleapis.com is BLOCKED in this sandbox (ECONNRESET before handshake). J1/J2 success paths therefore cannot be execute-verified here.",
+    "No browser is available in this sandbox, so J8 (Google Workspace) is UNTESTABLE by execution."
+  ],
+  "phase7_rebaseline": {
+    "captured_at": "2026-10-05T01:18:00Z",
+    "head": "8 commits ahead of b88f913 on arena/01a1097d-reddy-agent (tip e2b9745)",
+    "commands": [
+      {
+        "command": "npm run lint",
+        "exit_code": 0,
+        "status": "GREEN",
+        "grade": "A"
+      },
+      {
+        "command": "npm run test:coverage",
+        "exit_code": 0,
+        "status": "GREEN",
+        "observed": "Test Files 8 passed (8); Tests 105 passed (105); coverage statements 29.15%, branches 30.41%, functions 40.84%, lines 29.19%; zero 'fetch failed' traces",
+        "grade": "A"
+      },
+      {
+        "command": "npm run build",
+        "exit_code": 0,
+        "status": "GREEN",
+        "observed": "dist/server.cjs 26.1kb; frontend chunk still >500 kB (F-RELY-004 open)",
+        "grade": "A"
+      },
+      {
+        "command": "npm run verify:assets",
+        "exit_code": 0,
+        "status": "GREEN",
+        "observed": "15/15 SVG valid and Camo-safe",
+        "grade": "A"
+      },
+      {
+        "command": "npm run verify:readme",
+        "exit_code": 0,
+        "status": "GREEN",
+        "grade": "A"
+      },
+      {
+        "command": "npm audit --json",
+        "exit_code": 1,
+        "status": "IMPROVED",
+        "observed": "{info:0,low:0,moderate:0,high:4,critical:0,total:4} \u2014 was {high:7,moderate:5,total:12}; all 4 remaining are unreachable firebase/firestore/grpc-js",
+        "grade": "A"
+      },
+      {
+        "command": "production smoke (port 3132, REDDY_API_TOKEN set)",
+        "exit_code": 0,
+        "status": "GREEN",
+        "observed": "401 without token; 200 {status:ok,auth_mode:token} with token; JSON 404 on unknown /api; GET / 200 text/html; no X-Powered-By; nosniff + CSP + x-request-id present",
+        "grade": "A"
+      },
+      {
+        "command": "path-traversal PoC on /api/purge/execute",
+        "exit_code": 0,
+        "status": "CLOSED",
+        "observed": "400 {error:PURGE_PATH_REJECTED, reason:'target resolves outside <cwd>/src'}; target file byte-identical",
+        "grade": "A"
+      },
+      {
+        "command": "grep -rnE 'catch\\s*(\\([^)]*\\))?\\s*\\{\\s*\\}' src/ core/ server.ts",
+        "exit_code": 0,
+        "status": "GREEN",
+        "observed": "0 matches (was 14)",
+        "grade": "A"
+      }
+    ],
+    "green_definition_now": [
+      "npm run lint exits 0",
+      "npm run test:coverage exits 0 with >= 105 passing tests and 0 failures",
+      "npm run build exits 0",
+      "npm run verify:assets exits 0",
+      "npm run verify:readme exits 0",
+      "npm audit --audit-level=critical --omit=dev exits 0",
+      "the corrected empty-catch grep returns 0 matches"
+    ]
+  }
+}

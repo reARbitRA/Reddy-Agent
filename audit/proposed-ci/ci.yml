@@ -1,0 +1,75 @@
+name: ci
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: lint · test · build · verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run lint
+
+      - name: Test (with coverage)
+        run: npm run test:coverage
+
+      - name: Build
+        run: npm run build
+
+      - name: Verify SVG assets
+        run: npm run verify:assets
+
+      - name: Verify README links
+        run: npm run verify:readme
+
+      # Blocking bar: no critical advisories in the runtime dependency set.
+      - name: Dependency audit — critical is a hard failure
+        run: npm audit --audit-level=critical --omit=dev
+
+      # Advisory bar: high advisories are surfaced but do not fail the build.
+      # Rationale recorded in README "Operational characteristics": the four
+      # remaining highs (firebase -> @firebase/firestore -> @grpc/grpc-js@1.9.x)
+      # are unreachable — this app imports only firebase/app and firebase/auth
+      # and contains zero firestore references — and upstream firebase 12.19.0
+      # still pins @grpc/grpc-js ~1.9.0 with no patched release available.
+      - name: Dependency audit — high advisories reported
+        run: npm audit --audit-level=high --omit=dev || echo "::warning::high advisories present (see reachability note in README)"
+
+      - name: Boot smoke — production bundle answers /api/health
+        env:
+          PORT: "3131"
+          NODE_ENV: production
+          REDDY_API_TOKEN: ci-smoke-token
+        run: |
+          node dist/server.cjs &
+          SERVER_PID=$!
+          for i in $(seq 1 60); do
+            if curl -sf -H "authorization: Bearer ci-smoke-token" http://127.0.0.1:3131/api/health >/dev/null; then break; fi
+            sleep 0.5
+          done
+          echo "--- unauthenticated /api/health must be 401 ---"
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3131/api/health)" = "401"
+          echo "--- authenticated /api/health must be 200 ---"
+          test "$(curl -s -o /dev/null -w '%{http_code}' -H 'authorization: Bearer ci-smoke-token' http://127.0.0.1:3131/api/health)" = "200"
+          echo "--- unknown /api route must be JSON 404 ---"
+          test "$(curl -s -o /dev/null -w '%{http_code}' -H 'authorization: Bearer ci-smoke-token' http://127.0.0.1:3131/api/nope)" = "404"
+          echo "--- dashboard shell must be 200 text/html ---"
+          curl -s -o /dev/null -w '%{content_type}\n' http://127.0.0.1:3131/ | grep -q 'text/html'
+          kill $SERVER_PID

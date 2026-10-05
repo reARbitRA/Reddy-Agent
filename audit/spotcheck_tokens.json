@@ -1,0 +1,124 @@
+{
+  "head": "b88f913ff9da55e755560e9cef43d4bb2f1fbc14",
+  "total_tokens": 66,
+  "tokens": [
+    "[E:README.md 'Firebase authentication and the security boundary']",
+    "[E:README.md 'Operational characteristics']",
+    "[E:README.md 'Task history and telemetry']",
+    "[E:cmd#10]",
+    "[E:cmd#11]",
+    "[E:cmd#13]",
+    "[E:cmd#17]",
+    "[E:cmd#2]",
+    "[E:cmd#3]",
+    "[E:cmd#4]",
+    "[E:cmd#6]",
+    "[E:cmd#8]",
+    "[E:cmd#9]",
+    "[E:core/engine.ts:34-50]",
+    "[E:core/engine.ts:49]",
+    "[E:core/memory.ts:43-45]",
+    "[E:core/memory.ts:5-9]",
+    "[E:core/memory.ts:54-62]",
+    "[E:core/orchestrator.ts:28-37]",
+    "[E:core/orchestrator.ts:31]",
+    "[E:core/orchestrator.ts:34]",
+    "[E:core/orchestrator.ts:42-49]",
+    "[E:core/orchestrator.ts:51-55]",
+    "[E:core/orchestrator.ts:52]",
+    "[E:firebase-applet-config.json:4]",
+    "[E:index.html:6]",
+    "[E:package.json scripts]",
+    "[E:package.json:2-4]",
+    "[E:server.ts:115-165]",
+    "[E:server.ts:134-160]",
+    "[E:server.ts:134]",
+    "[E:server.ts:160]",
+    "[E:server.ts:173-178]",
+    "[E:server.ts:180-183]",
+    "[E:server.ts:185-190]",
+    "[E:server.ts:18]",
+    "[E:server.ts:20-46]",
+    "[E:server.ts:243-250]",
+    "[E:server.ts:273]",
+    "[E:server.ts:288]",
+    "[E:server.ts:296-301]",
+    "[E:server.ts:303]",
+    "[E:server.ts:304]",
+    "[E:server.ts:309]",
+    "[E:server.ts:35]",
+    "[E:server.ts:39-46]",
+    "[E:server.ts:47-63]",
+    "[E:server.ts:66-282]",
+    "[E:server.ts:70-100]",
+    "[E:src/App.tsx:132-133]",
+    "[E:src/App.tsx:362]",
+    "[E:src/App.tsx:672]",
+    "[E:src/App.tsx:780]",
+    "[E:src/App.tsx:847]",
+    "[E:src/App.tsx:901]",
+    "[E:src/App.tsx:934]",
+    "[E:src/components/KeyDeck.tsx:37-51]",
+    "[E:src/components/SunoWidget.tsx:114]",
+    "[E:src/components/WorkspaceWidget.tsx:262-330]",
+    "[E:src/lib/firebase.ts:1-2]",
+    "[E:src/lib/firebase.ts:11-18]",
+    "[E:tests/orchestrator.test.ts:33-38]",
+    "[E:url:https://ai.google.dev/gemini-api/docs/changelog]",
+    "[E:url:https://firebase.google.com/docs/ai-logic/models]",
+    "[E:vite.config.ts:19-22]",
+    "[E:vitest.config.ts:1-16]"
+  ],
+  "selected": [
+    {
+      "i": 0,
+      "idx": 39,
+      "token": "[E:server.ts:288]"
+    },
+    {
+      "i": 1,
+      "idx": 28,
+      "token": "[E:server.ts:115-165]"
+    },
+    {
+      "i": 2,
+      "idx": 16,
+      "token": "[E:core/memory.ts:5-9]"
+    },
+    {
+      "i": 3,
+      "idx": 32,
+      "token": "[E:server.ts:173-178]"
+    },
+    {
+      "i": 4,
+      "idx": 61,
+      "token": "[E:tests/orchestrator.test.ts:33-38]"
+    },
+    {
+      "i": 5,
+      "idx": 35,
+      "token": "[E:server.ts:18]"
+    },
+    {
+      "i": 6,
+      "idx": 12,
+      "token": "[E:cmd#9]"
+    },
+    {
+      "i": 7,
+      "idx": 65,
+      "token": "[E:vitest.config.ts:1-16]"
+    },
+    {
+      "i": 8,
+      "idx": 29,
+      "token": "[E:server.ts:134-160]"
+    },
+    {
+      "i": 9,
+      "idx": 38,
+      "token": "[E:server.ts:273]"
+    }
+  ]
+}

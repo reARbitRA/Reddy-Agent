@@ -138,3 +138,40 @@ describe("MemoryVault — context pruning", () => {
     expect(ctx[1].content).toBe("first-ever");
   });
 });
+
+describe("MemoryVault — episodic summary is bounded (T-014)", () => {
+  it("never exceeds the configured limit even after hundreds of prunes", () => {
+    const LIMIT = 200;
+    const vault = new MemoryVault(LIMIT);
+    vault.add("system", "pinned");
+    for (let i = 0; i < 500; i++) {
+      vault.add("user", `message-number-${i}-`.repeat(6));
+    }
+    expect(vault.summaryLength()).toBeLessThanOrEqual(LIMIT);
+
+    const summary = vault
+      .getContext()
+      .find((m) => typeof m.content === "string" && m.content.startsWith("EPISODIC_SUMMARY:"));
+    expect(summary).toBeDefined();
+    expect((summary!.content as string).length).toBeLessThanOrEqual(
+      LIMIT + "EPISODIC_SUMMARY: ".length
+    );
+  });
+
+  it("keeps the most recent evicted content, not the oldest", () => {
+    const vault = new MemoryVault(120);
+    vault.add("system", "pinned");
+    for (let i = 0; i < 200; i++) {
+      vault.add("user", `M${i}`.padEnd(40, "."));
+    }
+    const ctx = vault.getContext();
+    const summary = ctx.find((m) =>
+      typeof m.content === "string" && m.content.startsWith("EPISODIC_SUMMARY:")
+    )!.content as string;
+    // 200 user messages + 1 pinned system message, window 50 => M0..M150 were
+    // evicted. The bounded tail must hold the newest evictions, not the oldest.
+    expect(summary).toContain("M150");
+    expect(summary).not.toContain("M0.");
+    expect(summary).not.toContain("M100.");
+  });
+});
