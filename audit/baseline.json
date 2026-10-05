@@ -94,5 +94,81 @@
   "baseline_notes": [
     "Outbound TLS to generativelanguage.googleapis.com is BLOCKED in this sandbox (ECONNRESET before handshake). J1/J2 success paths therefore cannot be execute-verified here.",
     "No browser is available in this sandbox, so J8 (Google Workspace) is UNTESTABLE by execution."
-  ]
+  ],
+  "phase7_rebaseline": {
+    "captured_at": "2026-10-05T01:18:00Z",
+    "head": "8 commits ahead of b88f913 on arena/01a1097d-reddy-agent (tip e2b9745)",
+    "commands": [
+      {
+        "command": "npm run lint",
+        "exit_code": 0,
+        "status": "GREEN",
+        "grade": "A"
+      },
+      {
+        "command": "npm run test:coverage",
+        "exit_code": 0,
+        "status": "GREEN",
+        "observed": "Test Files 8 passed (8); Tests 105 passed (105); coverage statements 29.15%, branches 30.41%, functions 40.84%, lines 29.19%; zero 'fetch failed' traces",
+        "grade": "A"
+      },
+      {
+        "command": "npm run build",
+        "exit_code": 0,
+        "status": "GREEN",
+        "observed": "dist/server.cjs 26.1kb; frontend chunk still >500 kB (F-RELY-004 open)",
+        "grade": "A"
+      },
+      {
+        "command": "npm run verify:assets",
+        "exit_code": 0,
+        "status": "GREEN",
+        "observed": "15/15 SVG valid and Camo-safe",
+        "grade": "A"
+      },
+      {
+        "command": "npm run verify:readme",
+        "exit_code": 0,
+        "status": "GREEN",
+        "grade": "A"
+      },
+      {
+        "command": "npm audit --json",
+        "exit_code": 1,
+        "status": "IMPROVED",
+        "observed": "{info:0,low:0,moderate:0,high:4,critical:0,total:4} \u2014 was {high:7,moderate:5,total:12}; all 4 remaining are unreachable firebase/firestore/grpc-js",
+        "grade": "A"
+      },
+      {
+        "command": "production smoke (port 3132, REDDY_API_TOKEN set)",
+        "exit_code": 0,
+        "status": "GREEN",
+        "observed": "401 without token; 200 {status:ok,auth_mode:token} with token; JSON 404 on unknown /api; GET / 200 text/html; no X-Powered-By; nosniff + CSP + x-request-id present",
+        "grade": "A"
+      },
+      {
+        "command": "path-traversal PoC on /api/purge/execute",
+        "exit_code": 0,
+        "status": "CLOSED",
+        "observed": "400 {error:PURGE_PATH_REJECTED, reason:'target resolves outside <cwd>/src'}; target file byte-identical",
+        "grade": "A"
+      },
+      {
+        "command": "grep -rnE 'catch\\s*(\\([^)]*\\))?\\s*\\{\\s*\\}' src/ core/ server.ts",
+        "exit_code": 0,
+        "status": "GREEN",
+        "observed": "0 matches (was 14)",
+        "grade": "A"
+      }
+    ],
+    "green_definition_now": [
+      "npm run lint exits 0",
+      "npm run test:coverage exits 0 with >= 105 passing tests and 0 failures",
+      "npm run build exits 0",
+      "npm run verify:assets exits 0",
+      "npm run verify:readme exits 0",
+      "npm audit --audit-level=critical --omit=dev exits 0",
+      "the corrected empty-catch grep returns 0 matches"
+    ]
+  }
 }
