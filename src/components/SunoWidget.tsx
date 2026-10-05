@@ -111,7 +111,9 @@ export const SunoWidget = () => {
       
       osc.start();
       osc.stop(ctx.currentTime + duration);
-    } catch (e) {}
+    } catch (e) {
+      console.warn('[reddy:audio] optional UI sound failed:', e);
+    }
   };
 
   // Embed Player URL format

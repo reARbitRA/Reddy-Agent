@@ -359,7 +359,9 @@ export default function App() {
       gain.connect(ctx.destination);
       osc.start();
       osc.stop(ctx.currentTime + 0.5);
-    } catch (e) {}
+    } catch (e) {
+      console.warn('[reddy:audio] optional UI sound failed:', e);
+    }
 
     const selectedItems = activeAuditItems.filter(item => selectedAuditIds.includes(item.id));
 
@@ -669,7 +671,9 @@ export default function App() {
                                     gain.connect(ctx.destination);
                                     osc.start();
                                     osc.stop(ctx.currentTime + 0.1);
-                                  } catch (e) {}
+                                  } catch (e) {
+                                    console.warn('[reddy:audio] optional UI sound failed:', e);
+                                  }
                                 }}
                                 className="text-[#facc15] hover:underline cursor-pointer flex items-center gap-1 active:scale-95 text-[7px]"
                               >
@@ -777,7 +781,9 @@ export default function App() {
                                     gain.connect(ctx.destination);
                                     osc.start();
                                     osc.stop(ctx.currentTime + 0.1);
-                                  } catch (e) {}
+                                  } catch (e) {
+                                    console.warn('[reddy:audio] optional UI sound failed:', e);
+                                  }
                                 }
                               }}
                               className="text-cyan-400 hover:text-[#facc15] cursor-pointer"
@@ -844,7 +850,9 @@ export default function App() {
                       gain.connect(ctx.destination);
                       osc.start();
                       osc.stop(ctx.currentTime + 0.05);
-                    } catch (e) {}
+                    } catch (e) {
+                      console.warn('[reddy:audio] optional UI sound failed:', e);
+                    }
                     
                     if (q.text === '/reboot') {
                       setLogs([
@@ -898,7 +906,9 @@ export default function App() {
                         gain.connect(ctx.destination);
                         osc.start();
                         osc.stop(ctx.currentTime + 0.06);
-                      } catch (e) {}
+                      } catch (e) {
+                        console.warn('[reddy:audio] optional UI sound failed:', e);
+                      }
                       handleSend();
                     }
                   }}
@@ -931,7 +941,9 @@ export default function App() {
                     gain.connect(ctx.destination);
                     osc.start();
                     osc.stop(ctx.currentTime + 0.08);
-                  } catch (e) {}
+                  } catch (e) {
+                    console.warn('[reddy:audio] optional UI sound failed:', e);
+                  }
                   handleSend();
                 }}
                 disabled={isProcessing}
