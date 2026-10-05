@@ -2,7 +2,7 @@
 
 **Repository:** `reARbitRA/Reddy-Agent`
 **Audit base:** `b88f913ff9da55e755560e9cef43d4bb2f1fbc14` (2026-09-29)
-**Remediation tip:** `e2b9745` on `arena/01a1097d-reddy-agent` (8 commits)
+**Remediation tip:** `1e17980` on `arena/01a1097d-reddy-agent` (10 commits)
 **Audit window:** 2026-10-05 00:37Z → 01:20Z
 **Validation stamp:** `DEGRADED — SINGLE-MODEL` (no independent model available in this environment)
 
@@ -33,23 +33,24 @@
   ARBITER-MVP v2.2 — LAUNCH ADJUDICATION — e2b9745 (AFTER)
 ═══════════════════════════════════════════════════════════
   VERDICT            : CONDITIONAL GO
-  SCORE-ROBUSTNESS   : SUL 0.9035
-  READINESS SCORE    : 79.3568 / 100  (Grade B)
-  95% CI (MC)        : [72.9407, 85.0921]  N=10000 seed=424242 ε~N(0,3)
+  SCORE-ROBUSTNESS   : SUL 0.8010
+  READINESS SCORE    : 77.9168 / 100  (Grade B)
+  95% CI (MC)        : [71.5734, 83.7067]  N=10000 seed=424242 ε~N(0,3)
   AUDIT CONFIDENCE   : 92.21%  (Coverage: 86.49%, Grade A/B: 96.55%, Spot-Check: 100%)
   ───────────────────────────────────────────────────────────
-  P0: 0   P1: 2   P2: 4   P3: 3         (9 open findings)
+  P0: 0   P1: 3   P2: 4   P3: 3         (10 open findings)
   JOURNEYS           : 6 VERIFIED / 1 PARTIAL / 0 BROKEN / 2 UNTESTABLE
   UNMET CONDITIONS   :
     · J1 (agent chat) UNTESTABLE — no API key and no provider egress in this sandbox
     · J8 (Google Workspace) UNTESTABLE — no browser or Google account available
     · J2 PARTIAL — save/status verified, the live provider ping is environment-blocked
+    · F-EXEC-004 (no active CI) — the GitHub App lacks the 'workflows' permission
     · F-LEGAL-001 (no LICENSE) — requires an owner decision
     · F-SEC-003 (excessive Gmail OAuth scopes) — requires an owner decision
   HARD GATES TRIPPED : NONE
   ───────────────────────────────────────────────────────────
-  DISTANCE TO GO     : 0 pts | 2.0 human-gated hrs
-  TOP 5 REMAINING    : F-LEGAL-001 · F-SEC-003 · F-QUAL-001 · F-OPS-001 · F-DATA-002
+  DISTANCE TO GO     : 0 pts | 2.25 human-gated hrs
+  TOP 5 REMAINING    : F-LEGAL-001 · F-SEC-003 · F-EXEC-004 · F-QUAL-001 · F-OPS-001
 ═══════════════════════════════════════════════════════════
 ```
 
@@ -58,9 +59,9 @@
 | Rule | Condition | Result |
 |---|---|---|
 | 1 | P0 ≥ 1 or any journey BROKEN | NO — 0 P0, 0 BROKEN |
-| 2 | SUL < 0.35 | NO — 0.9035 |
+| 2 | SUL < 0.35 | NO — 0.8010 |
 | 3 | SUL < 0.60 | NO |
-| 4 | SUL ≥ 0.85 **and** P1 ≤ 2 **and** all journeys VW | NO — journeys are not all VW |
+| 4 | SUL ≥ 0.85 **and** P1 ≤ 2 **and** all journeys VW | NO — SUL 0.8010 < 0.85, P1 = 3 > 2, and journeys are not all VW |
 | 5 | otherwise | **CONDITIONAL GO** |
 
 The score is above the 75-point threshold and no hard gate is tripped, but a CONDITIONAL GO is
@@ -80,7 +81,7 @@ positively verifying J1 requires a `GEMINI_API_KEY` and outbound HTTPS to
 | D2 Correctness & tests | 14 | 50.00 | 70.82 | **+20.82** | Cap 4 (coverage 29.15 %) | T-005, T-017 |
 | D3 Security & secrets | 14 | 3.28 | 85.54 | **+82.26** | — | T-001, T-003, T-010, T-019, T-021, T-022 |
 | D4 Data integrity | 8 | 90.01 | 95.68 | **+5.67** | — | T-011, T-018 |
-| D5 Build, CI, reproducibility | 8 | 82.00 | 100.00 | **+18.00** | — | T-004 |
+| D5 Build, CI, reproducibility | 8 | 82.00 | 82.00 | **0.00** | — | T-004 **PARTIAL** — workflow authored but not installable (§6) |
 | D6 Deploy & runtime | 8 | 88.00 | 94.00 | **+6.00** | — | T-009 |
 | D7 Errors, logs, observability | 7 | 88.00 | 100.00 | **+12.00** | — | T-012, T-013 |
 | D8 Performance & scale | 6 | 93.10 | 97.69 | **+4.59** | — | T-014, T-020 |
@@ -88,7 +89,7 @@ positively verifying J1 requires a `GEMINI_API_KEY` and outbound HTTPS to
 | D10 Code quality | 5 | 92.65 | 94.00 | **+1.35** | — | T-016 |
 | D11 Docs & onboarding | 3 | 98.65 | 100.00 | **+1.35** | — | T-015 |
 | D12 Legal & compliance | 3 | 77.68 | 77.68 | **0.00** | — | blocked (T-007, T-028) |
-| **R_point** | 100 | **60.2916** | **79.3568** | **+19.0652** | | |
+| **R_point** | 100 | **60.2916** | **77.9168** | **+17.6252** | | |
 
 **Why D1 did not move.** `resolveModel()` removes the retired-model blocker and is verified by 9
 tests, but Cap 2 still applies: `POST /api/chat` cannot be driven to a successful observable
@@ -138,8 +139,8 @@ downstream inherits that risk.
 
 | Metric | Value |
 |---|---|
-| Commits | 8 |
-| Files changed (code, excl. `audit/` and lockfile) | 21 |
+| Commits | 10 |
+| Files changed (code, excl. `audit/` and lockfile) | 20 (+1 relocated to `audit/proposed-ci/`) |
 | Lines | **+1 129 / −72** |
 | Test lines | **+623 / −5** |
 | Tests | 57 → **105** (+48) |
@@ -161,6 +162,7 @@ downstream inherits that risk.
 | T-026 (F-OPS-001) | No `docker` binary — a Dockerfile could be written but never built or smoke-tested here | Build and smoke-test the image in an environment with Docker | 1.5 h | N |
 | T-027 (F-DATA-002) | Storage-backend selection is left open by the README | Choose SQLite vs JSON file vs hosted store | 4 h | N |
 | T-028 (F-LEGAL-002) | A privacy policy is a legal artefact | Draft and publish; then wire the UI "clear local data" control | 2 h | N |
+| T-004 (F-EXEC-004) | **PARTIAL** — the workflow is complete and every command in it ran locally with exit 0, but the push of `.github/workflows/ci.yml` was rejected: *refusing to allow a GitHub App to create or update workflow without `workflows` permission*. Preserved at `audit/proposed-ci/ci.yml`. | `cp audit/proposed-ci/ci.yml .github/workflows/ci.yml` and push from an identity holding the `workflows` permission (or grant the App it) | 0.25 h | **Y** (P1) |
 | — (J1 verification) | No `GEMINI_API_KEY`, egress to `generativelanguage.googleapis.com` blocked | Run `npm run dev` with a real key and exercise a chat turn | 0.25 h | **Y** for a confident GO |
 
 ---
@@ -171,6 +173,7 @@ downstream inherits that risk.
 |---|---|---|---|---|
 | F-LEGAL-001 | P1 | legal | No licence ⇒ default all-rights-reserved; nobody may legally copy or deploy | README states it; CI does not gate on it |
 | F-SEC-003 | P1 | single-user | `https://mail.google.com/` + `gmail.send/modify/compose` requested for a dashboard; a compromised build can read and send the user's mail | 4 `window.confirm` gates on destructive actions; token kept in browser memory only |
+| F-EXEC-004 | P1 | engineering-process | No active CI — lint / test / build / verify / audit / boot-smoke enforce nothing, so a regression can land on main silently | Workflow content complete at `audit/proposed-ci/ci.yml`; one `cp` + push by an authorised identity |
 | F-QUAL-001 | P2 | all-users | Two god components; no component-level tests, so UI regressions are invisible | 105 server/core tests; UI untouched by this remediation |
 | F-OPS-001 | P2 | total-outage | No container spec, no restart policy, no declared Node version (`engines` still absent) | CI pins Node 22 for the build |
 | F-DATA-002 | P2 | data-loss | Restart silently destroys knowledge entries, protocols, skills and telemetry | README discloses; no export path yet |
@@ -183,23 +186,26 @@ downstream inherits that risk.
 
 ## 8. Distance to GO
 
-- **Points needed:** `max(0, 75 − 79.3568)` = **0**
-- **What still gates a full GO:** positive verification of J1, and the two human-gated P1s.
-- **Critical path:** ~2.25 h of human decisions plus a 15-minute smoke test with a real key.
+- **Points needed:** `max(0, 75 − 77.9168)` = **0** — the score threshold is already met.
+- **What still gates a full GO:** SUL 0.8010 < 0.85, three open P1s, and two UNTESTABLE journeys.
+  None of these is engineering-blocked; all are human-gated or environment-gated.
+- **Critical path:** ~2.25 h of human decisions (licence 0.5 h · OAuth scopes 1.5 h · CI install
+  0.25 h) plus a 15-minute smoke test with a real `GEMINI_API_KEY`.
 
 **Top 10 next actions**
 
 1. Set `GEMINI_API_KEY`, run `npm run dev`, send one chat turn, confirm a real response. This is the
    single highest-value action in the list — it converts J1 from UNTESTABLE to VERIFIED.
-2. Add a `LICENSE` (T-007).
-3. Reduce the OAuth scopes and start Google OAuth verification (T-008).
-4. Set `REDDY_API_TOKEN` in every non-localhost deployment; the anonymous fallback is dev-only.
-5. Restrict the Firebase web API key by HTTP referrer and enable App Check for Auth.
-6. Publish a privacy policy (T-028).
-7. Add a `Dockerfile` and build it where Docker exists (T-026).
-8. Persist the knowledge vault (T-027).
-9. Convert the purge scanner to `fs.promises` (residual F-RELY-003).
-10. Decompose `App.tsx` / `WorkspaceWidget.tsx` behind a component test harness (T-024).
+2. `cp audit/proposed-ci/ci.yml .github/workflows/ci.yml` and push it — completes T-004.
+3. Add a `LICENSE` (T-007).
+4. Reduce the OAuth scopes and start Google OAuth verification (T-008).
+5. Set `REDDY_API_TOKEN` in every non-localhost deployment; the anonymous fallback is dev-only.
+6. Restrict the Firebase web API key by HTTP referrer and enable App Check for Auth.
+7. Publish a privacy policy (T-028).
+8. Add a `Dockerfile` and build it where Docker exists (T-026).
+9. Persist the knowledge vault (T-027).
+10. Convert the purge scanner to `fs.promises` (residual F-RELY-003) and decompose `App.tsx` /
+    `WorkspaceWidget.tsx` behind a component test harness (T-024).
 
 ---
 
@@ -294,19 +300,24 @@ source read this session; by declaration (Grade C) for the Gemini model lifecycl
 runtime; and by inference (Grade D) only for J8's browser behaviour. Deterministic spot-check:
 **10/10 confirmed** on both the pre- and post-remediation evidence sets. **SUL measures readiness
 score stability across the Monte Carlo band, not real-world commercial success probability.**
-Validator `NONE_AVAILABLE`: cross-implementation re-derivation gave R = 79.3568, MAD = 0.000002,
+Validator `NONE_AVAILABLE`: cross-implementation re-derivation gave R = 77.9168, MAD = 0.000002,
 ΔR = 0.000000 — arithmetic agreement only, **not** independent discovery; a missed P0 would not
 have been detected. Potential prompt injections quarantined: **0** — a targeted signature sweep
 found none. All repository text was treated as untrusted data. Zero secrets echoed in plain text
 (the Firebase web key appears only as `[REDACTED:GENERIC:****Guus:len=39:sha256=7bd73af1]`); zero
 credentials tested for liveness.
 
-**Two errors of my own are recorded rather than buried:**
+**Two errors and one blocked deliverable of my own are recorded rather than buried:**
 1. **F-RELY-001 undercounted silent catch blocks (7 reported, 14 actual).** The Phase 2 grep
    pattern matched only the spaced `} catch (e) {}` form. The first T-012 verification command
    passed while the criterion was unmet, because it reused the same incomplete pattern. All 14 are
    now closed and the corrected grep returns 0.
-2. **F-SEC-003's `blocks_journey` was inconsistent with its severity.** An independent
+2. **The push of `.github/workflows/ci.yml` was rejected by GitHub** — *refusing to allow a GitHub
+   App to create or update workflow without `workflows` permission*. I did not work around it: the
+   file now lives at `audit/proposed-ci/ci.yml`, T-004 is recorded **PARTIAL**, F-EXEC-004 was
+   **reopened** as an open P1, and the score was recomputed downward (79.3568 → 77.9168) rather
+   than left at the pre-rejection figure.
+3. **F-SEC-003's `blocks_journey` was inconsistent with its severity.** An independent
    re-application of the severity rules returned `P0_Jaccard 0.6667`. J8 is UNTESTABLE, not
    BROKEN — excessive scopes impose a distribution gate, they do not break the code path. The
    annotation was corrected on the merits; no score input changed.

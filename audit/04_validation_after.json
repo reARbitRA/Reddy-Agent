@@ -24,7 +24,7 @@
     "D2": 70.8214,
     "D3": 85.54,
     "D4": 95.68,
-    "D5": 100,
+    "D5": 82,
     "D6": 94,
     "D7": 100,
     "D8": 97.69,
@@ -33,9 +33,9 @@
     "D11": 100,
     "D12": 77.68
   },
-  "validator_R_point": 79.3568,
-  "validator_SUL": 0.9035,
-  "validator_monte_carlo_mean": 79.0045,
+  "validator_R_point": 77.9168,
+  "validator_SUL": 0.801,
+  "validator_monte_carlo_mean": 77.6181,
   "honest_limitations": [
     "No second model was available, so discovery and severity assignment are single-model. Agreement on arithmetic is necessary but NOT sufficient evidence that the finding set is complete.",
     "Because the validator re-derived scores from the SAME 01_findings.json, MAD/MAX_DEV/ΔR measure implementation agreement only. A missed P0 would not be detected by this procedure.",

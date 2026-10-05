@@ -2,7 +2,7 @@
 
 **Session branch:** `arena/01a1097d-reddy-agent`
 **Audit base HEAD:** `b88f913ff9da55e755560e9cef43d4bb2f1fbc14`
-**Started:** 2026-10-05T00:37Z · **Closed:** 2026-10-05T01:20Z
+**Started:** 2026-10-05T00:37Z · **Closed:** 2026-10-05T01:40Z · **Tip:** `1e17980` (10 commits)
 
 ## Branching deviation (recorded, not silent)
 
@@ -91,7 +91,7 @@ trailers in the commit subject; traceability is preserved by the trailer and by 
   corrected to `M150` / not-`M0.` / not-`M100.`. The implementation was never wrong.
 - **Verification (exit 0):** `npm test` → 93/93 · build 0 · verify:assets 15/15 · verify:readme OK.
 
-### T-004 / T-005 — commit `2898f93`
+### T-004 / T-005 — commit `2898f93` — **T-004 PARTIAL, see below**
 - **T-004** `.github/workflows/ci.yml`: `npm ci`, `lint`, `test:coverage`, `build`, `verify:assets`,
   `verify:readme`, dependency audit, and a production boot smoke asserting 401/200/JSON-404/HTML.
 - **T-005** `@vitest/coverage-v8@5.0.2` + `test:coverage` script + v8 coverage config.
@@ -122,6 +122,19 @@ trailers in the commit subject; traceability is preserved by the trailer and by 
 - **Verification (exit 0):** `npm test` → **105/105 across 8 files** · lint 0 · build 0 ·
   verify:assets 15/15 · verify:readme OK.
 
+### T-004 completion attempt — commit `1e17980` — **BLOCKED BY REMOTE PERMISSION**
+- The push of `.github/workflows/ci.yml` was rejected:
+  `remote: refusing to allow a GitHub App to create or update workflow
+  .github/workflows/ci.yml without 'workflows' permission`.
+- No history was rewritten to dodge the hook. The workflow was **relocated** verbatim to
+  `audit/proposed-ci/ci.yml` with an activation README; the push then succeeded.
+- **Consequence, applied rather than ignored:** T-004 is downgraded to **PARTIAL**, **F-EXEC-004
+  was reopened** as an open P1 (`resolution: PARTIAL`, `requires_human: true`), and the after-score
+  was recomputed: D5 `100.00 → 82.00`, `R_point 79.3568 → 77.9168`, `SUL 0.9035 → 0.8010`.
+  Open findings 9 → 10 (P1 2 → 3). A workflow that does not run enforces nothing.
+- **Verification (exit 0):** re-scored via `mc_sim.py … 77.9168 …` (self-assertion PASSED) and
+  re-validated via `validator_selfrecon.mjs` (`MAD 0.000002`, `ΔR 0.000000`, `arithmetic_pass true`).
+
 ### T-012 follow-up — commit `e2b9745` — **AUDIT CORRECTION**
 - **F-RELY-001 reported 7 empty catch bodies. That count was wrong; the true count was 14.**
   The Phase 2 grep used `catch\s*{`, which matches only the spaced form `} catch (e) {}` and misses
@@ -139,6 +152,7 @@ trailers in the commit subject; traceability is preserved by the trailer and by 
 |---|---|---|
 | T-007 | F-LEGAL-001 | Choosing a licence transfers rights — owner decision |
 | T-008 | F-SEC-003 | Scope reduction removes product capability; Google OAuth verification is an owner action |
+| T-004 | F-EXEC-004 | **PARTIAL** — GitHub rejected the push: the App lacks the `workflows` permission. Content preserved at `audit/proposed-ci/ci.yml`. |
 | T-024 | F-QUAL-001 | High-regression UI decomposition with no component test harness |
 | T-026 | F-OPS-001 | No `docker` binary in this environment — a Dockerfile could not be built or smoke-tested |
 | T-027 | F-DATA-002 | Storage-backend selection is an architecture decision the README leaves open |
@@ -156,9 +170,9 @@ T-025 code splitting (F-RELY-004) · residual async-fs conversion (F-RELY-003)
 |---|---|---|
 | M0 Unblock | P0 == 0 | **MET** — 2 → 0 |
 | M1 De-Risk | P1 ≤ 2 and all journeys VERIFIED_WORKING | **PARTIAL** — P1 6 → 2 met; journeys 6 VW / 1 PARTIAL / 0 BROKEN / 2 UNTESTABLE |
-| M2 Harden | R_point ≥ 75 | **MET** — 60.2916 → 79.3568 |
+| M2 Harden | R_point ≥ 75 | **MET** — 60.2916 → 77.9168 |
 | M3 Launch Readiness | All GO criteria satisfied | **NOT MET** — J1/J8 UNTESTABLE, 2 human-gated P1s |
 
-Post-remediation re-score: `audit/mc_sim.py 01_findings_after.json 29.15 79.3568 …` →
-`R_point 79.3568 (B)`, `SUL 0.9035`, `CI95 [72.9407, 85.0921]`, self-assertion **PASSED**.
+Post-remediation re-score: `audit/mc_sim.py 01_findings_after.json 29.15 77.9168 …` →
+`R_point 77.9168 (B)`, `SUL 0.8010`, `CI95 [71.5734, 83.7067]`, self-assertion **PASSED**.
 Mini-Phase 5 on the modified dimensions: `MAD 0.000002`, `MAX_DEV 0.000029`, `ΔR 0.000000` — **PASS**.

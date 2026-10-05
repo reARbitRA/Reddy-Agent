@@ -4,17 +4,16 @@
   "remediated_head": "(see git log; 7 commits on arena/01a1097d-reddy-agent)",
   "counts": {
     "P0": 0,
-    "P1": 2,
+    "P1": 3,
     "P2": 4,
     "P3": 3,
-    "total": 9
+    "total": 10
   },
   "resolved": [
     "F-SEC-001",
     "F-EXEC-001",
     "F-SEC-002",
     "F-EXEC-002",
-    "F-EXEC-004",
     "F-EXEC-007",
     "F-SEC-004",
     "F-SEC-005",
@@ -89,6 +88,31 @@
   ],
   "findings": [
     {
+      "id": "F-EXEC-004",
+      "title": "No active CI pipeline -- the GitHub App backing this session lacks the 'workflows' permission",
+      "lane": "reliability",
+      "dimension": "D5",
+      "severity": "P1",
+      "confidence": 1.0,
+      "evidence_grade": "A",
+      "evidence": [
+        "[E:audit/proposed-ci/ci.yml]",
+        "[E:cmd#34 'remote: refusing to allow a GitHub App to create or update workflow .github/workflows/ci.yml without workflows permission']",
+        "[E:audit/proposed-ci/README.md]"
+      ],
+      "impact": "The five green checks (lint, test:coverage, build, verify:assets, verify:readme) plus the audit gate and the boot smoke are still not enforced on any push. A regression can land on main silently.",
+      "exploit_or_repro": "git push a branch containing .github/workflows/ci.yml from this session -> remote rejected.",
+      "blast_radius": "engineering-process",
+      "remediation": "Copy audit/proposed-ci/ci.yml to .github/workflows/ci.yml and push from an identity holding the 'workflows' permission, or grant the App that permission and re-push. The workflow content is complete and every command in it was executed locally this session with exit 0.",
+      "effort_hours": 0.25,
+      "mvp_blocking": false,
+      "blocks_journey": [],
+      "pre_existing": true,
+      "requires_human": true,
+      "task": "T-004",
+      "resolution": "PARTIAL"
+    },
+    {
       "id": "F-LEGAL-001",
       "title": "No LICENSE file \u2014 default all-rights-reserved blocks any redistribution",
       "lane": "LEGAL",
@@ -134,48 +158,6 @@
       "journey_note": "RECONCILED IN PHASE 5: blocks_journey was originally ['J8'] but J8 is classified UNTESTABLE, not BROKEN \u2014 the excessive scopes do not break the Workspace code path, they impose a Google-side OAuth verification gate on distribution. blocks_journey is therefore [] and the launch gate is carried by mvp_blocking + requires_human. No score input (severity/grade/confidence) changed, so R_point is unaffected."
     },
     {
-      "id": "F-SEC-007",
-      "title": "Four residual high advisories remain, all in unreachable firebase/firestore code",
-      "lane": "SEC",
-      "dimension": "D3",
-      "severity": "P3",
-      "confidence": 1.0,
-      "evidence_grade": "A",
-      "evidence": [
-        "[E:cmd#30]",
-        "[E:src/lib/firebase.ts:1-2]"
-      ],
-      "impact": "After npm update the advisory count fell from 12 (7 high, 5 moderate) to 4 (all high). Every reachable advisory is patched. The four remaining highs all descend from firebase -> @firebase/firestore -> @grpc/grpc-js@1.9.16; this repository imports only firebase/app and firebase/auth and contains zero firestore references, so they are not reachable in the shipped bundle. Upstream firebase@12.19.0 still pins @grpc/grpc-js ~1.9.0, so no patched release exists. CI fails on critical and warns on high with the reachability analysis attached.",
-      "exploit_or_repro": "npm audit --json exit code 1 with the metadata above; reachability determined by grepping the import graph for firestore (no matches).",
-      "blast_radius": "all-users",
-      "remediation": "Track firebase releases; adopt a version whose @firebase/firestore depends on @grpc/grpc-js >=1.13.6, or drop the umbrella package for @firebase/app + @firebase/auth once that swap can be verified against a live Firebase project.",
-      "effort_hours": 1.5,
-      "mvp_blocking": false,
-      "blocks_journey": [],
-      "pre_existing": true
-    },
-    {
-      "id": "F-OPS-001",
-      "title": "No container or deploy artifact; no resource bounds or restart policy",
-      "lane": "OPS",
-      "dimension": "D6",
-      "severity": "P2",
-      "confidence": 1.0,
-      "evidence_grade": "A",
-      "evidence": [
-        "[E:cmd#3]",
-        "[E:package.json scripts]"
-      ],
-      "impact": "find over the repo root returns no Dockerfile, no compose file, no Terraform, no k8s or helm manifests. Deployment is 'npm start' with no process supervisor, no memory ceiling, no declared Node version (no engines field, no .nvmrc, no mise.toml) and no documented rollback. Combined with in-memory state (F-DATA-002) any restart is a silent data reset.",
-      "exploit_or_repro": "find . -maxdepth 2 -iname 'Dockerfile*' -o -iname 'docker-compose*' -o -iname '*.tf' -> empty; ls mise.toml .nvmrc -> not found.",
-      "blast_radius": "total-outage",
-      "remediation": "Add a multi-stage Dockerfile (pinned node:22-slim, non-root USER, npm ci --omit=dev, dist/ only in the runtime stage), an engines field in package.json, and a documented rollback (previous image tag / previous dist bundle).",
-      "effort_hours": 1.5,
-      "mvp_blocking": false,
-      "blocks_journey": [],
-      "pre_existing": true
-    },
-    {
       "id": "F-DATA-002",
       "title": "All server state is process memory; a restart silently destroys it",
       "lane": "DATA",
@@ -192,26 +174,6 @@
       "blast_radius": "data-loss",
       "remediation": "Persist the knowledge vault first (highest value, smallest volume) to a JSON file or SQLite with an atomic write, then sessions. Add an export route so operators can evacuate state before a restart.",
       "effort_hours": 4.0,
-      "mvp_blocking": false,
-      "blocks_journey": [],
-      "pre_existing": true
-    },
-    {
-      "id": "F-QUAL-001",
-      "title": "God components: App.tsx 1186 LOC and WorkspaceWidget.tsx 845 LOC",
-      "lane": "QUAL",
-      "dimension": "D10",
-      "severity": "P2",
-      "confidence": 1.0,
-      "evidence_grade": "A",
-      "evidence": [
-        "[E:cmd#17]"
-      ],
-      "impact": "src/App.tsx mixes the boot screen, custom cursor, Web Audio alarms, chat transport, settings panel, purge console and log rendering in one 1186-line component. src/components/WorkspaceWidget.tsx carries Sheets, Gmail and Docs clients, OAuth token state and all rendering in 845 lines. Neither can be unit tested in isolation \u2014 which is why the 57 tests cover core/ and the API but no component at all.",
-      "exploit_or_repro": "wc -l over src core plugins server.ts scripts tests: App.tsx 1186, WorkspaceWidget.tsx 845, AnimatedVectorIcons.tsx 602.",
-      "blast_radius": "all-users",
-      "remediation": "Extract a useChat/usePurgeSettings hook pair and a ChatTerminal component from App.tsx; split WorkspaceWidget into SheetsPanel, GmailPanel and DocsPanel over a shared useGoogleToken hook.",
-      "effort_hours": 6.0,
       "mvp_blocking": false,
       "blocks_journey": [],
       "pre_existing": true
@@ -238,6 +200,47 @@
       "blocks_journey": [],
       "pre_existing": true,
       "requires_human": true
+    },
+    {
+      "id": "F-OPS-001",
+      "title": "No container or deploy artifact; no resource bounds or restart policy",
+      "lane": "OPS",
+      "dimension": "D6",
+      "severity": "P2",
+      "confidence": 1.0,
+      "evidence_grade": "A",
+      "evidence": [
+        "[E:cmd#3]",
+        "[E:package.json scripts]"
+      ],
+      "impact": "find over the repo root returns no Dockerfile, no compose file, no Terraform, no k8s or helm manifests. Deployment is 'npm start' with no process supervisor, no memory ceiling, no declared Node version (no engines field, no .nvmrc, no mise.toml) and no documented rollback. Combined with in-memory state (F-DATA-002) any restart is a silent data reset.",
+      "exploit_or_repro": "find . -maxdepth 2 -iname 'Dockerfile*' -o -iname 'docker-compose*' -o -iname '*.tf' -> empty; ls mise.toml .nvmrc -> not found.",
+      "blast_radius": "total-outage",
+      "remediation": "Add a multi-stage Dockerfile (pinned node:22-slim, non-root USER, npm ci --omit=dev, dist/ only in the runtime stage), an engines field in package.json, and a documented rollback (previous image tag / previous dist bundle).",
+      "effort_hours": 1.5,
+      "mvp_blocking": false,
+      "blocks_journey": [],
+      "pre_existing": true
+    },
+    {
+      "id": "F-QUAL-001",
+      "title": "God components: App.tsx 1186 LOC and WorkspaceWidget.tsx 845 LOC",
+      "lane": "QUAL",
+      "dimension": "D10",
+      "severity": "P2",
+      "confidence": 1.0,
+      "evidence_grade": "A",
+      "evidence": [
+        "[E:cmd#17]"
+      ],
+      "impact": "src/App.tsx mixes the boot screen, custom cursor, Web Audio alarms, chat transport, settings panel, purge console and log rendering in one 1186-line component. src/components/WorkspaceWidget.tsx carries Sheets, Gmail and Docs clients, OAuth token state and all rendering in 845 lines. Neither can be unit tested in isolation \u2014 which is why the 57 tests cover core/ and the API but no component at all.",
+      "exploit_or_repro": "wc -l over src core plugins server.ts scripts tests: App.tsx 1186, WorkspaceWidget.tsx 845, AnimatedVectorIcons.tsx 602.",
+      "blast_radius": "all-users",
+      "remediation": "Extract a useChat/usePurgeSettings hook pair and a ChatTerminal component from App.tsx; split WorkspaceWidget into SheetsPanel, GmailPanel and DocsPanel over a shared useGoogleToken hook.",
+      "effort_hours": 6.0,
+      "mvp_blocking": false,
+      "blocks_journey": [],
+      "pre_existing": true
     },
     {
       "id": "F-RELY-003",
@@ -276,6 +279,27 @@
       "blast_radius": "all-users",
       "remediation": "React.lazy the heavy widgets (WorkspaceWidget, SunoWidget, AnimatedVectorIcons) and add build.rollupOptions.output.manualChunks for recharts/motion/firebase.",
       "effort_hours": 2.0,
+      "mvp_blocking": false,
+      "blocks_journey": [],
+      "pre_existing": true
+    },
+    {
+      "id": "F-SEC-007",
+      "title": "Four residual high advisories remain, all in unreachable firebase/firestore code",
+      "lane": "SEC",
+      "dimension": "D3",
+      "severity": "P3",
+      "confidence": 1.0,
+      "evidence_grade": "A",
+      "evidence": [
+        "[E:cmd#30]",
+        "[E:src/lib/firebase.ts:1-2]"
+      ],
+      "impact": "After npm update the advisory count fell from 12 (7 high, 5 moderate) to 4 (all high). Every reachable advisory is patched. The four remaining highs all descend from firebase -> @firebase/firestore -> @grpc/grpc-js@1.9.16; this repository imports only firebase/app and firebase/auth and contains zero firestore references, so they are not reachable in the shipped bundle. Upstream firebase@12.19.0 still pins @grpc/grpc-js ~1.9.0, so no patched release exists. CI fails on critical and warns on high with the reachability analysis attached.",
+      "exploit_or_repro": "npm audit --json exit code 1 with the metadata above; reachability determined by grepping the import graph for firestore (no matches).",
+      "blast_radius": "all-users",
+      "remediation": "Track firebase releases; adopt a version whose @firebase/firestore depends on @grpc/grpc-js >=1.13.6, or drop the umbrella package for @firebase/app + @firebase/auth once that swap can be verified against a live Firebase project.",
+      "effort_hours": 1.5,
       "mvp_blocking": false,
       "blocks_journey": [],
       "pre_existing": true
@@ -355,6 +379,15 @@
         "conf": 1.0,
         "grade": "A",
         "penalty": 1.5
+      }
+    ],
+    "D5": [
+      {
+        "id": "F-EXEC-004",
+        "sev": "P1",
+        "conf": 1.0,
+        "grade": "A",
+        "penalty": 18.0
       }
     ]
   }
