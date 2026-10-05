@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { ProviderOrchestrator, resolveModel, DEFAULT_GEMINI_MODEL } from "../core/orchestrator";
+import { ProviderOrchestrator, resolveModel, DEFAULT_GEMINI_MODEL, toGeminiContents, PROVIDER_TIMEOUT_MS } from "../core/orchestrator";
 
 describe("ProviderOrchestrator — provider error normalization", () => {
   const originalKey = process.env.GEMINI_API_KEY;
@@ -46,8 +46,10 @@ describe("ProviderOrchestrator — provider error normalization", () => {
     };
     try {
       const orchestrator = new ProviderOrchestrator();
-      const isValid = await orchestrator.validateKey("not-a-real-gemini-key");
-      expect(isValid).toBe(false);
+      const result = await orchestrator.validateKey("not-a-real-gemini-key");
+      expect(result.valid).toBe(false);
+      // A provider 400 is an authentication failure, not a transport failure.
+      expect(result.reason).toBe("auth");
     } finally {
       (globalThis as any).fetch = original;
     }
@@ -144,5 +146,79 @@ describe("ProviderOrchestrator — model resolution (T-002)", () => {
     // resolver, and no model: field may be a hardcoded string.
     expect(src.match(/resolveModel\(\)/g)?.length).toBeGreaterThanOrEqual(3);
     expect(src).not.toMatch(/model:\s*["'`]/);
+  });
+});
+
+/**
+ * T-020: every provider call must be bounded.
+ */
+describe("ProviderOrchestrator — provider timeout (T-020)", () => {
+  it("configures a finite timeout on the client", () => {
+    expect(Number.isFinite(PROVIDER_TIMEOUT_MS)).toBe(true);
+    expect(PROVIDER_TIMEOUT_MS).toBeGreaterThan(0);
+    expect(PROVIDER_TIMEOUT_MS).toBeLessThanOrEqual(60_000);
+  });
+});
+
+/**
+ * T-006: the Gemini function-calling contract. An assistant turn that carried
+ * tool_calls must be replayed as a model turn with functionCall parts, and the
+ * matching tool turn as a functionResponse part.
+ */
+describe("toGeminiContents — function-calling contract (T-006)", () => {
+  it("maps an assistant tool-call turn to a model turn with functionCall parts", () => {
+    const contents = toGeminiContents([
+      { role: "user", content: "check os" },
+      {
+        role: "assistant",
+        content: null,
+        tool_calls: [{ name: "get_system_metrics", args: { metric: "os" } }],
+      },
+    ]);
+    expect(contents[1].role).toBe("model");
+    expect(contents[1].parts).toEqual([
+      { functionCall: { name: "get_system_metrics", args: { metric: "os" } } },
+    ]);
+  });
+
+  it("keeps assistant text alongside its functionCall parts", () => {
+    const contents = toGeminiContents([
+      {
+        role: "assistant",
+        content: "let me check",
+        tool_calls: [{ name: "t", args: {} }],
+      },
+    ]);
+    expect(contents[0].parts).toEqual([
+      { text: "let me check" },
+      { functionCall: { name: "t", args: {} } },
+    ]);
+  });
+
+  it("maps a tool turn to a structured functionResponse, not flattened text", () => {
+    const contents = toGeminiContents([
+      { role: "tool", tool_call_id: "c1", name: "get_system_metrics", content: '{"platform":"linux"}' },
+    ]);
+    expect(contents[0].parts[0].functionResponse).toBeDefined();
+    expect(contents[0].parts[0].functionResponse.name).toBe("get_system_metrics");
+    expect(contents[0].parts[0].functionResponse.response.result).toEqual({ platform: "linux" });
+  });
+
+  it("orders the model functionCall turn before the functionResponse turn", () => {
+    const contents = toGeminiContents([
+      { role: "user", content: "go" },
+      { role: "assistant", content: null, tool_calls: [{ name: "t", args: {} }] },
+      { role: "tool", tool_call_id: "c1", name: "t", content: "42" },
+    ]);
+    const callIdx = contents.findIndex((c) => c.parts.some((p: any) => p.functionCall));
+    const respIdx = contents.findIndex((c) => c.parts.some((p: any) => p.functionResponse));
+    expect(callIdx).toBe(1);
+    expect(respIdx).toBe(2);
+    expect(callIdx).toBeLessThan(respIdx);
+  });
+
+  it("still prefixes system instructions", () => {
+    const contents = toGeminiContents([{ role: "system", content: "be terse" }]);
+    expect(contents[0].parts[0].text).toBe("SYSTEM_INSTRUCTION: be terse");
   });
 });

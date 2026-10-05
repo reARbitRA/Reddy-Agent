@@ -360,3 +360,27 @@ describe("API — mid-session protocol changes take effect (T-016)", () => {
     expect(settings.instruction).toBe("PROTOCOL SYNC 99");
   });
 });
+
+describe("API — key validation reports a reason (T-023)", () => {
+  it("returns valid plus a reason field", async () => {
+    const res = await fetch(`${server.baseUrl}/api/keys/validate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ key: "not-a-real-key" }),
+    });
+    expect(res.status).toBe(200);
+    const data = await res.json();
+    expect(data.valid).toBe(false);
+    expect(["auth", "transport", "model", "unknown"]).toContain(data.reason);
+  });
+
+  it("rejects a non-string key with 400", async () => {
+    const res = await fetch(`${server.baseUrl}/api/keys/save`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ key: 12345 }),
+    });
+    expect(res.status).toBe(400);
+    expect(await res.json()).toEqual({ error: "Missing key" });
+  });
+});

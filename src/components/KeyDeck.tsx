@@ -4,7 +4,7 @@ import { Eye, EyeOff, ShieldCheck, ShieldAlert, KeyRound, Lock, Zap } from 'luci
 
 export const KeyDeck = () => {
   const [key, setKey] = useState('');
-  const [status, setStatus] = useState<'idle' | 'scanning' | 'valid' | 'invalid'>('idle');
+  const [status, setStatus] = useState<'idle' | 'scanning' | 'valid' | 'invalid' | 'unreachable'>('idle');
   const [showKey, setShowKey] = useState(false);
   const [activeKeySource, setActiveKeySource] = useState<string>('Detecting...');
 
@@ -33,25 +33,35 @@ export const KeyDeck = () => {
         body: JSON.stringify({ key }),
       });
       const data = await res.json();
-      
+
       if (data.valid) {
         setStatus('valid');
-        await fetch('/api/keys/save', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ key }),
-        });
-        setTimeout(() => {
-          setKey('');
-          setStatus('idle');
-          fetchStatus();
-        }, 2000);
+        await deployKey();
+      } else if (data.reason === 'transport') {
+        // The provider could not be reached. That is not evidence the key is
+        // wrong, so offer an explicit save-anyway path instead of a hard gate.
+        setStatus('unreachable');
       } else {
         setStatus('invalid');
       }
     } catch (e) {
-      setStatus('invalid');
+      console.warn('[reddy:keydeck] validation request failed:', e);
+      setStatus('unreachable');
     }
+  };
+
+  const deployKey = async () => {
+    if (!key.trim()) return;
+    await fetch('/api/keys/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key }),
+    });
+    setTimeout(() => {
+      setKey('');
+      setStatus('idle');
+      fetchStatus();
+    }, 1500);
   };
 
   return (
@@ -91,11 +101,12 @@ export const KeyDeck = () => {
         </div>
 
         <button 
-          onClick={validateAndSave}
+          onClick={status === 'unreachable' ? deployKey : validateAndSave}
           disabled={status === 'scanning' || !key.trim()}
           className={`w-full py-2.5 font-mono font-black text-xs uppercase tracking-widest border-2 border-black shadow-[3px_3px_0px_0px_#000] cursor-pointer transition-all active:translate-y-0.5 disabled:opacity-30 ${
             status === 'scanning' ? 'bg-zinc-800 text-zinc-500' :
             status === 'valid' ? 'bg-emerald-500 text-black font-black' :
+            status === 'unreachable' ? 'bg-amber-500 text-black font-black' :
             status === 'invalid' ? 'bg-red-500 text-black font-black' :
             'bg-[#facc15] text-black hover:bg-yellow-400'
           }`}
@@ -103,6 +114,7 @@ export const KeyDeck = () => {
           {status === 'idle' && <span className="flex items-center justify-center gap-1.5"><Zap size={12} /> SAVE API KEY</span>}
           {status === 'scanning' && 'Validating Key...'}
           {status === 'valid' && 'Key Verified & Set'}
+          {status === 'unreachable' && 'Provider Unreachable — Save Anyway'}
           {status === 'invalid' && 'Invalid Key / Reset'}
         </button>
       </div>
@@ -116,7 +128,7 @@ export const KeyDeck = () => {
           <div className="flex flex-col">
             <span className="text-[7px] font-mono font-bold text-zinc-500 uppercase tracking-wider leading-none">Authentication Engine</span>
             <span className="text-[9px] font-mono text-zinc-300 uppercase leading-snug mt-0.5">
-              {status === 'idle' ? 'Awaiting inputs' : status === 'scanning' ? 'Processing key...' : status === 'invalid' ? 'Disconnected / Invalid' : 'Connection Active'}
+              {status === 'idle' ? 'Awaiting inputs' : status === 'scanning' ? 'Processing key...' : status === 'invalid' ? 'Key rejected by provider' : status === 'unreachable' ? 'Provider unreachable — save anyway to proceed' : 'Connection Active'}
             </span>
           </div>
         </div>

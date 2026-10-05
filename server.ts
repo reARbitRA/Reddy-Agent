@@ -93,6 +93,33 @@ async function startServer() {
   }
   app.use("/api", requireApiAuth);
 
+  // ---- Fixed-window rate limit on the key routes (T-022) ----------------
+  // The validate route triggers one outbound provider call per request, so it
+  // is both a cost amplifier and a key-validity oracle. No new dependency: a
+  // small in-process window per client IP is enough for a single-node MVP.
+  const KEY_WINDOW_MS = 15 * 60 * 1000;
+  const KEY_WINDOW_MAX = Number(process.env.REDDY_KEY_RATE_LIMIT) || 10;
+  const keyWindows = new Map<string, { count: number; resetAt: number }>();
+  function rateLimitKeys(req: express.Request, res: express.Response, next: express.NextFunction) {
+    const id = req.ip || req.socket?.remoteAddress || "unknown";
+    const now = Date.now();
+    let win = keyWindows.get(id);
+    if (!win || now >= win.resetAt) {
+      win = { count: 0, resetAt: now + KEY_WINDOW_MS };
+      keyWindows.set(id, win);
+    }
+    win.count += 1;
+    res.setHeader("x-ratelimit-limit", String(KEY_WINDOW_MAX));
+    res.setHeader("x-ratelimit-remaining", String(Math.max(0, KEY_WINDOW_MAX - win.count)));
+    if (win.count > KEY_WINDOW_MAX) {
+      res.setHeader("retry-after", String(Math.ceil((win.resetAt - now) / 1000)));
+      return res.status(429).json({ error: "RATE_LIMITED", retry_after_s: Math.ceil((win.resetAt - now) / 1000) });
+    }
+    next();
+  }
+  app.use("/api/keys/validate", rateLimitKeys);
+  app.use("/api/keys/save", rateLimitKeys);
+
   // Agent Setup
   const orchestrator = new ProviderOrchestrator();
   const registry = new ToolRegistry();
@@ -315,14 +342,16 @@ async function startServer() {
 
   app.post("/api/keys/validate", async (req, res) => {
     const { key } = req.body;
-    if (!key) return res.status(400).json({ error: "Missing key" });
-    const isValid = await orchestrator.validateKey(key);
-    res.json({ valid: isValid });
+    if (!key || typeof key !== "string") return res.status(400).json({ error: "Missing key" });
+    const validation = await orchestrator.validateKey(key);
+    // `reason` lets the client distinguish a rejected key ("auth") from an
+    // unreachable provider ("transport") instead of collapsing both into false.
+    res.json({ valid: validation.valid, reason: validation.reason });
   });
 
   app.post("/api/keys/save", async (req, res) => {
     const { key } = req.body;
-    if (!key) return res.status(400).json({ error: "Missing key" });
+    if (!key || typeof key !== "string") return res.status(400).json({ error: "Missing key" });
     orchestrator.setKey(key);
     res.json({ status: "key_deployed" });
   });

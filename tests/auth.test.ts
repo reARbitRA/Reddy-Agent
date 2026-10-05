@@ -95,3 +95,30 @@ describe("API authentication — anonymous fallback", () => {
     expect(open.status).toBe("ok");
   });
 });
+
+describe("API — key routes are rate limited (T-022)", () => {
+  it("returns 429 with Retry-After after the window budget is spent", async () => {
+    const headers = {
+      authorization: `Bearer ${TEST_API_TOKEN}`,
+      "Content-Type": "application/json",
+    };
+    let last: Response | null = null;
+    for (let i = 0; i < 12; i++) {
+      last = await fetch(`${server.baseUrl}/api/keys/validate`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ key: `probe-${i}` }),
+      });
+    }
+    expect(last!.status).toBe(429);
+    expect(Number(last!.headers.get("retry-after"))).toBeGreaterThan(0);
+    expect(await last!.json()).toMatchObject({ error: "RATE_LIMITED" });
+  });
+
+  it("leaves other routes unlimited", async () => {
+    for (let i = 0; i < 15; i++) {
+      const res = await fetch(`${server.baseUrl}/api/skills`);
+      expect(res.status).toBe(200);
+    }
+  });
+});
