@@ -4,6 +4,14 @@
   "seed": 424242,
   "iterations": 10000,
   "sigma_bias": 3.0,
+  "inputs": {
+    "findings_file": "01_findings.json",
+    "coverage_pct": 0.0,
+    "pass_rate": 1.0,
+    "core_cmd_failed_dims": [
+      "D1"
+    ]
+  },
   "severity_counts": {
     "P0": 2,
     "P1": 6,

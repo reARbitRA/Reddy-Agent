@@ -218,7 +218,9 @@ export default function App() {
       gain.connect(ctx.destination);
       osc.start();
       osc.stop(ctx.currentTime + 0.5);
-    } catch(e) {}
+    } catch (e) {
+      console.warn('[reddy:audio] optional UI sound failed:', e);
+    }
   };
   const handleReaction = (id: string, reaction: 'useful' | 'incorrect') => {
     setLogs(prev => prev.map(log => 
@@ -239,7 +241,9 @@ export default function App() {
       gain.connect(ctx.destination);
       osc.start();
       osc.stop(ctx.currentTime + 0.1);
-    } catch(e) {}
+    } catch (e) {
+      console.warn('[reddy:audio] optional UI sound failed:', e);
+    }
   };
 
   const [isListening, setIsListening] = useState(false);
@@ -271,7 +275,9 @@ export default function App() {
         gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
         osc.connect(gain); gain.connect(ctx.destination);
         osc.start(); osc.stop(ctx.currentTime + 0.1);
-      } catch(e) {}
+      } catch (e) {
+        console.warn('[reddy:audio] optional UI sound failed:', e);
+      }
     };
 
     recognition.onresult = (event: any) => {
@@ -312,7 +318,9 @@ export default function App() {
       gain.connect(ctx.destination);
       osc.start();
       osc.stop(ctx.currentTime + 0.3);
-    } catch(e) {}
+    } catch (e) {
+      console.warn('[reddy:audio] optional UI sound failed:', e);
+    }
 
     try {
       const res = await fetch('/api/purge/audit');
@@ -588,7 +596,9 @@ export default function App() {
                   gain.connect(ctx.destination);
                   osc.start();
                   osc.stop(ctx.currentTime + 0.3);
-                } catch(e){}
+                } catch (e) {
+                  console.warn('[reddy:audio] optional UI sound failed:', e);
+                }
                 addLog("REDDY agent pinged manually.", "warn");
               }}
               className="mb-3 p-3 bg-black border-2 border-zinc-800 hover:border-red-500 relative overflow-hidden transition-all group cursor-pointer flex gap-4 select-none shadow-inner"
@@ -1099,7 +1109,9 @@ export default function App() {
                                     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
                                     osc.connect(gain); gain.connect(ctx.destination);
                                     osc.start(); osc.stop(ctx.currentTime + 0.05);
-                                  } catch(e){}
+                                  } catch (e) {
+                                    console.warn('[reddy:audio] optional UI sound failed:', e);
+                                  }
 
                                   setSelectedAuditIds(prev => 
                                     prev.includes(item.id) 

@@ -311,7 +311,9 @@ export const SunoWidget = () => {
                   setCopiedUrl(true);
                   playTone(700, 0.1);
                   setTimeout(() => setCopiedUrl(false), 2000);
-                } catch(e) {}
+                } catch (e) {
+                  console.warn('[reddy:audio] optional UI sound failed:', e);
+                }
               }}
               className="w-full py-1.5 bg-zinc-900 border border-zinc-800 text-zinc-500 hover:text-zinc-400 font-mono text-[9px] uppercase cursor-pointer flex items-center justify-center gap-1 transition-colors select-none"
             >

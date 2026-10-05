@@ -19,8 +19,13 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
-const doc = JSON.parse(fs.readFileSync(path.join(HERE, '01_findings.json'), 'utf8'));
-const mine = JSON.parse(fs.readFileSync(path.join(HERE, '02_scorecard.json'), 'utf8'));
+const FINDINGS = process.argv[2] || '01_findings.json';
+const SCORECARD = process.argv[3] || '02_scorecard.json';
+const OUT = process.argv[4] || '_validator.json';
+const COVERAGE = Number(process.argv[5] || 0);
+const DOM_OVERRIDE = process.argv[6] ? JSON.parse(process.argv[6]) : {};
+const doc = JSON.parse(fs.readFileSync(path.join(HERE, FINDINGS), 'utf8'));
+const mine = JSON.parse(fs.readFileSync(path.join(HERE, SCORECARD), 'utf8'));
 
 const BASE = { P0: 45, P1: 18, P2: 6, P3: 1.5 };
 const GM = { A: 1.0, B: 0.9, C: 0.7, D: 0.45 };
@@ -40,7 +45,7 @@ for (const f of doc.findings) {
 const dominant = {};
 for (const d of Object.keys(W)) {
   const g = grades[d];
-  if (!Object.keys(g).length) { dominant[d] = 'A'; continue; }
+  if (!Object.keys(g).length) { dominant[d] = DOM_OVERRIDE[d] || 'A'; continue; }
   const best = Math.max(...Object.values(g));
   dominant[d] = Object.keys(g).filter(k => Math.abs(g[k] - best) < 1e-9).sort((a, b) => ORD[b] - ORD[a])[0];
 }
@@ -55,7 +60,7 @@ for (const d of Object.keys(W)) {
   if (dominant[d] === 'C' || dominant[d] === 'D') s = Math.min(s, 55);           // Cap 1
   if (d === 'D1') s = Math.min(s, 30);                                            // Cap 2 (chat execution failed)
   if (d === 'D1') s = Math.min(s, 100 * (VW / Math.max(1, J.length)));            // Cap 3
-  if (d === 'D2') s = Math.min(s, 100 * (0.5 * 1.0 + 0.5 * Math.min(0 / 70, 1))); // Cap 4 (coverage 0)
+  if (d === 'D2') s = Math.min(s, 100 * (0.5 * 1.0 + 0.5 * Math.min(COVERAGE / 70, 1))); // Cap 4
   const items = doc.findings.filter(f => f.dimension === d);
   if (items.length && items.every(f => f.evidence_grade === 'D')) s = clamp(s, 20, 55);
   val[d] = s;
@@ -155,4 +160,4 @@ const out = {
   },
 };
 console.log(JSON.stringify(out, null, 2));
-fs.writeFileSync(path.join(HERE, '_validator.json'), JSON.stringify(out, null, 2) + '\n');
+fs.writeFileSync(path.join(HERE, OUT), JSON.stringify(out, null, 2) + '\n');

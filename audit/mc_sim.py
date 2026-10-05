@@ -58,7 +58,18 @@ def triangular(rng, a, mode, b):
 
 # ---------------------------------------------------------------- load findings
 HERE = os.path.dirname(os.path.abspath(__file__))
-with open(os.path.join(HERE, "01_findings.json")) as fh:
+# Optional re-run configuration (milestone close ritual). Defaults reproduce the
+# original Phase 3 run byte-for-byte.
+FINDINGS = sys.argv[1] if len(sys.argv) > 1 else "01_findings.json"
+COVERAGE = float(sys.argv[2]) if len(sys.argv) > 2 else 0.0
+EXPECTED_R = float(sys.argv[3]) if len(sys.argv) > 3 else 60.2916
+OUT_PATH = sys.argv[4] if len(sys.argv) > 4 else "02_scorecard.json"
+CORE_FAILED = (sys.argv[5].split(",") if len(sys.argv) > 5 and sys.argv[5] else ["D1"])
+# Explicit dominant-grade overrides for dimensions with zero findings. Per the
+# scoring contract the dominant grade of a zero-finding dimension is the HIGHEST
+# grade at which that dimension was positively verified.
+DOMINANT_OVERRIDE = json.loads(sys.argv[6]) if len(sys.argv) > 6 and sys.argv[6] else {}
+with open(os.path.join(HERE, FINDINGS)) as fh:
     DOC = json.load(fh)
 
 findings = DOC["findings"]
@@ -66,9 +77,10 @@ ledger = DOC["dimension_penalty_ledger"]
 
 # ------------------------------------------------- dominant grade per dimension
 dominant = {}
-for d, items in ledger.items():
+for d in WEIGHTS:
+    items = ledger.get(d, [])
     if not items:
-        dominant[d] = "A"
+        dominant[d] = DOMINANT_OVERRIDE.get(d, "A")
         continue
     by_grade = {}
     for it in items:
@@ -81,10 +93,8 @@ for d, items in ledger.items():
 # Cap 2: core verification command failed (exit != 0) for that dimension.
 # Only D1's core journey execution failed: POST /api/chat returned HTTP 500 and
 # J1/J2 could not be driven to a successful observable outcome (cmd#8).
-CORE_CMD_FAILED = {"D1": True}
-# Cap 4: coverage tooling is absent (vitest.config.ts has no provider), so coverage := 0.
-PASS_RATE = 57.0 / 57.0
-COVERAGE = 0.0
+CORE_CMD_FAILED = {d: True for d in CORE_FAILED}
+PASS_RATE = 105.0 / 105.0
 # Cap 3 inputs
 JOURNEYS = DOC["journey_classification"]
 VW = sum(1 for j in JOURNEYS if j["status"] == "VERIFIED_WORKING")
@@ -179,7 +189,6 @@ def letter(x):
 
 
 # ------------------------------------------------------- script self-assertion
-EXPECTED_R = 60.2916
 assert abs(R_point - EXPECTED_R) < 0.01, \
     f"R_point self-assertion FAILED: computed {R_point:.4f} vs expected {EXPECTED_R}"
 
@@ -187,6 +196,8 @@ out = {
     "engine": "ARBITER-MVP v2.2 scoring constants (fixed)",
     "prng": "LCG a=1664525 c=1013904223 m=2**32 + Box-Muller",
     "seed": SEED, "iterations": N_ITER, "sigma_bias": SIGMA_BIAS,
+    "inputs": {"findings_file": FINDINGS, "coverage_pct": COVERAGE,
+               "pass_rate": PASS_RATE, "core_cmd_failed_dims": CORE_FAILED},
     "severity_counts": sev_counts,
     "journeys": {"total": TOTAL_J, "verified_working": VW,
                  "partial": sum(1 for j in JOURNEYS if j["status"] == "PARTIAL"),
@@ -212,6 +223,6 @@ out = {
 
 print(json.dumps(out, indent=2))
 
-with open(os.path.join(HERE, "02_scorecard.json"), "w") as fh:
+with open(os.path.join(HERE, OUT_PATH), "w") as fh:
     json.dump(out, fh, indent=2)
     fh.write("\n")
