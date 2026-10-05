@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { ProviderOrchestrator } from "../core/orchestrator";
+import { ProviderOrchestrator, resolveModel, DEFAULT_GEMINI_MODEL } from "../core/orchestrator";
 
 describe("ProviderOrchestrator — provider error normalization", () => {
   const originalKey = process.env.GEMINI_API_KEY;
@@ -62,5 +62,68 @@ describe("ProviderOrchestrator — key precedence contract", () => {
     process.env.GEMINI_API_KEY = "";
     const orchestrator = new ProviderOrchestrator();
     await expect(orchestrator.request([])).rejects.toThrow("NO_KEY_DETECTED");
+  });
+});
+
+/**
+ * T-002 regression: the provider model must be resolvable and must never be a
+ * model Google has already shut down. gemini-1.5-flash was retired on
+ * 2025-09-29 (Gemini API changelog), so the previous hard pin made every
+ * request 404 and broke both the chat journey and the key-validation gate.
+ */
+describe("ProviderOrchestrator — model resolution (T-002)", () => {
+  const original = process.env.GEMINI_MODEL;
+  afterEach(() => {
+    if (original === undefined) delete process.env.GEMINI_MODEL;
+    else process.env.GEMINI_MODEL = original;
+  });
+
+  it("defaults to a currently supported Flash model", () => {
+    delete process.env.GEMINI_MODEL;
+    const model = resolveModel();
+    expect(model).toBe(DEFAULT_GEMINI_MODEL);
+    expect(model).toBe("gemini-3.8-flash");
+  });
+
+  it("honours GEMINI_MODEL when it names a supported model", () => {
+    process.env.GEMINI_MODEL = "gemini-3.5-flash-lite";
+    expect(resolveModel()).toBe("gemini-3.5-flash-lite");
+  });
+
+  it.each([
+    "gemini-1.5-flash",
+    "gemini-1.5-flash-002",
+    "gemini-1.5-pro",
+    "gemini-1.0-pro",
+    "gemini-2.0-flash",
+  ])("rejects the retired model %s with MODEL_RETIRED", (retired) => {
+    process.env.GEMINI_MODEL = retired;
+    expect(() => resolveModel()).toThrow(/MODEL_RETIRED/);
+  });
+
+  it("never passes a retired model identifier as a string literal to the provider", async () => {
+    // Prose that documents a retirement is fine; a quoted retired identifier
+    // reaching a model: field is not. Assert the precise invariant.
+    const fs = await import("node:fs");
+    const path = await import("node:path");
+    for (const rel of ["core/orchestrator.ts", "server.ts"]) {
+      const src = fs.readFileSync(path.resolve(__dirname, "..", rel), "utf8");
+      expect(src).not.toMatch(/["'`]gemini-1\.5-[a-z0-9.-]*["'`]/);
+      expect(src).not.toMatch(/["'`]gemini-1\.0-[a-z0-9.-]*["'`]/);
+      expect(src).not.toMatch(/["'`]gemini-2\.0-flash[a-z0-9.-]*["'`]/);
+    }
+  });
+
+  it("resolves every provider call through resolveModel()", async () => {
+    const fs = await import("node:fs");
+    const path = await import("node:path");
+    const src = fs.readFileSync(
+      path.resolve(__dirname, "..", "core", "orchestrator.ts"),
+      "utf8"
+    );
+    // Both provider call sites (validateKey and generate) must go through the
+    // resolver, and no model: field may be a hardcoded string.
+    expect(src.match(/resolveModel\(\)/g)?.length).toBeGreaterThanOrEqual(3);
+    expect(src).not.toMatch(/model:\s*["'`]/);
   });
 });

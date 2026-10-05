@@ -270,6 +270,9 @@ Copy `.env.example` to `.env` and fill it in. Every variable in the template is 
 | Variable | Required | Read by | Default |
 |---|---|---|---|
 | `GEMINI_API_KEY` | For AI features | `core/orchestrator.ts`, `server.ts` | — |
+| `GEMINI_MODEL` | No | `core/orchestrator.ts` (`resolveModel`) | `gemini-3.8-flash` |
+| `REDDY_API_TOKEN` | **Yes for any non-localhost deployment** | `server.ts` (`requireApiAuth`) | unset → `INSECURE_ANONYMOUS_MODE` |
+| `ALLOWED_DEV_HOSTS` | No | `vite.config.ts` | `localhost,127.0.0.1` |
 | `PORT` | No | `server.ts` | `3000` |
 | `NODE_ENV` | No | `server.ts` (`production` serves `dist/` statically) | development mode |
 | `DISABLE_HMR` | No | `vite.config.ts` (`true` disables HMR + file watching) | HMR on |
@@ -389,7 +392,8 @@ Stated plainly, because a cockpit you can't trust is a toy:
 - Task history boots with **15 seeded entries** (labeled `Task Execution #N`) so the telemetry panel is populated before real executions arrive.
 - The `SystemStatusMonitor` gauges are **simulated UI state**, not host telemetry; real host metrics come from the `get_system_metrics` tool.
 - The Suno widget's preset tracks and the guestbook's default entries are local seed data.
-- The Gemini model is pinned to `gemini-1.5-flash` in `core/orchestrator.ts`.
+- The Gemini model defaults to `gemini-3.8-flash` and is resolved in one place (`resolveModel()` in `core/orchestrator.ts`). Models Google has shut down — `gemini-1.0-*`, `gemini-1.5-*`, `gemini-2.0-flash` — are rejected at resolution time with `MODEL_RETIRED` instead of 404ing at request time. Override with `GEMINI_MODEL`.
+- `firebase-applet-config.json` is public-by-design Firebase **web client** configuration, not a secret. Restrict that web API key by HTTP referrer in the Firebase console and enable App Check for Authentication; the repository cannot enforce either.
 - There is **no license file** in this repository — resolve licensing before redistributing.
 - For a persistent multi-user deployment, replace the in-memory maps with a database and add authentication around the stateful routes; `MemoryVault` and `ToolRegistry` are dependency-light on purpose to make that swap straightforward.
 

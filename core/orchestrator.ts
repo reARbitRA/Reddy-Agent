@@ -1,6 +1,38 @@
 import { GoogleGenAI } from "@google/genai";
 import { AgentMessage } from '../src/types';
 
+/**
+ * The provider model is resolved here and nowhere else.
+ *
+ * gemini-3.8-flash is the current stable Flash model on the Gemini API
+ * (GA 2026-09-02). Override with GEMINI_MODEL.
+ */
+export const DEFAULT_GEMINI_MODEL = "gemini-3.8-flash";
+
+/**
+ * Models Google has already shut down. A request to any of these returns 404,
+ * so we fail loudly at resolution time instead of surfacing a provider 404 as
+ * an opaque chat error. gemini-1.5-flash was retired on 2025-09-29 per the
+ * Gemini API changelog; gemini-2.0 Flash and Flash-Lite were shut down on
+ * 2026-06-01.
+ */
+const RETIRED_MODEL_PATTERNS: RegExp[] = [
+  /^gemini-1\.0-/,
+  /^gemini-1\.5-/,
+  /^gemini-2\.0-flash/,
+];
+
+export function resolveModel(): string {
+  const requested = (process.env.GEMINI_MODEL || "").trim();
+  const model = requested || DEFAULT_GEMINI_MODEL;
+  if (RETIRED_MODEL_PATTERNS.some((re) => re.test(model))) {
+    throw new Error(
+      `MODEL_RETIRED: '${model}' has been shut down by the provider and every request to it returns 404. Set GEMINI_MODEL to a supported model (default: ${DEFAULT_GEMINI_MODEL}).`
+    );
+  }
+  return model;
+}
+
 export class ProviderOrchestrator {
   private genAI: GoogleGenAI | null = null;
   private model: any = null;
@@ -28,7 +60,7 @@ export class ProviderOrchestrator {
   async validateKey(key: string): Promise<boolean> {
     try {
       const tester = new GoogleGenAI({ apiKey: key } as any);
-      await (tester as any).models.generateContent({ model: "gemini-1.5-flash", contents: "ping" });
+      await (tester as any).models.generateContent({ model: resolveModel(), contents: "ping" });
       return true;
     } catch (e) {
       console.error("Key Validation Failed", e);
@@ -49,7 +81,7 @@ export class ProviderOrchestrator {
     });
 
     const response = await (this.model as any).generateContent({
-      model: "gemini-1.5-flash",
+      model: resolveModel(),
       contents,
       config: tools ? { tools: [{ functionDeclarations: tools.map((t: any) => t.function) }] } : undefined,
     });
