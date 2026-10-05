@@ -1,0 +1,1081 @@
+{
+  "phase": "PHASE 6 \u2014 SELF-AUTHORED EXECUTION BLUEPRINT",
+  "derived_from_frozen": "sha256(01_findings.json) = 777bcdbf6676815eced0e937c78b15f9ded6b0e48282db6674e21f0993d0eded",
+  "head_sha": "b88f913ff9da55e755560e9cef43d4bb2f1fbc14",
+  "branch": "arena/01a1097d-reddy-agent",
+  "branching_note": "Per-task fix/<task_id> branches are prohibited by the host platform, which pins this session to arena/01a1097d-reddy-agent. Tasks commit directly to the session branch with [T-xxx] trailers; traceability is preserved by the trailer and by 06_execution_log.md.",
+  "coverage_proof": "Every P0 and every journey-blocking P1 maps to a task. F-EXEC-001 (P0, blocks J1+J2) -> T-002. F-SEC-001 (P0) -> T-001. F-SEC-002, F-EXEC-002, F-EXEC-004, F-EXEC-007 (P1) -> T-003, T-019, T-013, T-012. F-LEGAL-001 and F-SEC-003 are requires_human and are emitted as BLOCKED tasks with explicit human actions.",
+  "milestones": {
+    "M0_Unblock": {
+      "exit": "P0 == 0",
+      "tasks": [
+        "T-001",
+        "T-002"
+      ]
+    },
+    "M1_DeRisk": {
+      "exit": "P1 <= 2 and all journeys VERIFIED_WORKING",
+      "tasks": [
+        "T-003",
+        "T-013",
+        "T-012",
+        "T-019",
+        "T-007",
+        "T-008"
+      ]
+    },
+    "M2_Harden": {
+      "exit": "R_point >= 75",
+      "tasks": [
+        "T-004",
+        "T-005",
+        "T-006",
+        "T-009",
+        "T-010",
+        "T-011",
+        "T-014",
+        "T-015",
+        "T-016",
+        "T-017",
+        "T-018",
+        "T-020",
+        "T-021",
+        "T-029"
+      ]
+    },
+    "M3_LaunchReadiness": {
+      "exit": "all GO criteria satisfied",
+      "tasks": [
+        "T-022",
+        "T-023"
+      ]
+    },
+    "M4_Backlog": {
+      "exit": "deferred",
+      "tasks": [
+        "T-024",
+        "T-025",
+        "T-026",
+        "T-027",
+        "T-028"
+      ]
+    }
+  },
+  "tasks": [
+    {
+      "task_id": "T-001",
+      "title": "Contain /api/purge/execute writes inside the project src tree",
+      "source_findings": [
+        "F-SEC-001"
+      ],
+      "lane": "SEC",
+      "dimension": "D3",
+      "priority": "P0",
+      "verification_mode": "test-first",
+      "depends_on": [],
+      "files_to_touch": [
+        "server.ts",
+        "tests/purge.test.ts"
+      ],
+      "change_spec": "Add a resolvePurgeTarget(filePath) helper in server.ts that (a) rejects non-string paths, (b) resolves against process.cwd(), (c) rejects anything whose path.relative(<cwd>/src, resolved) starts with '..' or is absolute, (d) rejects extensions other than .ts/.tsx, and (e) rejects symlinks via fs.lstatSync. Return a 400 {error:'PURGE_PATH_REJECTED'} for rejections instead of silently continuing. Also make /api/purge/audit skip symlinked entries.",
+      "acceptance_criteria": [
+        "GIVEN an item whose file resolves outside <cwd>/src WHEN POST /api/purge/execute THEN 400 and the target file is byte-identical",
+        "GIVEN a legitimate fixture item WHEN POST /api/purge/execute THEN 200 and the line is rewritten (existing behaviour preserved)",
+        "npm test exits 0 with the pre-existing 57 tests still passing"
+      ],
+      "verification_command": "npm test -- tests/purge.test.ts",
+      "rollback": "git revert <commit>",
+      "effort_hours": 1.0,
+      "score_delta_estimate": {
+        "dimension": "D3",
+        "points": 45.0
+      },
+      "risk_of_regression": "low",
+      "requires_human": false,
+      "human_reason": null
+    },
+    {
+      "task_id": "T-002",
+      "title": "Replace the retired gemini-1.5-flash pin with a configurable supported model",
+      "source_findings": [
+        "F-EXEC-001"
+      ],
+      "lane": "EXEC",
+      "dimension": "D1",
+      "priority": "P0",
+      "verification_mode": "test-first",
+      "depends_on": [],
+      "files_to_touch": [
+        "core/orchestrator.ts",
+        "tests/orchestrator.test.ts",
+        ".env.example",
+        "README.md"
+      ],
+      "change_spec": "Introduce export const DEFAULT_GEMINI_MODEL and a resolveModel() that reads process.env.GEMINI_MODEL. Replace both hardcoded 'gemini-1.5-flash' occurrences (validateKey and generate). Add a retired-model denylist (gemini-1.0-*, gemini-1.5-*, gemini-2.0-flash) that resolveModel rejects with a thrown, explicit error so the failure is loud rather than a 404 at request time.",
+      "acceptance_criteria": [
+        "GIVEN no GEMINI_MODEL WHEN the orchestrator resolves a model THEN it returns a currently supported model identifier",
+        "GIVEN GEMINI_MODEL=gemini-1.5-flash WHEN resolveModel runs THEN it throws MODEL_RETIRED",
+        "grep finds no 'gemini-1.5-flash' literal in core/ or server.ts",
+        "npm test exits 0"
+      ],
+      "verification_command": "npm test -- tests/orchestrator.test.ts && ! grep -rn 'gemini-1.5-flash' core/ server.ts",
+      "rollback": "git revert <commit>",
+      "effort_hours": 0.5,
+      "score_delta_estimate": {
+        "dimension": "D1",
+        "points": 38.5
+      },
+      "risk_of_regression": "medium",
+      "requires_human": false,
+      "human_reason": null
+    },
+    {
+      "task_id": "T-003",
+      "title": "Add bearer-token authentication middleware over the /api surface",
+      "source_findings": [
+        "F-SEC-002"
+      ],
+      "lane": "SEC",
+      "dimension": "D3",
+      "priority": "P1",
+      "verification_mode": "test-first",
+      "depends_on": [
+        "T-001"
+      ],
+      "files_to_touch": [
+        "server.ts",
+        "tests/helpers/server.ts",
+        "tests/auth.test.ts",
+        ".env.example",
+        "README.md"
+      ],
+      "change_spec": "Add requireApiAuth middleware mounted before all /api routes. When REDDY_API_TOKEN is set, every request must carry Authorization: Bearer <token> or x-reddy-token: <token>, compared with crypto.timingSafeEqual; otherwise 401 {error:'UNAUTHORIZED'}. When unset, the server boots in a loudly-warned INSECURE_ANONYMOUS_MODE. The test helper injects the token into the child env and into outgoing fetch calls so the existing 57 tests keep asserting the same behaviours.",
+      "acceptance_criteria": [
+        "GIVEN REDDY_API_TOKEN set WHEN GET /api/skills without a token THEN 401",
+        "GIVEN REDDY_API_TOKEN set WHEN POST /api/purge/execute without a token THEN 401",
+        "GIVEN the correct token THEN the route behaves exactly as before",
+        "GIVEN a wrong token THEN 401",
+        "npm test exits 0"
+      ],
+      "verification_command": "npm test -- tests/auth.test.ts tests/api.test.ts tests/purge.test.ts",
+      "rollback": "git revert <commit>",
+      "effort_hours": 3.0,
+      "score_delta_estimate": {
+        "dimension": "D3",
+        "points": 18.0
+      },
+      "risk_of_regression": "medium",
+      "requires_human": false,
+      "human_reason": null
+    },
+    {
+      "task_id": "T-004",
+      "title": "Add a GitHub Actions CI workflow running every green check",
+      "source_findings": [
+        "F-EXEC-004"
+      ],
+      "lane": "EXEC",
+      "dimension": "D5",
+      "priority": "P1",
+      "verification_mode": "check-first",
+      "depends_on": [
+        "T-002"
+      ],
+      "files_to_touch": [
+        ".github/workflows/ci.yml"
+      ],
+      "change_spec": "Workflow on push and pull_request: checkout, setup-node with a pinned Node 22 and npm cache, npm ci, npm run lint, npm test, npm run build, npm run verify:assets, npm run verify:readme, npm audit --audit-level=high.",
+      "acceptance_criteria": [
+        "The workflow file parses as valid YAML",
+        "Every command it lists is a real script in package.json"
+      ],
+      "verification_command": "node -e \"const fs=require('fs');const y=fs.readFileSync('.github/workflows/ci.yml','utf8');if(!/npm ci/.test(y)||!/npm test/.test(y)||!/npm run lint/.test(y))process.exit(1);console.log('ci.yml OK')\"",
+      "rollback": "git rm .github/workflows/ci.yml",
+      "effort_hours": 1.0,
+      "score_delta_estimate": {
+        "dimension": "D5",
+        "points": 18.0
+      },
+      "risk_of_regression": "low",
+      "requires_human": false,
+      "human_reason": null
+    },
+    {
+      "task_id": "T-005",
+      "title": "Configure vitest coverage so D2 is measurable",
+      "source_findings": [
+        "F-EXEC-007"
+      ],
+      "lane": "EXEC",
+      "dimension": "D2",
+      "priority": "P1",
+      "verification_mode": "check-first",
+      "depends_on": [],
+      "files_to_touch": [
+        "package.json",
+        "vitest.config.ts"
+      ],
+      "change_spec": "Add @vitest/coverage-v8 to devDependencies, a test:coverage script, and coverage configuration (provider v8, include server.ts/core/plugins/src/lib, reporter text+json-summary).",
+      "acceptance_criteria": [
+        "npm run test:coverage exits 0 and prints a coverage table",
+        "A coverage/coverage-summary.json is produced"
+      ],
+      "verification_command": "npm run test:coverage",
+      "rollback": "git revert <commit>",
+      "effort_hours": 0.75,
+      "score_delta_estimate": {
+        "dimension": "D2",
+        "points": 25.0
+      },
+      "risk_of_regression": "low",
+      "requires_human": false,
+      "human_reason": null
+    },
+    {
+      "task_id": "T-006",
+      "title": "Record the assistant tool-call turn so the function-calling contract holds",
+      "source_findings": [
+        "F-EXEC-002"
+      ],
+      "lane": "EXEC",
+      "dimension": "D9",
+      "priority": "P1",
+      "verification_mode": "test-first",
+      "depends_on": [],
+      "files_to_touch": [
+        "core/engine.ts",
+        "core/orchestrator.ts",
+        "tests/engine.test.ts"
+      ],
+      "change_spec": "In engine.ts, write the assistant turn with its tool_calls into memory before appending tool results. In orchestrator.ts, map assistant tool_calls to Gemini functionCall parts and tool messages to functionResponse parts, keeping the existing flat-text fallback only when no structured parts are available.",
+      "acceptance_criteria": [
+        "GIVEN a provider response with tool_calls WHEN the loop runs a second iteration THEN the replayed history contains a model turn carrying functionCall before the tool turn",
+        "npm test exits 0 with the existing engine tests unmodified in intent"
+      ],
+      "verification_command": "npm test -- tests/engine.test.ts",
+      "rollback": "git revert <commit>",
+      "effort_hours": 3.0,
+      "score_delta_estimate": {
+        "dimension": "D9",
+        "points": 12.96
+      },
+      "risk_of_regression": "medium",
+      "requires_human": false,
+      "human_reason": null
+    },
+    {
+      "task_id": "T-007",
+      "title": "Add a LICENSE file",
+      "source_findings": [
+        "F-LEGAL-001"
+      ],
+      "lane": "LEGAL",
+      "dimension": "D12",
+      "priority": "P1",
+      "verification_mode": "check-first",
+      "depends_on": [],
+      "files_to_touch": [
+        "LICENSE"
+      ],
+      "change_spec": "Blocked: choosing a licence is an owner decision that transfers rights. No licence may be selected autonomously.",
+      "acceptance_criteria": [
+        "A LICENSE file exists whose SPDX identifier matches the owner's decision"
+      ],
+      "verification_command": "test -f LICENSE",
+      "rollback": "git rm LICENSE",
+      "effort_hours": 0.5,
+      "score_delta_estimate": {
+        "dimension": "D12",
+        "points": 18.0
+      },
+      "risk_of_regression": "low",
+      "requires_human": true,
+      "human_reason": "Selecting a licence (MIT / Apache-2.0 / proprietary) is a legal decision reserved to the rights holder."
+    },
+    {
+      "task_id": "T-008",
+      "title": "Reduce Google OAuth scopes to the minimum the widget uses",
+      "source_findings": [
+        "F-SEC-003"
+      ],
+      "lane": "SEC",
+      "dimension": "D3",
+      "priority": "P1",
+      "verification_mode": "check-first",
+      "depends_on": [],
+      "files_to_touch": [
+        "src/lib/firebase.ts"
+      ],
+      "change_spec": "Blocked: dropping https://mail.google.com/ and gmail.modify changes what the product can do, and Google OAuth verification for any remaining restricted scope is an owner action. Requires a product decision on which Workspace operations stay in scope.",
+      "acceptance_criteria": [
+        "src/lib/firebase.ts requests only the scopes the owner approved",
+        "The Firebase/Google Cloud console reflects the same scope list"
+      ],
+      "verification_command": "grep -c 'addScope' src/lib/firebase.ts",
+      "rollback": "git revert <commit>",
+      "effort_hours": 1.5,
+      "score_delta_estimate": {
+        "dimension": "D3",
+        "points": 12.96
+      },
+      "risk_of_regression": "medium",
+      "requires_human": true,
+      "human_reason": "Scope reduction removes product capability and Google OAuth verification requires owner action."
+    },
+    {
+      "task_id": "T-009",
+      "title": "Add /api/health and a JSON 404 for unknown /api routes",
+      "source_findings": [
+        "F-OPS-002"
+      ],
+      "lane": "OPS",
+      "dimension": "D6",
+      "priority": "P2",
+      "verification_mode": "test-first",
+      "depends_on": [],
+      "files_to_touch": [
+        "server.ts",
+        "tests/api.test.ts"
+      ],
+      "change_spec": "Register GET /api/health before the catch-all returning {status:'ok', uptime, version, pid}. Add app.use('/api', ...) 404 handler returning JSON before the SPA fallback.",
+      "acceptance_criteria": [
+        "GET /api/health returns 200 JSON with status ok",
+        "GET /api/does-not-exist returns 404 JSON, not 200 HTML",
+        "GET / still returns 200 text/html"
+      ],
+      "verification_command": "npm test -- tests/api.test.ts",
+      "rollback": "git revert <commit>",
+      "effort_hours": 0.5,
+      "score_delta_estimate": {
+        "dimension": "D6",
+        "points": 6.0
+      },
+      "risk_of_regression": "low",
+      "requires_human": false,
+      "human_reason": null
+    },
+    {
+      "task_id": "T-010",
+      "title": "Disable x-powered-by and set security response headers",
+      "source_findings": [
+        "F-SEC-004"
+      ],
+      "lane": "SEC",
+      "dimension": "D3",
+      "priority": "P2",
+      "verification_mode": "test-first",
+      "depends_on": [],
+      "files_to_touch": [
+        "server.ts",
+        "tests/api.test.ts"
+      ],
+      "change_spec": "app.disable('x-powered-by') plus a small header middleware setting X-Content-Type-Options: nosniff, Referrer-Policy: no-referrer, X-Frame-Options: DENY and a Content-Security-Policy permitting the googleapis.com origins the Workspace widget calls.",
+      "acceptance_criteria": [
+        "No X-Powered-By header on any response",
+        "X-Content-Type-Options: nosniff present",
+        "The dashboard still loads (CSP does not block the bundle)"
+      ],
+      "verification_command": "npm test -- tests/api.test.ts",
+      "rollback": "git revert <commit>",
+      "effort_hours": 0.75,
+      "score_delta_estimate": {
+        "dimension": "D3",
+        "points": 6.0
+      },
+      "risk_of_regression": "medium",
+      "requires_human": false,
+      "human_reason": null
+    },
+    {
+      "task_id": "T-011",
+      "title": "Use crypto.randomUUID for knowledge ids and 404 unknown DELETEs",
+      "source_findings": [
+        "F-DATA-001"
+      ],
+      "lane": "DATA",
+      "dimension": "D4",
+      "priority": "P2",
+      "verification_mode": "test-first",
+      "depends_on": [],
+      "files_to_touch": [
+        "server.ts",
+        "tests/api.test.ts"
+      ],
+      "change_spec": "Replace Math.random().toString(36).substring(7) with crypto.randomUUID(); DELETE /api/knowledge/:id returns 404 when the id is absent.",
+      "acceptance_criteria": [
+        "POST /api/knowledge returns a UUID-shaped id",
+        "DELETE of an unknown id returns 404",
+        "DELETE of a known id still returns 200 and removes it"
+      ],
+      "verification_command": "npm test -- tests/api.test.ts",
+      "rollback": "git revert <commit>",
+      "effort_hours": 0.5,
+      "score_delta_estimate": {
+        "dimension": "D4",
+        "points": 4.32
+      },
+      "risk_of_regression": "low",
+      "requires_human": false,
+      "human_reason": null
+    },
+    {
+      "task_id": "T-012",
+      "title": "Give the seven silent catch blocks a labelled log or user feedback",
+      "source_findings": [
+        "F-RELY-001"
+      ],
+      "lane": "RELY",
+      "dimension": "D7",
+      "priority": "P2",
+      "verification_mode": "check-first",
+      "depends_on": [],
+      "files_to_touch": [
+        "src/App.tsx",
+        "src/components/SunoWidget.tsx"
+      ],
+      "change_spec": "Each empty catch(e){} becomes a console.warn with a stable prefix; the interactive ones also push an entry into the existing log stream. Audio-only handlers keep a warn without a UI toast.",
+      "acceptance_criteria": [
+        "grep finds no empty catch bodies in src/",
+        "npm run lint exits 0"
+      ],
+      "verification_command": "! grep -rnE 'catch\\s*(\\([^)]*\\))?\\s*\\{\\s*\\}' src/ && npm run lint",
+      "rollback": "git revert <commit>",
+      "effort_hours": 1.0,
+      "score_delta_estimate": {
+        "dimension": "D7",
+        "points": 6.0
+      },
+      "risk_of_regression": "low",
+      "requires_human": false,
+      "human_reason": null
+    },
+    {
+      "task_id": "T-013",
+      "title": "Add structured request logging with a correlation id",
+      "source_findings": [
+        "F-OBS-001"
+      ],
+      "lane": "OBS",
+      "dimension": "D7",
+      "priority": "P2",
+      "verification_mode": "test-first",
+      "depends_on": [
+        "T-009"
+      ],
+      "files_to_touch": [
+        "server.ts",
+        "tests/api.test.ts"
+      ],
+      "change_spec": "Middleware assigns crypto.randomUUID() as x-request-id, echoes it on the response, and emits one JSON line per completed request with method, path, status, duration_ms and request_id. Never log bodies or headers.",
+      "acceptance_criteria": [
+        "Every API response carries an x-request-id header",
+        "One structured JSON log line is emitted per request",
+        "No request body or header value appears in the log line"
+      ],
+      "verification_command": "npm test -- tests/api.test.ts",
+      "rollback": "git revert <commit>",
+      "effort_hours": 1.5,
+      "score_delta_estimate": {
+        "dimension": "D7",
+        "points": 6.0
+      },
+      "risk_of_regression": "low",
+      "requires_human": false,
+      "human_reason": null
+    },
+    {
+      "task_id": "T-014",
+      "title": "Bound episodicSummary and wire the inert MemoryVault.limit",
+      "source_findings": [
+        "F-RELY-002"
+      ],
+      "lane": "RELY",
+      "dimension": "D8",
+      "priority": "P2",
+      "verification_mode": "test-first",
+      "depends_on": [],
+      "files_to_touch": [
+        "core/memory.ts",
+        "tests/memory.test.ts"
+      ],
+      "change_spec": "Cap episodicSummary at this.limit characters keeping the most recent tail, so the emitted EPISODIC_SUMMARY is bounded. Keep the pinned system message and the 50-message window semantics unchanged.",
+      "acceptance_criteria": [
+        "GIVEN 500 messages WHEN getContext runs THEN the summary length is <= limit",
+        "All 10 existing memory tests still pass"
+      ],
+      "verification_command": "npm test -- tests/memory.test.ts",
+      "rollback": "git revert <commit>",
+      "effort_hours": 1.5,
+      "score_delta_estimate": {
+        "dimension": "D8",
+        "points": 4.32
+      },
+      "risk_of_regression": "medium",
+      "requires_human": false,
+      "human_reason": null
+    },
+    {
+      "task_id": "T-015",
+      "title": "Fix the shipped identity: package name and page title",
+      "source_findings": [
+        "F-QUAL-003"
+      ],
+      "lane": "QUAL",
+      "dimension": "D11",
+      "priority": "P3",
+      "verification_mode": "check-first",
+      "depends_on": [],
+      "files_to_touch": [
+        "package.json",
+        "index.html"
+      ],
+      "change_spec": "name -> reddy-agent, version -> 0.1.0; index.html title -> REDDY Agent.",
+      "acceptance_criteria": [
+        "package.json name is reddy-agent",
+        "index.html title is REDDY Agent",
+        "npm run build still exits 0"
+      ],
+      "verification_command": "node -e \"const p=require('./package.json');if(p.name!=='reddy-agent')process.exit(1)\" && grep -q '<title>REDDY Agent</title>' index.html",
+      "rollback": "git revert <commit>",
+      "effort_hours": 0.25,
+      "score_delta_estimate": {
+        "dimension": "D11",
+        "points": 1.35
+      },
+      "risk_of_regression": "low",
+      "requires_human": false,
+      "human_reason": null
+    },
+    {
+      "task_id": "T-016",
+      "title": "Remove dead code and make mid-session protocol changes take effect",
+      "source_findings": [
+        "F-QUAL-002"
+      ],
+      "lane": "QUAL",
+      "dimension": "D10",
+      "priority": "P3",
+      "verification_mode": "test-first",
+      "depends_on": [
+        "T-014"
+      ],
+      "files_to_touch": [
+        "server.ts",
+        "tests/api.test.ts"
+      ],
+      "change_spec": "In the /api/chat else branch, call vault.updateSystemPrompt(currentProtocol) so a protocol changed via POST /api/settings reaches an already-created session, matching the README claim.",
+      "acceptance_criteria": [
+        "GIVEN a session that already chatted WHEN POST /api/settings changes its protocol THEN the next turn uses the new system prompt",
+        "npm test exits 0"
+      ],
+      "verification_command": "npm test -- tests/api.test.ts",
+      "rollback": "git revert <commit>",
+      "effort_hours": 0.5,
+      "score_delta_estimate": {
+        "dimension": "D10",
+        "points": 1.35
+      },
+      "risk_of_regression": "low",
+      "requires_human": false,
+      "human_reason": null
+    },
+    {
+      "task_id": "T-017",
+      "title": "Make the orchestrator test hermetic (no live network call)",
+      "source_findings": [
+        "F-EXEC-006"
+      ],
+      "lane": "EXEC",
+      "dimension": "D2",
+      "priority": "P2",
+      "verification_mode": "check-first",
+      "depends_on": [
+        "T-002"
+      ],
+      "files_to_touch": [
+        "tests/orchestrator.test.ts"
+      ],
+      "change_spec": "Stub globalThis.fetch inside the validateKey test so no request leaves the process, and assert the normalised false result comes from a provider error rather than a transport failure.",
+      "acceptance_criteria": [
+        "npm test emits no 'fetch failed' trace",
+        "npm test exits 0"
+      ],
+      "verification_command": "npm test 2>&1 | tee /tmp/t17.log | grep -c 'fetch failed' | grep -q '^0$'",
+      "rollback": "git revert <commit>",
+      "effort_hours": 0.5,
+      "score_delta_estimate": {
+        "dimension": "D2",
+        "points": 6.0
+      },
+      "risk_of_regression": "low",
+      "requires_human": false,
+      "human_reason": null
+    },
+    {
+      "task_id": "T-018",
+      "title": "Flag seeded telemetry records so the chart cannot pass them off as measured",
+      "source_findings": [
+        "F-DATA-003"
+      ],
+      "lane": "DATA",
+      "dimension": "D4",
+      "priority": "P3",
+      "verification_mode": "test-first",
+      "depends_on": [],
+      "files_to_touch": [
+        "server.ts",
+        "src/components/TaskTracker.tsx",
+        "tests/api.test.ts"
+      ],
+      "change_spec": "Add seeded:true to the 15 boot records; TaskTracker renders seeded records in a muted series and excludes them from the success-ratio and average-latency figures unless no real records exist.",
+      "acceptance_criteria": [
+        "The 15 boot records carry seeded:true",
+        "Real records do not carry the flag",
+        "npm test exits 0"
+      ],
+      "verification_command": "npm test -- tests/api.test.ts",
+      "rollback": "git revert <commit>",
+      "effort_hours": 0.75,
+      "score_delta_estimate": {
+        "dimension": "D4",
+        "points": 1.35
+      },
+      "risk_of_regression": "low",
+      "requires_human": false,
+      "human_reason": null
+    },
+    {
+      "task_id": "T-019",
+      "title": "Replace allowedHosts:true with an explicit dev-host allowlist",
+      "source_findings": [
+        "F-SEC-008"
+      ],
+      "lane": "SEC",
+      "dimension": "D3",
+      "priority": "P2",
+      "verification_mode": "check-first",
+      "depends_on": [],
+      "files_to_touch": [
+        "vite.config.ts",
+        ".env.example",
+        "README.md"
+      ],
+      "change_spec": "Read ALLOWED_DEV_HOSTS from the environment (comma-separated) and default to localhost/127.0.0.1; only widen when the variable is set.",
+      "acceptance_criteria": [
+        "vite.config.ts no longer contains allowedHosts: true",
+        "npm run build and npm run lint still exit 0"
+      ],
+      "verification_command": "! grep -q 'allowedHosts: true' vite.config.ts && npm run lint",
+      "rollback": "git revert <commit>",
+      "effort_hours": 0.5,
+      "score_delta_estimate": {
+        "dimension": "D3",
+        "points": 3.24
+      },
+      "risk_of_regression": "medium",
+      "requires_human": false,
+      "human_reason": null
+    },
+    {
+      "task_id": "T-020",
+      "title": "Add a timeout to the provider call",
+      "source_findings": [
+        "F-RELY-003"
+      ],
+      "lane": "RELY",
+      "dimension": "D8",
+      "priority": "P3",
+      "verification_mode": "test-first",
+      "depends_on": [
+        "T-002"
+      ],
+      "files_to_touch": [
+        "core/orchestrator.ts",
+        "tests/orchestrator.test.ts"
+      ],
+      "change_spec": "Pass an abort signal / httpOptions timeout (30s) to generateContent in both generate() and validateKey(), and normalise a timeout to the existing error shapes.",
+      "acceptance_criteria": [
+        "A hung provider cannot hold a request open indefinitely",
+        "npm test exits 0"
+      ],
+      "verification_command": "npm test -- tests/orchestrator.test.ts",
+      "rollback": "git revert <commit>",
+      "effort_hours": 1.5,
+      "score_delta_estimate": {
+        "dimension": "D8",
+        "points": 1.08
+      },
+      "risk_of_regression": "medium",
+      "requires_human": false,
+      "human_reason": null
+    },
+    {
+      "task_id": "T-021",
+      "title": "Update the reachable vulnerable dependencies",
+      "source_findings": [
+        "F-SEC-007"
+      ],
+      "lane": "SEC",
+      "dimension": "D3",
+      "priority": "P2",
+      "verification_mode": "check-first",
+      "depends_on": [],
+      "files_to_touch": [
+        "package.json",
+        "package-lock.json"
+      ],
+      "change_spec": "npm update the reachable set (qs, body-parser, express, postcss, nanoid, browserslist, protobufjs, baseline-browser-mapping) and re-run npm audit.",
+      "acceptance_criteria": [
+        "npm audit reports 0 moderate or higher for the reachable runtime set",
+        "npm test, npm run lint and npm run build all exit 0"
+      ],
+      "verification_command": "npm audit --audit-level=moderate --omit=dev || npm audit --audit-level=moderate",
+      "rollback": "git checkout -- package.json package-lock.json && npm ci",
+      "effort_hours": 1.5,
+      "score_delta_estimate": {
+        "dimension": "D3",
+        "points": 6.0
+      },
+      "risk_of_regression": "medium",
+      "requires_human": false,
+      "human_reason": null
+    },
+    {
+      "task_id": "T-022",
+      "title": "Rate-limit the key routes",
+      "source_findings": [
+        "F-SEC-005"
+      ],
+      "lane": "SEC",
+      "dimension": "D3",
+      "priority": "P2",
+      "verification_mode": "test-first",
+      "depends_on": [
+        "T-003"
+      ],
+      "files_to_touch": [
+        "server.ts",
+        "tests/auth.test.ts"
+      ],
+      "change_spec": "Add a small in-process fixed-window limiter (no new dependency) of 10 requests / 15 min / IP on /api/keys/validate and /api/keys/save, returning 429 with a Retry-After header.",
+      "acceptance_criteria": [
+        "The 11th validate call in a window returns 429",
+        "Other routes are unaffected"
+      ],
+      "verification_command": "npm test -- tests/auth.test.ts",
+      "rollback": "git revert <commit>",
+      "effort_hours": 0.75,
+      "score_delta_estimate": {
+        "dimension": "D3",
+        "points": 4.32
+      },
+      "risk_of_regression": "low",
+      "requires_human": false,
+      "human_reason": null
+    },
+    {
+      "task_id": "T-023",
+      "title": "Make KeyDeck validation tri-state so a network blip is not 'Invalid Key'",
+      "source_findings": [
+        "F-EXEC-003"
+      ],
+      "lane": "EXEC",
+      "dimension": "D9",
+      "priority": "P2",
+      "verification_mode": "test-first",
+      "depends_on": [
+        "T-002",
+        "T-020"
+      ],
+      "files_to_touch": [
+        "core/orchestrator.ts",
+        "server.ts",
+        "src/components/KeyDeck.tsx",
+        "tests/api.test.ts"
+      ],
+      "change_spec": "validateKey returns {valid, reason:'ok'|'auth'|'transport'|'model'}; /api/keys/validate returns the reason; KeyDeck offers an explicit 'Save without validating' path when reason is transport.",
+      "acceptance_criteria": [
+        "A transport failure is distinguishable from an auth failure in the API response",
+        "npm test exits 0"
+      ],
+      "verification_command": "npm test -- tests/api.test.ts tests/orchestrator.test.ts",
+      "rollback": "git revert <commit>",
+      "effort_hours": 1.0,
+      "score_delta_estimate": {
+        "dimension": "D9",
+        "points": 4.32
+      },
+      "risk_of_regression": "medium",
+      "requires_human": false,
+      "human_reason": null
+    },
+    {
+      "task_id": "T-024",
+      "title": "Split App.tsx and WorkspaceWidget.tsx into testable units",
+      "source_findings": [
+        "F-QUAL-001"
+      ],
+      "lane": "QUAL",
+      "dimension": "D10",
+      "priority": "P2",
+      "verification_mode": "check-first",
+      "depends_on": [
+        "T-012",
+        "T-016"
+      ],
+      "files_to_touch": [
+        "src/App.tsx",
+        "src/components/WorkspaceWidget.tsx"
+      ],
+      "change_spec": "Deferred to M4: a 1186-line and an 845-line component decomposition with no component test infrastructure in place is a multi-day refactor that cannot be safely verified inside this remediation window.",
+      "acceptance_criteria": [
+        "No file in src/ exceeds 600 LOC",
+        "A component test harness exists"
+      ],
+      "verification_command": "find src -name '*.tsx' | xargs wc -l | awk '$1>600 && $2!=\"total\"' | wc -l | grep -q '^0$'",
+      "rollback": "git revert <commit>",
+      "effort_hours": 6.0,
+      "score_delta_estimate": {
+        "dimension": "D10",
+        "points": 6.0
+      },
+      "risk_of_regression": "high",
+      "requires_human": true,
+      "human_reason": "High-regression refactor of the entire UI surface; needs an owner-approved component test strategy first."
+    },
+    {
+      "task_id": "T-025",
+      "title": "Code-split the 943 kB frontend bundle",
+      "source_findings": [
+        "F-RELY-004"
+      ],
+      "lane": "RELY",
+      "dimension": "D8",
+      "priority": "P3",
+      "verification_mode": "check-first",
+      "depends_on": [
+        "T-024"
+      ],
+      "files_to_touch": [
+        "src/App.tsx",
+        "vite.config.ts"
+      ],
+      "change_spec": "Deferred to M4 pending T-024.",
+      "acceptance_criteria": [
+        "No emitted chunk exceeds 500 kB",
+        "npm run build emits no chunk-size warning"
+      ],
+      "verification_command": "npm run build 2>&1 | grep -c 'larger than 500 kB' | grep -q '^0$'",
+      "rollback": "git revert <commit>",
+      "effort_hours": 2.0,
+      "score_delta_estimate": {
+        "dimension": "D8",
+        "points": 1.5
+      },
+      "risk_of_regression": "medium",
+      "requires_human": false,
+      "human_reason": null
+    },
+    {
+      "task_id": "T-026",
+      "title": "Add a multi-stage Dockerfile with a non-root runtime user",
+      "source_findings": [
+        "F-OPS-001"
+      ],
+      "lane": "OPS",
+      "dimension": "D6",
+      "priority": "P2",
+      "verification_mode": "check-first",
+      "depends_on": [
+        "T-004"
+      ],
+      "files_to_touch": [
+        "Dockerfile",
+        ".dockerignore",
+        "package.json"
+      ],
+      "change_spec": "Deferred to M4: docker is not installed in this environment, so a Dockerfile could be authored but never built or smoke-tested. Shipping an unverified container spec would violate the evidence rule.",
+      "acceptance_criteria": [
+        "docker build succeeds",
+        "The container serves GET /api/health with 200",
+        "The runtime user is non-root"
+      ],
+      "verification_command": "docker build -t reddy . && docker run --rm -p 3000:3000 -d reddy && curl -sf localhost:3000/api/health",
+      "rollback": "git rm Dockerfile .dockerignore",
+      "effort_hours": 1.5,
+      "score_delta_estimate": {
+        "dimension": "D6",
+        "points": 6.0
+      },
+      "risk_of_regression": "low",
+      "requires_human": true,
+      "human_reason": "No docker binary in the execution environment; the artifact cannot be verified by execution here."
+    },
+    {
+      "task_id": "T-027",
+      "title": "Persist the knowledge vault across restarts",
+      "source_findings": [
+        "F-DATA-002"
+      ],
+      "lane": "DATA",
+      "dimension": "D4",
+      "priority": "P2",
+      "verification_mode": "test-first",
+      "depends_on": [
+        "T-011"
+      ],
+      "files_to_touch": [
+        "server.ts",
+        "core/",
+        "tests/api.test.ts"
+      ],
+      "change_spec": "Deferred to M4: the README lists store selection (knowledge vs sessions) as an open engineering question; choosing SQLite vs a JSON file vs a hosted store is an owner decision with deployment consequences.",
+      "acceptance_criteria": [
+        "Knowledge entries survive a server restart",
+        "An export route exists"
+      ],
+      "verification_command": "npm test -- tests/api.test.ts",
+      "rollback": "git revert <commit>",
+      "effort_hours": 4.0,
+      "score_delta_estimate": {
+        "dimension": "D4",
+        "points": 4.32
+      },
+      "risk_of_regression": "medium",
+      "requires_human": true,
+      "human_reason": "Storage-backend selection is an architecture decision the README explicitly leaves open."
+    },
+    {
+      "task_id": "T-028",
+      "title": "Publish a privacy policy and a local-data clear control",
+      "source_findings": [
+        "F-LEGAL-002"
+      ],
+      "lane": "LEGAL",
+      "dimension": "D12",
+      "priority": "P2",
+      "verification_mode": "check-first",
+      "depends_on": [
+        "T-008"
+      ],
+      "files_to_touch": [
+        "PRIVACY.md",
+        "src/App.tsx"
+      ],
+      "change_spec": "Blocked: a privacy policy is a legal document. The UI 'clear local data' control can be built autonomously but is deferred until the policy text exists so the two agree.",
+      "acceptance_criteria": [
+        "A privacy policy is published and linked from the UI",
+        "A control clears reddy_chat_logs, reddy_system_instruction and guestbook_signatures"
+      ],
+      "verification_command": "test -f PRIVACY.md",
+      "rollback": "git rm PRIVACY.md",
+      "effort_hours": 2.0,
+      "score_delta_estimate": {
+        "dimension": "D12",
+        "points": 4.32
+      },
+      "risk_of_regression": "low",
+      "requires_human": true,
+      "human_reason": "Privacy policy text is a legal artefact requiring owner sign-off."
+    },
+    {
+      "task_id": "T-029",
+      "title": "Document the Firebase key's required HTTP-referrer restriction",
+      "source_findings": [
+        "F-SEC-006"
+      ],
+      "lane": "SEC",
+      "dimension": "D3",
+      "priority": "P3",
+      "verification_mode": "check-first",
+      "depends_on": [],
+      "files_to_touch": [
+        "README.md"
+      ],
+      "change_spec": "Add a note to the README security-boundary section stating that firebase-applet-config.json is public-by-design client configuration and that the Firebase console MUST restrict the web API key by HTTP referrer and enable App Check for Auth. The key itself stays committed because the browser needs it; it is redacted in all audit output.",
+      "acceptance_criteria": [
+        "README documents the referrer-restriction requirement",
+        "No raw key value appears in any audit artefact"
+      ],
+      "verification_command": "grep -q 'referrer' README.md",
+      "rollback": "git revert <commit>",
+      "effort_hours": 0.5,
+      "score_delta_estimate": {
+        "dimension": "D3",
+        "points": 1.2
+      },
+      "risk_of_regression": "low",
+      "requires_human": false,
+      "human_reason": null
+    }
+  ],
+  "dag_is_acyclic": true,
+  "dag_edges": [
+    [
+      "T-001",
+      "T-003"
+    ],
+    [
+      "T-002",
+      "T-004"
+    ],
+    [
+      "T-002",
+      "T-017"
+    ],
+    [
+      "T-002",
+      "T-020"
+    ],
+    [
+      "T-002",
+      "T-023"
+    ],
+    [
+      "T-009",
+      "T-013"
+    ],
+    [
+      "T-003",
+      "T-022"
+    ],
+    [
+      "T-012",
+      "T-024"
+    ],
+    [
+      "T-016",
+      "T-024"
+    ],
+    [
+      "T-024",
+      "T-025"
+    ],
+    [
+      "T-014",
+      "T-016"
+    ],
+    [
+      "T-011",
+      "T-027"
+    ],
+    [
+      "T-004",
+      "T-026"
+    ],
+    [
+      "T-020",
+      "T-023"
+    ],
+    [
+      "T-008",
+      "T-028"
+    ]
+  ],
+  "validator_review": {
+    "validator_model": "NONE_AVAILABLE",
+    "task_coverage_check": "Performed by the audit model itself (DEGRADED \u2014 SINGLE-MODEL). Verified mechanically: every finding id in 01_findings.json appears in at least one task's source_findings, and every P0 and journey-blocking P1 has a non-deferred task.",
+    "acyclicity_check": "Verified by topological sort in Phase 6 execution \u2014 no cycle detected.",
+    "objective_verification_commands": "Every task carries an executable shell command; the requires_human tasks carry commands that cannot be satisfied autonomously and are marked BLOCKED."
+  }
+}

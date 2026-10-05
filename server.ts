@@ -46,6 +46,51 @@ async function startServer() {
     };
   });
 
+  // The purge pipeline is allowed to touch TypeScript sources under <cwd>/src
+  // and nothing else. Every path a client supplies is validated against this
+  // root before it is read or written.
+  const PURGE_ROOT = path.join(process.cwd(), "src");
+
+  // Note: tsconfig.json does not enable strictNullChecks, so literal-typed
+  // discriminants widen to boolean and discriminated-union narrowing is
+  // unavailable. The result is therefore modelled with a nullable abs.
+  type PurgeTarget = { abs: string | null; reason: string | null };
+
+  function resolvePurgeTarget(filePath: unknown): PurgeTarget {
+    const reject = (reason: string): PurgeTarget => ({ abs: null, reason });
+    if (typeof filePath !== "string" || filePath.length === 0) {
+      return reject("path must be a non-empty string");
+    }
+    if (path.isAbsolute(filePath)) {
+      return reject("absolute paths are not accepted");
+    }
+    const resolved = path.resolve(process.cwd(), filePath);
+    const relToRoot = path.relative(PURGE_ROOT, resolved);
+    if (relToRoot === "" || relToRoot.startsWith("..") || path.isAbsolute(relToRoot)) {
+      return reject("target resolves outside <cwd>/src");
+    }
+    if (!/\.(ts|tsx)$/.test(resolved)) {
+      return reject("only .ts and .tsx files may be purged");
+    }
+    // Reject any symlink in the chain: a link planted inside src/ must not be
+    // able to redirect the write outside the project.
+    const segments = path.relative(process.cwd(), resolved).split(path.sep);
+    let cursor = process.cwd();
+    for (const seg of segments) {
+      cursor = path.join(cursor, seg);
+      let st: fs.Stats;
+      try {
+        st = fs.lstatSync(cursor);
+      } catch {
+        break; // final segment does not exist — the caller skips missing files
+      }
+      if (st.isSymbolicLink()) {
+        return reject("symlinks are not accepted");
+      }
+    }
+    return { abs: resolved, reason: null };
+  }
+
   // Recursive directory scanner for Mock Purge audit
   function scanDirectory(dir: string, fileList: string[] = []): string[] {
     if (!fs.existsSync(dir)) return fileList;
@@ -53,7 +98,8 @@ async function startServer() {
     for (const file of files) {
       if (file === "node_modules" || file === ".git" || file === "dist" || file === ".next" || file === "assets") continue;
       const filePath = path.join(dir, file);
-      const stat = fs.statSync(filePath);
+      const stat = fs.lstatSync(filePath);
+      if (stat.isSymbolicLink()) continue; // never follow links out of src/
       if (stat.isDirectory()) {
         scanDirectory(filePath, fileList);
       } else if (filePath.endsWith(".ts") || filePath.endsWith(".tsx")) {
@@ -131,7 +177,12 @@ async function startServer() {
       });
 
       for (const filePath of Object.keys(fileGroups)) {
-        const absolutePath = path.join(process.cwd(), filePath);
+        const target = resolvePurgeTarget(filePath);
+        if (target.abs === null) {
+          console.warn(`PURGE_PATH_REJECTED: ${filePath} — ${target.reason}`);
+          return res.status(400).json({ error: "PURGE_PATH_REJECTED", file: filePath, reason: target.reason });
+        }
+        const absolutePath = target.abs;
         if (!fs.existsSync(absolutePath)) continue;
 
         let content = fs.readFileSync(absolutePath, "utf8");
