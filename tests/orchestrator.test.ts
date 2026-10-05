@@ -31,10 +31,29 @@ describe("ProviderOrchestrator — provider error normalization", () => {
   });
 
   it("reports an invalid key as not valid instead of throwing", async () => {
-    const orchestrator = new ProviderOrchestrator();
-    // A syntactically invalid key must fail the live ping and normalize to false.
-    const isValid = await orchestrator.validateKey("not-a-real-gemini-key");
-    expect(isValid).toBe(false);
+    // T-017: this test used to issue a real HTTPS request to
+    // generativelanguage.googleapis.com, which made the suite depend on network
+    // egress — in a sandbox without egress it passed for the wrong reason (a
+    // transport failure, not a provider rejection). The ping is now stubbed.
+    const original = globalThis.fetch;
+    let calledWith: string | null = null;
+    (globalThis as any).fetch = async (input: any) => {
+      calledWith = typeof input === "string" ? input : String(input?.url ?? input);
+      const body = JSON.stringify({
+        error: { code: 400, message: "API key not valid. Please pass a valid API key.", status: "INVALID_ARGUMENT" },
+      });
+      return new Response(body, { status: 400, headers: { "content-type": "application/json" } });
+    };
+    try {
+      const orchestrator = new ProviderOrchestrator();
+      const isValid = await orchestrator.validateKey("not-a-real-gemini-key");
+      expect(isValid).toBe(false);
+    } finally {
+      (globalThis as any).fetch = original;
+    }
+    // The stubbed endpoint really was reached — the assertion is about a
+    // provider rejection, not about the network being unavailable.
+    expect(calledWith).toContain("generativelanguage.googleapis.com");
   }, 30_000);
 
   it("resets its internal client when a new key is deployed", () => {

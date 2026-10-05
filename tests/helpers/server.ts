@@ -35,6 +35,35 @@ export async function getFreePort(): Promise<number> {
   });
 }
 
+/** Shared token the test suite deploys into every server it spawns. */
+export const TEST_API_TOKEN = "reddy-test-token";
+
+/**
+ * The server now requires Authorization: Bearer <REDDY_API_TOKEN> on every
+ * /api route whenever the token is configured. The suite always configures it,
+ * so the ambient fetch is wrapped once to attach the header. `rawFetch` is the
+ * untouched original and is what the 401 assertions use.
+ */
+export const rawFetch: typeof fetch = globalThis.fetch.bind(globalThis);
+
+let authFetchInstalled = false;
+function installAuthFetch() {
+  if (authFetchInstalled) return;
+  authFetchInstalled = true;
+  const original = globalThis.fetch.bind(globalThis);
+  (globalThis as any).fetch = ((input: any, init: any = {}) => {
+    const url =
+      typeof input === "string"
+        ? input
+        : input instanceof URL
+          ? input.toString()
+          : (input && typeof input.url === "string" ? input.url : "");
+    const headers = new Headers(init && init.headers ? init.headers : undefined);
+    if (url.includes("/api/")) headers.set("authorization", `Bearer ${TEST_API_TOKEN}`);
+    return original(input, { ...init, headers });
+  }) as typeof fetch;
+}
+
 export interface ServerHandle {
   child: ChildProcess;
   port: number;
@@ -47,12 +76,17 @@ export async function startServer(
 ): Promise<ServerHandle> {
   const port = await getFreePort();
   const cwd = options.cwd ?? REPO_ROOT;
+  installAuthFetch();
+
   const env = {
     ...process.env,
     PORT: String(port),
     // Keep the key state deterministic: tests assert both the
     // "no key configured" and the explicit env-key source paths.
     GEMINI_API_KEY: "",
+    // The suite exercises the authenticated posture; tests/auth.test.ts asserts
+    // enforcement and the anonymous fallback separately.
+    REDDY_API_TOKEN: TEST_API_TOKEN,
     ...options.env,
   };
 

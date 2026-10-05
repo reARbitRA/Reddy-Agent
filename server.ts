@@ -1,6 +1,7 @@
 import express from "express";
 import path from "path";
 import fs from "fs";
+import crypto from "crypto";
 import { createServer as createViteServer } from "vite";
 import dotenv from "dotenv";
 import { ProviderOrchestrator } from "./core/orchestrator";
@@ -15,7 +16,82 @@ async function startServer() {
   const app = express();
   const PORT = Number(process.env.PORT) || 3000;
 
+  app.disable("x-powered-by");
   app.use(express.json());
+
+  // ---- Security headers (T-010) -----------------------------------------
+  const ALLOW_EMBEDDING = process.env.REDDY_ALLOW_EMBEDDING === "true";
+  app.use((req, res, next) => {
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    res.setHeader("Referrer-Policy", "no-referrer");
+    if (!ALLOW_EMBEDDING) res.setHeader("X-Frame-Options", "SAMEORIGIN");
+    res.setHeader(
+      "Content-Security-Policy",
+      [
+        "default-src 'self'",
+        "script-src 'self'",
+        "style-src 'self' 'unsafe-inline'",
+        "img-src 'self' data: blob:",
+        "media-src 'self' data: blob:",
+        "font-src 'self' data:",
+        "connect-src 'self' https://*.googleapis.com https://*.firebaseapp.com https://accounts.google.com https://*.gstatic.com",
+        "frame-src https://accounts.google.com https://*.firebaseapp.com",
+        "object-src 'none'",
+        "base-uri 'self'",
+        "form-action 'self'"
+      ].join("; ")
+    );
+    next();
+  });
+
+  // ---- Request id + structured access log (T-013) -----------------------
+  // Bodies and header values are never logged — only method, path, status,
+  // duration and the correlation id.
+  app.use((req, res, next) => {
+    const requestId = crypto.randomUUID();
+    res.setHeader("x-request-id", requestId);
+    const startedAt = Date.now();
+    res.on("finish", () => {
+      console.log(JSON.stringify({
+        level: "info",
+        event: "http_request",
+        request_id: requestId,
+        method: req.method,
+        path: req.path,
+        status: res.statusCode,
+        duration_ms: Date.now() - startedAt
+      }));
+    });
+    next();
+  });
+
+  // ---- API authentication (T-003) ---------------------------------------
+  // When REDDY_API_TOKEN is set every /api route requires it. When it is not
+  // set the server boots in a loudly-warned anonymous mode intended for local
+  // development only.
+  const API_TOKEN = (process.env.REDDY_API_TOKEN || "").trim();
+  if (!API_TOKEN) {
+    console.warn("======================================================================");
+    console.warn("INSECURE_ANONYMOUS_MODE: REDDY_API_TOKEN is not set.");
+    console.warn("Every /api route is reachable without credentials. Local use only.");
+    console.warn("Set REDDY_API_TOKEN before exposing this server to any network.");
+    console.warn("======================================================================");
+  }
+  function requireApiAuth(req: express.Request, res: express.Response, next: express.NextFunction) {
+    if (!API_TOKEN) return next();
+    const header = req.headers["authorization"];
+    const bearer = typeof header === "string" && header.toLowerCase().startsWith("bearer ")
+      ? header.slice(7).trim()
+      : "";
+    const provided = bearer || (typeof req.headers["x-reddy-token"] === "string" ? req.headers["x-reddy-token"].trim() : "");
+    const a = Buffer.from(provided);
+    const b = Buffer.from(API_TOKEN);
+    if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) {
+      return res.status(401).json({ error: "UNAUTHORIZED" });
+    }
+    next();
+  }
+  app.use("/api", requireApiAuth);
 
   // Agent Setup
   const orchestrator = new ProviderOrchestrator();
@@ -36,13 +112,14 @@ async function startServer() {
   }
 
   const knowledgeVault = new Map<string, { id: string, name: string, content: string, category: string }>();
-  const taskHistory: { timestamp: number, message: string, success: boolean, latency: number }[] = Array.from({ length: 15 }).map((_, i) => {
+  const taskHistory: { timestamp: number, message: string, success: boolean, latency: number, seeded?: boolean }[] = Array.from({ length: 15 }).map((_, i) => {
     const timeOffset = (15 - i) * 60 * 1000;
     return {
       timestamp: Date.now() - timeOffset,
       message: `Task Execution #${i}`,
       success: Math.random() > 0.05,
-      latency: Math.floor(120 + Math.random() * 850)
+      latency: Math.floor(120 + Math.random() * 850),
+      seeded: true // synthetic boot record — never presented as measured data
     };
   });
 
@@ -223,12 +300,15 @@ async function startServer() {
 
   app.post("/api/knowledge", (req, res) => {
     const { name, content, category } = req.body;
-    const id = Math.random().toString(36).substring(7);
+    const id = crypto.randomUUID();
     knowledgeVault.set(id, { id, name, content, category });
     res.json({ status: "saved", id });
   });
 
   app.delete("/api/knowledge/:id", (req, res) => {
+    if (!knowledgeVault.has(req.params.id)) {
+      return res.status(404).json({ error: "NOT_FOUND" });
+    }
     knowledgeVault.delete(req.params.id);
     res.json({ status: "deleted" });
   });
@@ -292,11 +372,12 @@ async function startServer() {
       vault.add("system", basePrompt);
       memories.set(session_id, vault);
     } else {
-      // If system protocol changed, we should update the first message if it's system
+      // A protocol changed through POST /api/settings must reach a session
+      // that was already created — rewrite the pinned system message in place.
       const vault = memories.get(session_id)!;
       const currentProtocol = systemProtocols.get(session_id);
       if (currentProtocol) {
-         // Logic to update existing vault system prompt could be added here
+        vault.updateSystemPrompt(currentProtocol);
       }
     }
 
@@ -332,6 +413,22 @@ async function startServer() {
 
   app.get("/api/skills", (req, res) => {
     res.json({ skills: registry.listSkills() });
+  });
+
+  app.get("/api/health", (req, res) => {
+    res.json({
+      status: "ok",
+      uptime_s: Math.round(process.uptime()),
+      pid: process.pid,
+      version: "0.1.0",
+      auth_mode: API_TOKEN ? "token" : "anonymous"
+    });
+  });
+
+  // Unknown /api routes must answer JSON 404, never the SPA shell — otherwise
+  // a mistyped endpoint returns 200 text/html and hides integration errors.
+  app.use("/api", (req, res) => {
+    res.status(404).json({ error: "NOT_FOUND", path: req.path });
   });
 
   // Vite middleware for development

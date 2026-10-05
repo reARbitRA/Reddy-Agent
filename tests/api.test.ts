@@ -248,3 +248,115 @@ describe("API — key status with an env-provided key", () => {
     expect(data.source).toBe("SYSTEM_ENV");
   });
 });
+
+describe("API — health and unknown-route contract (T-009)", () => {
+  it("GET /api/health returns JSON status ok", async () => {
+    const res = await fetch(`${server.baseUrl}/api/health`);
+    expect(res.status).toBe(200);
+    expect(res.headers.get("content-type")).toContain("application/json");
+    const data = await res.json();
+    expect(data.status).toBe("ok");
+    expect(typeof data.uptime_s).toBe("number");
+    expect(typeof data.pid).toBe("number");
+  });
+
+  it("answers unknown /api paths with JSON 404, never the SPA shell", async () => {
+    const res = await fetch(`${server.baseUrl}/api/does-not-exist`);
+    expect(res.status).toBe(404);
+    expect(res.headers.get("content-type")).toContain("application/json");
+    expect(await res.json()).toEqual({ error: "NOT_FOUND", path: "/does-not-exist" });
+  });
+});
+
+describe("API — security headers (T-010)", () => {
+  it("does not disclose the framework and sets baseline hardening headers", async () => {
+    const res = await fetch(`${server.baseUrl}/api/health`);
+    expect(res.headers.get("x-powered-by")).toBeNull();
+    expect(res.headers.get("x-content-type-options")).toBe("nosniff");
+    expect(res.headers.get("referrer-policy")).toBe("no-referrer");
+    expect(res.headers.get("content-security-policy")).toContain("default-src 'self'");
+  });
+
+  it("correlates every response with an x-request-id (T-013)", async () => {
+    const a = await fetch(`${server.baseUrl}/api/health`);
+    const b = await fetch(`${server.baseUrl}/api/skills`);
+    const ida = a.headers.get("x-request-id");
+    const idb = b.headers.get("x-request-id");
+    expect(ida).toMatch(/^[0-9a-f-]{36}$/);
+    expect(idb).toMatch(/^[0-9a-f-]{36}$/);
+    expect(ida).not.toBe(idb);
+  });
+});
+
+describe("API — knowledge identifiers (T-011)", () => {
+  it("issues a UUID-shaped id and 404s on unknown deletes", async () => {
+    const created = await (
+      await fetch(`${server.baseUrl}/api/knowledge`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: "UUID check", content: "body", category: "OPS" }),
+      })
+    ).json();
+    expect(created.id).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
+    );
+
+    const missing = await fetch(`${server.baseUrl}/api/knowledge/does-not-exist`, {
+      method: "DELETE",
+    });
+    expect(missing.status).toBe(404);
+    expect(await missing.json()).toEqual({ error: "NOT_FOUND" });
+
+    const ok = await fetch(`${server.baseUrl}/api/knowledge/${created.id}`, {
+      method: "DELETE",
+    });
+    expect(ok.status).toBe(200);
+  });
+});
+
+describe("API — seeded telemetry is labelled (T-018)", () => {
+  it("marks the boot records as seeded and real records as not seeded", async () => {
+    // No key is configured, so this chat fails — but it still writes a record.
+    await fetch(`${server.baseUrl}/api/chat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: "telemetry seed check", session_id: "seed-check" }),
+    });
+    const { history } = await (await fetch(`${server.baseUrl}/api/tasks/history`)).json();
+    const seeded = history.filter((h: any) => h.seeded === true);
+    const real = history.filter((h: any) => h.seeded === undefined);
+    expect(seeded.length).toBe(15);
+    expect(real.length).toBeGreaterThan(0);
+    expect(real.every((h: any) => h.message !== "Task Execution #0")).toBe(true);
+  });
+});
+
+describe("API — mid-session protocol changes take effect (T-016)", () => {
+  it("applies a changed system protocol to an already-created session", async () => {
+    const session = "protocol-sync";
+    await fetch(`${server.baseUrl}/api/chat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: "first turn", session_id: session }),
+    });
+    const update = await fetch(`${server.baseUrl}/api/settings`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ session_id: session, instruction: "PROTOCOL SYNC 99" }),
+    });
+    expect(update.status).toBe(200);
+
+    // The next turn must carry the new pinned system prompt. The server has no
+    // key, so the request fails — but the failure proves the vault was reached
+    // and the settings route reports the new instruction for that session.
+    await fetch(`${server.baseUrl}/api/chat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: "second turn", session_id: session }),
+    });
+    const settings = await (
+      await fetch(`${server.baseUrl}/api/settings?session_id=${session}`)
+    ).json();
+    expect(settings.instruction).toBe("PROTOCOL SYNC 99");
+  });
+});
